@@ -239,7 +239,7 @@ describe("UserController", function() {
 			*/
 		});
 	});
-	describe.only("converter", function() {
+	describe("converter", function() {
 		Converter = base.Converter
 		it("should convert a string to an integer", function() {
 			assert.strictEqual(Converter.convertField("5", "int"), 5);
