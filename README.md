@@ -86,7 +86,7 @@ UserController = BaseController.extend({
 					}
 				}
 			},
-			logic: function(id, _data) { // put input in as (id, name, username, password) or just as (id, _data)
+			logic: function(id, _data) { // use input like (id, name, username, password) or (id, _data)
 				for(var key in _data) {
 					UserData[id][key] = _data[key];
 				}
