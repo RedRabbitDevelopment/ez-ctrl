@@ -212,8 +212,8 @@ UserController = BaseController.extend({
 	```
   
   #### custom routes:
-  	The http method is by default get, but you can change that by either adding a "method"
-  	parameter or by throwing the method at the beginning of the route name:
+	The http method is by default get, but you can change that by either adding a "method"
+	parameter or by throwing the method at the beginning of the route name:
   	
   	```js
   	routes: {
@@ -237,7 +237,116 @@ UserController = BaseController.extend({
 	}
 	```
   #### validation:
+  	You can validation to any method with the validation parameter:
   	
+  	```js
+  	routes: {
+	  postLogin: {
+	  	validation: {
+			username: {
+				required: true,
+			},
+			password: {
+				required: true
+			}
+		},
+		logic: function(username, password) {
+	  		// Do stuff
+	  	}
+	  }
+	}
+	```
+	
+	The existing validation methods are:
+		required: must be present
+		float: must be a float
+		int: must be an integer
+		alphaNumeric: must be alpha-numeric
+		type: set type to float, int, or alpha-numeric
+		length: which includes it's own set of parameters:
+			length: {gt: 8},
+			length: {lt: 8},
+			length: {between: [8, 16]}
+	
+	Not that setting the type may also run it through a conversion:
+	type: 'int' - convert to an integer
+	type: 'float' - convert to an integer
+	
+### Custom Validation/Conversion
+
+	#### Validator.registerValidator(validatorName, message, validator);
+	You can create custom validation methods by registering it:
+	
+	```js
+  	Validator = require('ez-ctrl').Validator;
+  	
+  	Validator.registerValidator("unique", function(validatorResult, validatorData) {
+		return validatorData ? "must be unique" : "must not be unique";	
+	}, function(value, data, field) {
+		var i, user, isUnique = true;
+		for(i = 0, _len = UserData.length; i < _len;i++) {
+			user = UserData[i];
+			if(user[field] == value) {
+				isUnique = false;
+			}
+		}
+		return isUnique == data;
+	});
+	
+	...
+	routes: {
+		add: {
+			validation: {
+				username: {
+					unique: true // validatorName: validatorData
+				}
+			}
+			logic: function(username) {
+				
+			}
+		}
+	}
+	
+	```
+	
+	validatorName: name to use in the validation parameter
+	message: a message to send back when the validation fails. This can be a string or a function(validatorResult, validatorData) where
+		validatorResult: the result of the validation
+		validatorData: the data that was tagged onto the validation parameter
+	validator: a function(value, validatorData, field):
+		value: the value of the field
+		validatorData: the data that was tagged onto the validation parameter
+		field: the field name
+	
+	#### Converter.registerConverter(converterName, converterFunction);
+	You can create custom converter by registering it:
+	
+	```js
+  	Converter = require('ez-ctrl').Converter;
+  	
+  	Converter.registerConverter("object", function(value) {
+		return JSON.parse(value);
+	});
+	
+	...
+	routes: {
+		add: {
+			validation: {
+				username: {
+					type: 'object'
+				}
+			}
+			logic: function(username) {
+				
+			}
+		}
+	}
+	
+	```
+	
+	converterName: name to use in the type parameter
+	converter: a function(value):
+		value: the value to be converted
   
 ## License
 
