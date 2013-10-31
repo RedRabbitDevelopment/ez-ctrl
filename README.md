@@ -170,7 +170,75 @@ UserController = BaseController.extend({
   Also, in the future, we hope to be able to create a way for the developers
   to reuse the validation code on the front-end, essentially building 
   front-end and back-end validation at the same time.
+  
+## API
 
+### BaseController
+
+  Exposed by `require('ez-controller').BaseController`.
+
+### BaseController.extend()
+
+  Creates a new `Controller`.
+  
+  #### options:
+  	name: name of the controller. This will be prepended to the beginning of every route.
+  		i.e.:
+  			User: users
+  			Tweet: tweets
+  			UserComment: user_comments
+  	routes: all of the routes for that controller
+  
+  #### crud routes:
+  	The following are crud routes that are made easier for you:
+  	
+  	getAll: gets /users
+  	get: gets /users/:id
+  	add: puts /users
+  	save: posts /users/:id
+  	delete: deletes /users/:id
+  	
+  	The default method can be overridden by adding a method parameter in the route:
+  	
+  	```js
+  	routes: {
+	  getAll: {
+	  	method: "post",
+	  	logic: function() {
+	  		// Do stuff
+	  	}
+	  }
+	}
+	```
+  
+  #### custom routes:
+  	The http method is by default get, but you can change that by either adding a "method"
+  	parameter or by throwing the method at the beginning of the route name:
+  	
+  	```js
+  	routes: {
+	  postLogin: function() {
+		// Do stuff
+	  }
+	}
+	```
+	
+	or
+	
+	
+  	```js
+  	routes: {
+	  login: {
+	  	method: "post",
+	  	logic: function() {
+	  		// Do stuff
+	  	}
+	  }
+	}
+	```
+  #### validation:
+  	
+  
 ## License
 
 (The MIT License)
