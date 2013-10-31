@@ -181,24 +181,25 @@ UserController = BaseController.extend({
 
   Creates a new `Controller`.
   
-  #### options:
-    name: name of the controller. This will be prepended to the beginning of every route.
-      i.e.:
-        User: users
-        Tweet: tweets
-        UserComment: user_comments
-    routes: all of the routes for that controller
+  options:
+  name: name of the controller. This will be prepended to the beginning of every route.
+  i.e.:
+  User: users
+  Tweet: tweets
+  UserComment: user_comments
   
-  #### crud routes:
-    The following are crud routes that are made easier for you:
+  routes: all of the routes for that controller
+  
+  crud routes:
+  The following are crud routes that are made easier for you:
     
-    getAll: gets /users
-    get: gets /users/:id
-    add: puts /users
-    save: posts /users/:id
-    delete: deletes /users/:id
-    
-    The default method can be overridden by adding a method parameter in the route:
+  getAll: gets /users
+  get: gets /users/:id
+  add: puts /users
+  save: posts /users/:id
+  delete: deletes /users/:id
+  
+  The default method can be overridden by adding a method parameter in the route:
     
     ```js
     routes: {
@@ -211,103 +212,102 @@ UserController = BaseController.extend({
   }
   ```
   
-  #### custom routes:
+  ### custom routes:
   The http method is by default get, but you can change that by either adding a "method"
   parameter or by throwing the method at the beginning of the route name:
     
     ```js
     routes: {
-    postLogin: function() {
-    // Do stuff
+      postLogin: function() {
+        // Do stuff
+      }
     }
-  }
-  ```
+    ```
   
   or
   
   
     ```js
-    routes: {
-    login: {
-      method: "post",
-      logic: function() {
-        // Do stuff
+      routes: {
+      login: {
+        method: "post",
+        logic: function() {
+          // Do stuff
+        }
       }
     }
-  }
-  ```
-  #### validation:
-    You can validation to any method with the validation parameter:
+    ```
+
+  ### validation:
+  You can validation to any method with the validation parameter:
     
     ```js
     routes: {
-    postLogin: {
-      validation: {
-      username: {
-        required: true,
-      },
-      password: {
-        required: true
-      }
-    },
-    logic: function(username, password) {
-        // Do stuff
+      postLogin: {
+        validation: {
+          username: {
+            required: true,
+          },
+          password: {
+            required: true
+          }
+        },
+        logic: function(username, password) {
+          // Do stuff
+        }
       }
     }
-  }
-  ```
+    ```
   
   The existing validation methods are:
-    required: must be present
-    float: must be a float
-    int: must be an integer
-    alphaNumeric: must be alpha-numeric
-    type: set type to float, int, or alpha-numeric
-    length: which includes it's own set of parameters:
-      length: {gt: 8},
-      length: {lt: 8},
-      length: {between: [8, 16]}
+  required: must be present
+  float: must be a float
+  int: must be an integer
+  alphaNumeric: must be alpha-numeric
+  type: set type to float, int, or alpha-numeric
+  length: which includes it's own set of parameters:
+  length: {gt: 8},
+  length: {lt: 8},
+  length: {between: [8, 16]}
   
   Not that setting the type may also run it through a conversion:
   type: 'int' - convert to an integer
   type: 'float' - convert to an integer
-  
-### Custom Validation/Conversion
 
-  #### Validator.registerValidator(validatorName, message, validator);
+### Validator.registerValidator(validatorName, message, validator);
   You can create custom validation methods by registering it:
   
-  ```js
+    ```js
     Validator = require('ez-ctrl').Validator;
     
     Validator.registerValidator("unique", function(validatorResult, validatorData) {
-    return validatorData ? "must be unique" : "must not be unique";  
-  }, function(value, data, field) {
-    var i, user, isUnique = true;
-    for(i = 0, _len = UserData.length; i < _len;i++) {
-      user = UserData[i];
-      if(user[field] == value) {
-        isUnique = false;
-      }
-    }
-    return isUnique == data;
-  });
-  
-  ...
-  routes: {
-    add: {
-      validation: {
-        username: {
-          unique: true // validatorName: validatorData
+      return validatorData ? "must be unique" : "must not be unique";  
+    }, function(value, data, field) {
+      var i, user, isUnique = true;
+      for(i = 0, _len = UserData.length; i < _len;i++) {
+        user = UserData[i];
+        if(user[field] == value) {
+          isUnique = false;
         }
       }
-      logic: function(username) {
+      return isUnique == data;
+    });
+  
+    ...
+    routes: {
+      add: {
+        validation: {
+          username: {
+            unique: true // validatorName: validatorData
+          }
+        }
+        logic: function(username) {
         
+        }
       }
     }
-  }
   
-  ```
+    ```
   
   validatorName: name to use in the validation parameter
   message: a message to send back when the validation fails. This can be a string or a function(validatorResult, validatorData) where
@@ -325,24 +325,24 @@ UserController = BaseController.extend({
     Converter = require('ez-ctrl').Converter;
     
     Converter.registerConverter("object", function(value) {
-    return JSON.parse(value);
-  });
+      return JSON.parse(value);
+    });
   
-  ...
-  routes: {
-    add: {
-      validation: {
-        username: {
-          type: 'object'
+    ...
+    routes: {
+      add: {
+        validation: {
+          username: {
+            type: 'object'
+          }
+        }
+        logic: function(username) {
+        
         }
       }
-      logic: function(username) {
-        
-      }
     }
-  }
   
-  ```
+    ```
   
   converterName: name to use in the type parameter
   converter: a function(value):
