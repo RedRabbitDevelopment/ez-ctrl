@@ -266,11 +266,11 @@ UserController = BaseController.extend({
   type: 'int' - convert to an integer
   type: 'float' - convert to an integer
 
-### Validator.registerValidator(validatorName, message, validator);
+### Custom Validation
   You can create custom validation methods by registering it:
   
     Validator = require('ez-ctrl').Validator;
-    
+    // Validator.registerValidator(validatorName, message, validator);
     Validator.registerValidator("unique", function(validatorResult, validatorData) {
       return validatorData ? "must be unique" : "must not be unique";  
     }, function(value, data, field) {
@@ -308,11 +308,11 @@ UserController = BaseController.extend({
     validatorData: the data that was tagged onto the validation parameter
     field: the field name
   
-### Converter.registerConverter(converterName, converterFunction);
+### Custom Conversion
   You can create custom converter by registering it:
   
     Converter = require('ez-ctrl').Converter;
-    
+    // Converter.registerConverter(converterName, converterFunction);
     Converter.registerConverter("object", function(value) {
       return JSON.parse(value);
     });
