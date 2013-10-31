@@ -183,6 +183,7 @@ exports.UserController = MyBaseController.extend({
 		usesId: {
 			validation: {
 				id: {
+					type: 'int',
 					required: true,
 					inDb: true
 				}

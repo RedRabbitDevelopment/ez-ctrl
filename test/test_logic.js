@@ -239,4 +239,33 @@ describe("UserController", function() {
 			*/
 		});
 	});
+	describe.only("converter", function() {
+		Converter = base.Converter
+		it("should convert a string to an integer", function() {
+			assert.strictEqual(Converter.convertField("5", "int"), 5);
+		});
+		it("should convert a string to an float", function() {
+			assert.strictEqual(Converter.convertField("55.5", "float"), 55.5);
+		});
+		it("shouldn't convert something it doesn't recognize", function() {
+			assert.equal(Converter.convertField("abcda", "fakeType"), "abcda");
+		});
+		it("should convert a non-integer string to NaN", function() {
+			assert.ok(_.isNaN(Converter.convertField("abcda", "int")));
+		});
+		it("should convert a whole group of values", function() {
+			var newData = Converter.convert({
+				booya: {type: 'int'},
+				gee: {type: 'float'},
+				wizz: {type: 'text'}
+			}, {
+				booya: '5',
+				gee: '77.2',
+				wizz: '12'
+			});
+			assert.strictEqual(newData.booya, 5);
+			assert.strictEqual(newData.gee, 77.2);
+			assert.strictEqual(newData.wizz, "12");
+		});
+	});
 })
