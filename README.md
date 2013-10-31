@@ -5,6 +5,25 @@ ez-ctrl
 
     $ npm install ez-ctrl
 
+## Features
+
+  * Built on [Express](https://raw.github.com/visionmedia/express)
+  * Has all the same features as express
+  * Decouples data retrieval, data validation, and logic for better testing
+  * DRY - focus more on logic and less on sanitation
+  * DRY - validate input on the front-end and back-end simultaneously (coming soon!)
+
+## Philosophy
+
+  The EZController philosophy was inspired by Ruby on Rails, but with a few
+  changes. The basic idea is to make testing for validation, routing, and
+  logic built right in, by removing most references to req and res in the
+  business logic of the application.
+  
+  Also, in the future, we hope to be able to create a way for the developers
+  to reuse the validation code on the front-end, essentially building 
+  front-end and back-end validation at the same time.
+
 ## License
 
 (The MIT License)
