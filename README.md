@@ -1,6 +1,10 @@
 ez-ctrl
 =======
 
+## Installation
+
+    $ npm install ez-ctrl
+
 ## License
 
 (The MIT License)
