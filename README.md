@@ -201,16 +201,14 @@ UserController = BaseController.extend({
   
   The default method can be overridden by adding a method parameter in the route:
     
-    ```js
     routes: {
-    getAll: {
-      method: "post",
-      logic: function() {
-        // Do stuff
+      getAll: {
+        method: "post",
+        logic: function() {
+          // Do stuff
+        }
       }
     }
-  }
-  ```
   
   ### custom routes:
   The http method is by default get, but you can change that by either adding a "method"
@@ -321,7 +319,7 @@ UserController = BaseController.extend({
   #### Converter.registerConverter(converterName, converterFunction);
   You can create custom converter by registering it:
   
-  ```js
+    ```js
     Converter = require('ez-ctrl').Converter;
     
     Converter.registerConverter("object", function(value) {
