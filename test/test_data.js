@@ -1,7 +1,7 @@
 var Q = require('q'),
-	BaseController = require('../index').BaseController,
-	Validator = require('../index').Validator;
-
+	base = require('../index'),
+	BaseController = base.BaseController,
+	Validator = base.Validator;
 
 var UserData = null;
 exports.resetData = function() {
@@ -284,7 +284,7 @@ exports.AsyncUserController = MyBaseController.extend({
 					}
 				}
 			},
-			logic: function(id, name, username, password) {
+			logic: function(id, _data) {
 				var deferred = Q.defer();
 				setTimeout(function() {
 					for(var key in _data) {

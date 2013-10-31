@@ -1,10 +1,10 @@
-var BaseController = require('./lib/base'),
-	FrontEnd = require('./lib/frontend'),
-	Validator = require('./lib/validator'),
-	Converter = require('./lib/converter'),
-	ControllerManager = require('./lib/manager');
+var BaseController = require('./lib/ez-ctrl/base'),
+	FrontEnd = require('./lib/ez-ctrl/frontend'),
+	Validator = require('./lib/ez-ctrl/validator'),
+	Converter = require('./lib/ez-ctrl/converter'),
+	ControllerManager = require('./lib/ez-ctrl/manager');
 
-exports = {
+module.exports = {
 	BaseController: BaseController,
 	FrontEnd: FrontEnd,
 	Validator: Validator,
