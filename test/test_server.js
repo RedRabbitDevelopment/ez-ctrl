@@ -3,7 +3,8 @@ var express = require('express'),
 	Q = require('q'),
 	assert = require('assert'),
 	_ = require("underscore"),
-	TestData = require('./test_data');
+	TestData = require('./test_data'),
+	ControllerManager = require('../index').ControllerManager;
 	
 describe("Test Server", function() {
 	beforeEach(function() {
@@ -14,8 +15,7 @@ describe("Test Server", function() {
 		var app = express();
 		app.use(express.json());
 		app.use(express.urlencoded());
-		TestData.UserController.registerRoutes(app);
-		TestData.AsyncUserController.registerRoutes(app);
+		ControllerManager.registerRoutes(app);
 		server = http.createServer(app);
 		server.listen(3000, function() {
 			done();

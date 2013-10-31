@@ -177,6 +177,12 @@ UserController = BaseController.extend({
 
   Exposed by `require('ez-controller').BaseController`.
 
+### ControllerManager.registerRoutes(app)
+  In order to allow your express server to route to your different logic methods, express needs to be aware of them.
+  
+    ControllerManager = require('ez-ctrl').ControllerManager;
+    ControllerManager.registerRoutes(app);
+
 ### BaseController.extend()
 
   Creates a new `Controller`.
