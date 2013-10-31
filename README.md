@@ -1,6 +1,152 @@
 ez-ctrl
 =======
 
+```js
+var EZController = require('ez-ctrl').BaseController;
+UserController = BaseController.extend({
+	name: "User",
+	routes: {
+		getAll: function() { // Anything with "getAll" automatically is get /users
+			// Return raw data which is translated into JSON
+			return UserData;
+		},
+		get: { // Anything with "get" automatically is get /users/:id
+			validation: {
+				id: {
+					required: true,
+					type: 'int', // convert string inputs to integer
+					inDb: true // create custom validation
+				}
+			},
+			logic: function(id) {
+				// Note, id is already clean! No need to check if it exists!
+				// Return any promise
+				var deferred = Q.defer();
+				setTimeout(function() {
+					deferred.resolve(UserData[id]);
+				}, 25);
+				return deferred.promise;
+			}
+		},
+		add: { // Anything with "add" automatically is put /users
+			validation: {
+				name: {
+					required: true,
+					type: "text",
+					length: {
+						gt: 8
+					}
+				},
+				username: {
+					required: true,
+					type: 'alphaNumeric',
+					unique: true,
+					length: {
+						gt: 9
+					}
+				},
+				password: {
+					required: true,
+					type: 'alphaNumeric',
+					length: {
+						gt: 8
+					}
+				}
+			},
+			logic: function(data) {
+				data.id = UserData.length;
+				data.comments = []
+				UserData.push(data);
+				return true;
+			}
+		},
+		save: { // Anything with "save" automatically is post /users/:id
+			validation: {
+				id:  {
+					required: true,
+					type: 'int', 
+					inDb: true
+				},
+				name: {
+					length: {
+						gt: 8
+					}
+				},
+				username: {
+					type: 'alphaNumeric',
+					unique: true,
+					length: {
+						gt: 8
+					}
+				},
+				password: {
+					type: 'alphaNumeric',
+					length: {
+						gt: 8
+					}
+				}
+			},
+			logic: function(id, _data) { // put input in as (id, name, username, password) or just as (id, _data)
+				for(var key in _data) {
+					UserData[id][key] = _data[key];
+				}
+				return true;
+			}
+		},
+		postLogin: { // post<verb> is always /users/verb
+			validation: {
+				username: {
+					required: true,
+				},
+				password: {
+					required: true
+				}
+			},
+			logic: function(username, password) {
+				var user;
+				for(var id in UserData) {
+					user = UserData[id];
+					if(user.username == username) {
+						if(user.password == password) {
+							return true;
+						} else {
+							throw new Error("Invalid username or password"); // Throw errors
+						}
+					}
+				}
+				throw new Error("Invalid username or password");
+			}
+		},
+		action: { // any action is /users/action
+			validation: {
+				id: {
+					type: 'int',
+					required: true,
+					inDb: true
+				}
+			},
+			logic: function() {
+				return "Result";
+			}
+		}
+		usesIdAction: { // any action with usesId is /users/:id/action
+			validation: {
+				id: {
+					type: 'int',
+					required: true,
+					inDb: true
+				}
+			},
+			logic: function(id) {
+				return "Result";
+			}
+		}
+	}
+});
+
+
+```
+
 ## Installation
 
     $ npm install ez-ctrl
