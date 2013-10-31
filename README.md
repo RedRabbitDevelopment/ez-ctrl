@@ -210,22 +210,19 @@ UserController = BaseController.extend({
       }
     }
   
-  ### custom routes:
+### custom routes:
   The http method is by default get, but you can change that by either adding a "method"
   parameter or by throwing the method at the beginning of the route name:
     
-    ```js
     routes: {
       postLogin: function() {
         // Do stuff
       }
     }
-    ```
   
   or
   
   
-    ```js
       routes: {
       login: {
         method: "post",
@@ -234,12 +231,10 @@ UserController = BaseController.extend({
         }
       }
     }
-    ```
 
-  ### validation:
+### validation:
   You can validation to any method with the validation parameter:
     
-    ```js
     routes: {
       postLogin: {
         validation: {
@@ -255,7 +250,6 @@ UserController = BaseController.extend({
         }
       }
     }
-    ```
   
   The existing validation methods are:
   required: must be present
@@ -275,7 +269,6 @@ UserController = BaseController.extend({
 ### Validator.registerValidator(validatorName, message, validator);
   You can create custom validation methods by registering it:
   
-    ```js
     Validator = require('ez-ctrl').Validator;
     
     Validator.registerValidator("unique", function(validatorResult, validatorData) {
@@ -305,7 +298,6 @@ UserController = BaseController.extend({
       }
     }
   
-    ```
   
   validatorName: name to use in the validation parameter
   message: a message to send back when the validation fails. This can be a string or a function(validatorResult, validatorData) where
@@ -316,10 +308,9 @@ UserController = BaseController.extend({
     validatorData: the data that was tagged onto the validation parameter
     field: the field name
   
-  #### Converter.registerConverter(converterName, converterFunction);
+### Converter.registerConverter(converterName, converterFunction);
   You can create custom converter by registering it:
   
-    ```js
     Converter = require('ez-ctrl').Converter;
     
     Converter.registerConverter("object", function(value) {
@@ -339,9 +330,7 @@ UserController = BaseController.extend({
         }
       }
     }
-  
-    ```
-  
+    
   converterName: name to use in the type parameter
   converter: a function(value):
     value: the value to be converted
