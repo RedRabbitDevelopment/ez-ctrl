@@ -70,7 +70,6 @@ describe("Test Server", function() {
 				});
 			});
 			it("should get a single user", function(done) {
-				this.timeout(3000);
 				makeRequest({
 					path: "/" + type + "/2"
 				}).then(function(data) {
@@ -82,7 +81,6 @@ describe("Test Server", function() {
 				});
 			});
 			it("should update a single user", function(done) {
-				this.timeout(3000);
 				makeRequest({
 					method: "POST",
 					path: "/" + type + "/2"
