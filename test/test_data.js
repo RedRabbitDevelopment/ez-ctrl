@@ -50,7 +50,7 @@ Validator.registerValidator("inDb", function(validatorResult, validatorData) {
 		} else {
 			deferred.reject();
 		}
-	}, 100);
+	}, 25);
 	return deferred.promise;
 });
 Validator.on("error", console.log);
@@ -204,7 +204,7 @@ exports.AsyncUserController = MyBaseController.extend({
 			var deferred = Q.defer();
 			setTimeout(function() {
 				deferred.resolve(UserData);
-			}, 100);
+			}, 25);
 			return deferred.promise;
 		},
 		get: { // get /users/:id Anything with "get" automatically is get /<tableize>/:id
@@ -219,7 +219,7 @@ exports.AsyncUserController = MyBaseController.extend({
 				var deferred = Q.defer();
 				setTimeout(function() {
 					deferred.resolve(UserData[id]);
-				}, 100);
+				}, 25);
 				return deferred.promise;
 			}
 		},
@@ -255,7 +255,7 @@ exports.AsyncUserController = MyBaseController.extend({
 					_data.comments = []
 					UserData.push(_data);
 					deferred.resolve(true);
-				}, 100);
+				}, 25);
 				return deferred.promise;
 			}
 		},
@@ -292,7 +292,7 @@ exports.AsyncUserController = MyBaseController.extend({
 						UserData[id][key] = _data[key];
 					}
 					deferred.resolve(true);
-				}, 100);
+				}, 25);
 				return deferred.promise;
 			}
 		},
@@ -320,7 +320,7 @@ exports.AsyncUserController = MyBaseController.extend({
 						}
 					}
 					deferred.reject("Invalid username or password");
-				}, 100);
+				}, 25);
 				return deferred.promise;
 			}
 		}
