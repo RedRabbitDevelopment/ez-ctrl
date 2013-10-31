@@ -1,4 +1,4 @@
-ez-ctrl
+EZController
 =======
 
 ```js
