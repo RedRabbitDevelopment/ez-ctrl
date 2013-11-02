@@ -3,10 +3,10 @@ _ = require('underscore')
 Q = require('q')
 
 module.exports = Validator =
-	validate: (validation, data)->
+	validate: (validation, data, controllerName)->
 		promises = []
 		for field, validatorData of validation
-			promises.push Validator.validateField validatorData, field, data[field]
+			promises.push Validator.validateField validatorData, field, data[field], controllerName
 		Q.allSettled(promises).then (results)->
 			deferred = Q.defer()
 			errors = _.filter results, (result)->
@@ -34,12 +34,12 @@ module.exports = Validator =
 		field: name of the field
 		errors: list of readable errors. Example: ['must be less than 8', 'must exist']
 	###
-	validateField: (validators, field, value)->
+	validateField: (validators, field, value, controllerName)->
 		promises = []
 		# Skip if value is empty and it isn't required
 		unless value
 			if validators.required
-				return @runValidateAndGetReadableError(value, 'required', true, field).fail (error)->
+				return @runValidateAndGetReadableError(value, 'required', true, field, controllerName).fail (error)->
 					deferred = Q.defer()
 					deferred.reject [
 						field: error.field
@@ -54,7 +54,7 @@ module.exports = Validator =
 					validator = validatorData
 					unless ValidationMethods[validator]
 						continue
-				promises.push @runValidateAndGetReadableError value, validator, validatorData, field
+				promises.push @runValidateAndGetReadableError value, validator, validatorData, field, controllerName
 		Q.allSettled(promises).then (results)->
 			deferred = Q.defer()
 			readableErrors = []
@@ -74,8 +74,8 @@ module.exports = Validator =
 		field: name of the field that failed
 		error: the readable error
 	###
-	runValidateAndGetReadableError: (value, validator, validatorData, field)->
-		Validator.runValidate(value, validator, validatorData, field).then (result)->
+	runValidateAndGetReadableError: (value, validator, validatorData, field, controllerName)->
+		Validator.runValidate(value, validator, validatorData, field, controllerName).then (result)->
 			unless result is true or typeof result is "undefined"
 				deferred = Q.defer()
 				deferred.reject result
@@ -84,23 +84,23 @@ module.exports = Validator =
 			deferred = Q.defer()
 			deferred.reject
 				field: field
-				error: Validator.translateValidationError validator, error, validatorData
+				error: Validator.translateValidationError validator, error, validatorData, controllerName
 			deferred.promise
 			
-	runValidate: (value, validator, validatorData, field)->
+	runValidate: (value, validator, validatorData, field, controllerName)->
 		deferred = Q.defer()
 		try
 			unless ValidationMethods[validator]
 				throw new Error("Validation Method " + validator + " does not exist")
-			deferred.resolve ValidationMethods[validator] value, validatorData, field
+			deferred.resolve ValidationMethods[validator] value, validatorData, field, controllerName
 		catch e
 			deferred.reject e.message
 		deferred.promise
 
-	translateValidationError: (validator, validatorResult, validatorData)->
+	translateValidationError: (validator, validatorResult, validatorData, controllerName)->
 		if ValidationMessages[validator]
 			if _.isFunction(ValidationMessages[validator])
-				validationMessage = ValidationMessages[validator](validatorResult, validatorData)
+				validationMessage = ValidationMessages[validator](validatorResult, validatorData, controllerName)
 			else
 				validationMessage = ValidationMessages[validator]
 		else

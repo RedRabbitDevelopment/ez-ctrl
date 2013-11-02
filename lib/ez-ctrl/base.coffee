@@ -185,5 +185,5 @@ BaseController.prototype =
 		Converter.convert @validation, data
 	
 	validate: (data) ->
-		Validator.validate @validation, data
+		Validator.validate @validation, data, @modelName
 	

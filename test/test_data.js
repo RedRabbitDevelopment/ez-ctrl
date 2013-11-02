@@ -40,13 +40,13 @@ exports.getData = function() {
 
 exports.resetData();
 
-Validator.registerValidator("unique", function(validatorResult, validatorData) {
+Validator.registerValidator("unique", function(validatorResult, validatorData, controllerName) {
   if (validatorData) {
     return "must be unique";
   } else {
     return "must not be unique";
   }
-}, function(value, data, field) {
+}, function(value, data, field, controllerName) {
   var isUnique, user, _i, _len;
   isUnique = true;
   for (_i = 0, _len = UserData.length; _i < _len; _i++) {
@@ -64,7 +64,7 @@ Validator.registerValidator("inDb", function(validatorResult, validatorData) {
   } else {
     return "must not exist";
   }
-}, function(value, data, field) {
+}, function(value, data, field, controllerName) {
   var deferred;
   deferred = Q.defer();
   setTimeout(function() {

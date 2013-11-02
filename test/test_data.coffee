@@ -29,9 +29,9 @@ exports.getData = ()->
 exports.resetData()
 
 # Test synchronous validator
-Validator.registerValidator "unique", (validatorResult, validatorData)->
+Validator.registerValidator "unique", (validatorResult, validatorData, controllerName)->
 	if validatorData then "must be unique" else "must not be unique"
-, (value, data, field)->
+, (value, data, field, controllerName)->
 	isUnique = true
 	for user in UserData
 		isUnique = false if user[field] is value
@@ -40,7 +40,7 @@ Validator.registerValidator "unique", (validatorResult, validatorData)->
 # Test asynchronous validator
 Validator.registerValidator "inDb", (validatorResult, validatorData)->
 	if validatorData then "does not exist" else "must not exist"
-, (value, data, field)->
+, (value, data, field, controllerName)->
 	deferred = Q.defer()
 	setTimeout ->
 		found = UserData.length > value
