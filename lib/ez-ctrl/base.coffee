@@ -15,13 +15,16 @@ module.exports = BaseController =
 			_.extend(this, routeDetails)
 			if _.isFunction @initialize
 				@initialize()
+			if options.name
+				BaseController.setBaseData.call(@, options.name)
+			return
 		_.extend(NewController, this, options)
 		middleware = if middleware then @beforeEachMiddleware.concat middleware else @beforeEachMiddleware.slice 0
 		NewController.beforeEachMiddleware = middleware
 		_.extend(NewController.prototype, @prototype)
+		ControllerManager.controllers.push(NewController)
 		if options.name
 			NewController.setBaseData(options.name)
-		ControllerManager.controllers.push(NewController)
 		NewController
 
 	setBaseData: (name) ->
