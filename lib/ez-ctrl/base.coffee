@@ -8,24 +8,27 @@ Converter = require('./converter')
 Validator = require('./validator')
 
 module.exports = BaseController =
-	beforeEachMiddleware: []
+	beforeEach: []
 	extend: (options) ->
-		middleware = options.beforeEach
 		NewController = (routeDetails) ->
 			_.extend(this, routeDetails)
 			if _.isFunction @initialize
 				@initialize()
 			if options.name
 				BaseController.setBaseData.call(@, options.name)
+			@
 			return
 		_.extend(NewController, this, options)
-		middleware = if middleware then @beforeEachMiddleware.concat middleware else @beforeEachMiddleware.slice 0
-		NewController.beforeEachMiddleware = middleware
+		NewController.beforeEach = @extendArray 'beforeEach', options.beforeEach
+		NewController.prototype.allowedErrors = @extendArray.call @.prototype, 'allowedErrors', options.allowedErrors
 		_.extend(NewController.prototype, @prototype)
 		ControllerManager.controllers.push(NewController)
 		if options.name
 			NewController.setBaseData(options.name)
 		NewController
+	
+	extendArray: (name, extend)->
+		newarray = if extend then @[name].concat extend else @[name].slice 0
 
 	setBaseData: (name) ->
 		@modelName = name
@@ -102,7 +105,7 @@ module.exports = BaseController =
 		app[routeDetails.method](routeDetails.pattern, middleware, @handleRequest.bind(this, routeDetails))
 	
 	getMiddleWare: (routeDetails)->
-		@beforeEachMiddleware.concat routeDetails.middleware
+		@beforeEach.concat routeDetails.middleware
 	
 	handleRequest: (routeDetails, req, res, next) ->
 		ThisController = this
@@ -120,6 +123,7 @@ module.exports = BaseController =
 			@registerRoute(app, routeDetails)
 			
 BaseController.prototype =
+	allowedErrors: ['validate']
 	handleRequest: (req, res) ->
 		@request = req
 		@response = res
@@ -172,9 +176,8 @@ BaseController.prototype =
 			
 	sendErrorResponse: (error) ->
 		message = if error and error.message then error.message else error
-		allowedErrors = ['validate']
 		# Only allow deliberate messages
-		if -1 isnt allowedErrors.indexOf message
+		if -1 isnt @allowedErrors.indexOf message
 			message = error.error
 		else
 			if _.isFunction @logError
