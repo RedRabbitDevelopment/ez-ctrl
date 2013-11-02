@@ -83,6 +83,25 @@ describe "Test Server", ->
 					done()
 				.fail (error)->
 					done error
+			it "should add a single user", (done)->
+				makeRequest
+					method: "PUT",
+					path: "/#{type}"
+				,
+					name: "Another Tate"
+					username: "AnotherTate"
+					password: "booyaBaby"
+				.then (data)->
+					assert.ok data
+					assert.ok data.response
+					assert.ok data.success
+					userData = TestData.getData()[3]
+					assert.equal userData.name, "Another Tate"
+					assert.equal userData.username, "AnotherTate"
+					assert.equal userData.password, "booyaBaby"
+					done()
+				.fail (error)->
+					done error
 	doIt "users"
 	doIt "async_users"
 	describe "special cases", ->
@@ -110,6 +129,20 @@ describe "Test Server", ->
 				assert.ok data
 				assert.equal data.success, true
 				assert.equal data.response, 'Result'
+				done()
+			.fail (error)->
+				done error
+		it "should give me required error", (done)->
+			makeRequest
+				method: "PUT",
+				path: "/users"
+			,
+				name: "Booya Baby"
+			.then (data)->
+				assert.ok data
+				assert.equal data.success, false
+				assert.equal data.error.username[0], "is required"
+				assert.equal data.error.password[0], "is required"
 				done()
 			.fail (error)->
 				done error

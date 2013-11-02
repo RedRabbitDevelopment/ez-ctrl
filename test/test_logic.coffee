@@ -2,6 +2,7 @@ TestData = require('./test_data')
 _ = require("underscore")
 assert = require('assert')
 base = require('../index')
+Validator = base.Validator
 
 describe "UserController", ->
 	UserController = TestData.UserController
@@ -55,6 +56,16 @@ describe "UserController", ->
 		it "should get all the arguments", ->
 			args = UserController.prototype.extractLogicArguments.apply controller, [{a: 'a', b: 'b', c: 'c'}]
 			assert.deepEqual(args, ['b', 'a', 'c'])
+	
+		it "should compile all the data into one variable", ->
+			controller.logic = (_data)-> "G"
+			args = UserController.prototype.extractLogicArguments.apply controller, [{a: 'a', b: 'b', c: 'c'}]
+			assert.deepEqual(args, [{a: 'a', b: 'b', c: 'c'}])
+	
+		it "should compile all the data into one variable", ->
+			controller.logic = (a, _data)-> "G"
+			args = UserController.prototype.extractLogicArguments.apply controller, [{a: 'a', b: 'b', c: 'c'}]
+			assert.deepEqual(args, ['a', {b: 'b', c: 'c'}])
 
 	describe "getRouteDetails", ->
 		it "should work with getAll", ->
@@ -122,7 +133,11 @@ describe "UserController", ->
 		beforeEach ->
 			routeDetails = UserController.getRouteDetails "add"
 			controller = new UserController routeDetails
-	
+		it 'should get validation', ->
+			assert.ok controller.validation
+			assert.equal controller.validation.name.required, true
+			assert.equal controller.validation.username.required, true
+			assert.equal controller.validation.password.required, true
 		it "should pass", (done)->
 			controller.validate
 				name: "Kelly Johnson"
@@ -204,7 +219,55 @@ describe "UserController", ->
 			, (error)->
 				done(error)
 		
-	
+		it "should get the appropriate messages", (done)->
+			message = Validator.validate
+				name:
+					required: true
+					type: "text"
+					length:
+						gt: 8
+				username:
+					required: true
+					type: 'alphaNumeric'
+					unique: true # Backend Only
+					length:
+						gt: 9
+				password:
+					required: true
+					type: 'alphaNumeric'
+					length:
+						gt: 8
+			,
+				name: "Booya Baby"
+			.then ->
+				done new Error "didn't throw error"
+			.fail (result)->
+				assert.equal result.message, 'validate'
+				assert.equal result.error.username.length, 1
+				assert.equal result.error.username[0], 'is required'
+				assert.equal result.error.password.length, 1
+				assert.equal result.error.password[0], 'is required'
+				done()
+			.fail (error)->
+				done error
+		
+		it "should get the appropriate message", ->
+			message = Validator.translateValidationError("required", false, true)
+			assert.equal message, "is required"
+				
+		it "should fail", (done)->
+			Validator.runValidate(undefined, "required", true, "username").then (result)->
+				assert.equal result, false
+				done()
+			.fail (result)->
+				done(result)
+		it "should get me a readable error", (done)->
+			Validator.runValidateAndGetReadableError(undefined, "required", true, "username").then (result)->
+				done new Error "didn't fail"
+			.fail (result)->
+				assert.equal result.field, "username"
+				assert.equal result.error[0], "is required"
+				done()
 
 	describe "front-end functionality", ->
 		it "should give me all the routes", ->

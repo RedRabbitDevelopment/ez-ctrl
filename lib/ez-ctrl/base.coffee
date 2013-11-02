@@ -158,7 +158,7 @@ BaseController.prototype =
 				delete unseenData[arg]
 				data[arg]
 		)
-		if _dataPosition
+		if _dataPosition?
 			argData[_dataPosition] = unseenData
 		argData
 		

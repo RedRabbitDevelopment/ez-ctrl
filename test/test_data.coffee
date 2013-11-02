@@ -60,6 +60,7 @@ exports.ErrorHandler = ErrorHandler =
 	logError: (error)->
 		if @callback
 			@callback error
+			@callback = false
 		else
 			console.log "ServerError", error.message
 			console.log error.stack
@@ -111,10 +112,10 @@ exports.UserController = MyBaseController.extend
 					type: 'alphaNumeric'
 					length:
 						gt: 8
-			logic: (data)->
-				data.id = UserData.length
-				data.comments = []
-				UserData.push(data)
+			logic: (_data)->
+				_data.id = UserData.length
+				_data.comments = []
+				UserData.push(_data)
 				true
 		save: # post /users/:id Anything with "save" automatically is post /<tableize>/:id
 			validation:

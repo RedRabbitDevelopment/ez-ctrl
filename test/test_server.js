@@ -96,7 +96,7 @@ describe("Test Server", function() {
           return done(error);
         });
       });
-      return it("should update a single user", function(done) {
+      it("should update a single user", function(done) {
         return makeRequest({
           method: "POST",
           path: "/" + type + "/2"
@@ -110,6 +110,28 @@ describe("Test Server", function() {
           userData = TestData.getData()[2];
           assert.equal(userData.name, "Ren Tate");
           assert.equal(userData.username, "soonToCome");
+          return done();
+        }).fail(function(error) {
+          return done(error);
+        });
+      });
+      return it("should add a single user", function(done) {
+        return makeRequest({
+          method: "PUT",
+          path: "/" + type
+        }, {
+          name: "Another Tate",
+          username: "AnotherTate",
+          password: "booyaBaby"
+        }).then(function(data) {
+          var userData;
+          assert.ok(data);
+          assert.ok(data.response);
+          assert.ok(data.success);
+          userData = TestData.getData()[3];
+          assert.equal(userData.name, "Another Tate");
+          assert.equal(userData.username, "AnotherTate");
+          assert.equal(userData.password, "booyaBaby");
           return done();
         }).fail(function(error) {
           return done(error);
@@ -148,6 +170,22 @@ describe("Test Server", function() {
         assert.ok(data);
         assert.equal(data.success, true);
         assert.equal(data.response, 'Result');
+        return done();
+      }).fail(function(error) {
+        return done(error);
+      });
+    });
+    it("should give me required error", function(done) {
+      return makeRequest({
+        method: "PUT",
+        path: "/users"
+      }, {
+        name: "Booya Baby"
+      }).then(function(data) {
+        assert.ok(data);
+        assert.equal(data.success, false);
+        assert.equal(data.error.username[0], "is required");
+        assert.equal(data.error.password[0], "is required");
         return done();
       }).fail(function(error) {
         return done(error);

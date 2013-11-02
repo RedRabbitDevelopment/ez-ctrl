@@ -87,7 +87,8 @@ exports.ErrorHandler = ErrorHandler = {
   },
   logError: function(error) {
     if (this.callback) {
-      return this.callback(error);
+      this.callback(error);
+      return this.callback = false;
     } else {
       console.log("ServerError", error.message);
       return console.log(error.stack);
@@ -153,10 +154,10 @@ exports.UserController = MyBaseController.extend({
           }
         }
       },
-      logic: function(data) {
-        data.id = UserData.length;
-        data.comments = [];
-        UserData.push(data);
+      logic: function(_data) {
+        _data.id = UserData.length;
+        _data.comments = [];
+        UserData.push(_data);
         return true;
       }
     },

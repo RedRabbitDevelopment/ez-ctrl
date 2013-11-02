@@ -5,20 +5,22 @@ Q = require('q')
 module.exports = Validator =
 	validate: (validation, data)->
 		promises = []
-		for field, value of data
-			promises.push Validator.validateField validation, field, value
+		for field, validatorData of validation
+			promises.push Validator.validateField validatorData, field, data[field]
 		Q.allSettled(promises).then (results)->
 			deferred = Q.defer()
 			errors = _.filter results, (result)->
 				result.state != "fulfilled"
 			if errors.length > 0
 				errors = _.reduce errors, (memo, result)->
-					_.reduce result.reason, (memo, reason)->
-						unless memo[reason.name]
-							memo[reason.name] = []
-						memo[reason.name] = memo[reason.name].concat(reason.errors)
+					reason = result.reason
+					_.reduce reason, (memo, result)->
+						unless memo[result.field]
+							memo[result.field] = []
+						memo[result.field] = memo[result.field].concat(result.errors)
 						memo
 					, memo
+					memo
 				, {}
 				deferred.reject
 					message: "validate"
@@ -26,35 +28,33 @@ module.exports = Validator =
 			else
 				deferred.resolve(data)
 			deferred.promise
-
-	validateField: (validation, field, value)->
-		validators = validation[field]
+	
+	###
+	Returns a promise that includes all the readable errors for that field in the format: list of
+		field: name of the field
+		errors: list of readable errors. Example: ['must be less than 8', 'must exist']
+	###
+	validateField: (validators, field, value)->
 		promises = []
 		# Skip if value is empty and it isn't required
-		
-		unless value or validators.required
-			true
+		unless value
+			if validators.required
+				return @runValidateAndGetReadableError(value, 'required', true, field).fail (error)->
+					deferred = Q.defer()
+					deferred.reject [
+						field: error.field
+						errors: error.error
+					]
+					deferred.promise
+			else
+				return true
 		if validators
 			for validator, validatorData of validators
 				if validator is "type"
 					validator = validatorData
 					unless ValidationMethods[validator]
 						continue
-				((value, validator, validatorData, field)->
-					promises.push Validator.runValidate(value, validator, validatorData, field).then (result)->
-						unless result is true or typeof result is "undefined"
-							deferred = Q.defer()
-							deferred.reject result
-							deferred.promise
-					.fail (error)->
-						deferred = Q.defer()
-						deferred.reject
-							field: field
-							validator: validator
-							error: error
-							validatorData: validatorData
-						deferred.promise
-				)(value, validator, validatorData, field)
+				promises.push @runValidateAndGetReadableError value, validator, validatorData, field
 		Q.allSettled(promises).then (results)->
 			deferred = Q.defer()
 			readableErrors = []
@@ -62,12 +62,29 @@ module.exports = Validator =
 				if result.state isnt "fulfilled"
 					error = result.reason
 					readableErrors.push
-						name: error.field
-						errors: Validator.translateValidationError(error.validator, error.error, error.validatorData)
+						field: error.field
+						errors: error.error
 			if readableErrors.length > 0
 				deferred.reject readableErrors
 			else
 				deferred.resolve()
+			deferred.promise
+	###
+	Returns a promise that either is resolved, or is rejected with the following result:
+		field: name of the field that failed
+		error: the readable error
+	###
+	runValidateAndGetReadableError: (value, validator, validatorData, field)->
+		Validator.runValidate(value, validator, validatorData, field).then (result)->
+			unless result is true or typeof result is "undefined"
+				deferred = Q.defer()
+				deferred.reject result
+				deferred.promise
+		.fail (error)->
+			deferred = Q.defer()
+			deferred.reject
+				field: field
+				error: Validator.translateValidationError validator, error, validatorData
 			deferred.promise
 			
 	runValidate: (value, validator, validatorData, field)->
@@ -128,7 +145,7 @@ ValidationMessages =
 
 ValidationMethods =
 	required: (value, details)->
-		(value != null) is details
+		value? is details
 		
 	float: (value)->
 		if _.isString value
