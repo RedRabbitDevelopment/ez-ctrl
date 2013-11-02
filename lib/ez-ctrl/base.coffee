@@ -8,14 +8,17 @@ Converter = require('./converter')
 Validator = require('./validator')
 
 module.exports = BaseController =
+	beforeEachMiddleware: []
 	extend: (options) ->
+		middleware = options.beforeEach
 		NewController = (routeDetails) ->
 			_.extend(this, routeDetails)
 			if _.isFunction @initialize
 				@initialize()
-				
-		_.extend(NewController, BaseController, options)
-		_.extend(NewController.prototype, BaseController.prototype)
+		_.extend(NewController, this, options)
+		middleware = if middleware then @beforeEachMiddleware.concat middleware else @beforeEachMiddleware.slice 0
+		NewController.beforeEachMiddleware = middleware
+		_.extend(NewController.prototype, @prototype)
 		if options.name
 			NewController.setBaseData(options.name)
 		ControllerManager.controllers.push(NewController)
@@ -76,15 +79,27 @@ module.exports = BaseController =
 			usesId = routeDetails.usesId
 		logic = if _.isFunction(routeDetails) then routeDetails else routeDetails.logic
 		validation = routeDetails.validation || {}
+		middleware = if routeDetails.before
+			if _.isFunction routeDetails.before
+				[routeDetails.before]
+			else
+				routeDetails.before
+		else
+			[]
 		
 		method: method
 		logic: logic
 		pattern: pattern
 		validation: validation
 		usesId: usesId
+		middleware: middleware
 			
 	registerRoute: (app, routeDetails) ->
-		app[routeDetails.method](routeDetails.pattern, @handleRequest.bind(this, routeDetails))
+		middleware = @getMiddleWare(routeDetails)
+		app[routeDetails.method](routeDetails.pattern, middleware, @handleRequest.bind(this, routeDetails))
+	
+	getMiddleWare: (routeDetails)->
+		@beforeEachMiddleware.concat routeDetails.middleware
 	
 	handleRequest: (routeDetails, req, res, next) ->
 		ThisController = this

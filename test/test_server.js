@@ -140,7 +140,7 @@ describe("Test Server", function() {
         return done(error);
       });
     });
-    return it("should use an id", function(done) {
+    it("should use an id", function(done) {
       return makeRequest({
         method: "GET",
         path: "/users/1/uses-id"
@@ -151,6 +151,34 @@ describe("Test Server", function() {
         return done();
       }).fail(function(error) {
         return done(error);
+      });
+    });
+    return describe("middleware", function() {
+      it("should run base and user", function(done) {
+        return makeRequest({
+          method: "GET",
+          path: '/users/1'
+        }).then(function(data) {
+          assert.equal(TestData.middleware.myBaseRan, 1);
+          assert.equal(TestData.middleware.userRan, 1);
+          assert.equal(TestData.middleware.asyncRan, 0);
+          return done();
+        }).fail(function(reason) {
+          return done(reason);
+        });
+      });
+      return it("should run base and async", function(done) {
+        return makeRequest({
+          method: "GET",
+          path: '/async_users/1'
+        }).then(function(data) {
+          assert.equal(TestData.middleware.myBaseRan, 1);
+          assert.equal(TestData.middleware.userRan, 0);
+          assert.equal(TestData.middleware.asyncRan, 1);
+          return done();
+        }).fail(function(reason) {
+          return done(reason);
+        });
       });
     });
   });

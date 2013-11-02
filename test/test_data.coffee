@@ -3,6 +3,7 @@ base = require('../index')
 BaseController = base.BaseController
 Validator = base.Validator
 
+exports.middleware = middleware = {}
 UserData = null
 exports.resetData = ()->
 	UserData = [
@@ -18,7 +19,10 @@ exports.resetData = ()->
 		username: "soonToCome"
 		password: "password3"
 	]
-
+	middleware.myBaseRan = 0
+	middleware.userRan = 0
+	middleware.asyncRan = 0
+	
 exports.getData = ()->
 	UserData
 
@@ -60,12 +64,20 @@ exports.ErrorHandler = ErrorHandler =
 			console.log "ServerError", error.message
 			console.log error.stack
 
-MyBaseController = BaseController.extend {}
+
+MyBaseController = BaseController.extend
+	beforeEach:  (req, res, next)->
+		middleware.myBaseRan++
+		next()
+
 MyBaseController.prototype.logError = (error)->
 	ErrorHandler.logError(error)
 
 exports.UserController = MyBaseController.extend
 	name: "User"
+	beforeEach: (req, res, next)->
+		middleware.userRan++
+		next()
 	routes:
 		getAll: ()-> # get /users Anything with "getAll" automatically is get /<tableize>
 			# Get the users
@@ -156,6 +168,9 @@ exports.UserController = MyBaseController.extend
 
 exports.AsyncUserController = MyBaseController.extend
 	name: "AsyncUser"
+	beforeEach: (req, res, next)->
+		middleware.asyncRan++
+		next()
 	routes:
 		getAll: -> #get /users Anything with "getAll" automatically is get /<tableize>
 			# Get the users

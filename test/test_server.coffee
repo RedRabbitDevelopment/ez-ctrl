@@ -113,3 +113,27 @@ describe "Test Server", ->
 				done()
 			.fail (error)->
 				done error
+		describe "middleware", ->
+			it "should run base and user", (done)->
+				makeRequest
+					method: "GET"
+					path: '/users/1'
+				.then (data)->
+					assert.equal TestData.middleware.myBaseRan, 1
+					assert.equal TestData.middleware.userRan, 1
+					assert.equal TestData.middleware.asyncRan, 0
+					done()
+				.fail (reason)->
+					done reason
+			it "should run base and async", (done)->
+				makeRequest
+					method: "GET"
+					path: '/async_users/1'
+				.then (data)->
+					assert.equal TestData.middleware.myBaseRan, 1
+					assert.equal TestData.middleware.userRan, 0
+					assert.equal TestData.middleware.asyncRan, 1
+					done()
+				.fail (reason)->
+					done reason
+		
