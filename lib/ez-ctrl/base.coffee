@@ -15,16 +15,16 @@ module.exports = BaseController =
 			if _.isFunction @initialize
 				@initialize()
 			if options.name
-				BaseController.setBaseData.call(@, options.name)
-			@
+				BaseController.setBaseData.call(@, NewController.modelName)
 			return
-		_.extend(NewController, this, options)
-		NewController.beforeEach = @extendArray 'beforeEach', options.beforeEach
-		NewController.prototype.allowedErrors = @extendArray.call @.prototype, 'allowedErrors', options.allowedErrors
-		_.extend(NewController.prototype, @prototype)
-		ControllerManager.controllers.push(NewController)
+		_.extend(NewController, this)
 		if options.name
 			NewController.setBaseData(options.name)
+		_.extend NewController, options
+		NewController.beforeEach = @extendArray 'beforeEach', options.beforeEach
+		_.extend(NewController.prototype, @prototype)
+		NewController.prototype.allowedErrors = @extendArray.call @prototype, 'allowedErrors', options.allowedErrors
+		ControllerManager.controllers.push(NewController)
 		NewController
 	
 	extendArray: (name, extend)->
@@ -175,10 +175,10 @@ BaseController.prototype =
 			response: response
 			
 	sendErrorResponse: (error) ->
-		message = if error and error.message then error.message else error
+		errorType = if error and error.message then error.message else error
 		# Only allow deliberate messages
-		if -1 isnt @allowedErrors.indexOf message
-			message = error.error
+		if -1 isnt @allowedErrors.indexOf errorType
+			message = if error.error then error.error else errorType
 		else
 			if _.isFunction @logError
 				@logError(error)
