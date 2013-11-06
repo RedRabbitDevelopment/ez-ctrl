@@ -6,6 +6,7 @@ Validator = base.Validator
 
 describe "UserController", ->
 	UserController = TestData.UserController
+	FuncDetails = base.FuncDetails
 	beforeEach ->
 		TestData.resetData()
 
@@ -47,24 +48,20 @@ describe "UserController", ->
 	
 
 	describe "extractLogicArguments", ->
-		controller = null
-		beforeEach ->
-			controller =
-				logic: (b, a, c)-> "G"
-				extractArguments: UserController.prototype.extractArguments
 	
 		it "should get all the arguments", ->
-			args = UserController.prototype.extractLogicArguments.apply controller, [{a: 'a', b: 'b', c: 'c'}]
+			controller_logic = (b, a, c)-> "G"
+			args = FuncDetails.dataToArgs controller_logic, {a: 'a', b: 'b', c: 'c'}
 			assert.deepEqual(args, ['b', 'a', 'c'])
 	
 		it "should compile all the data into one variable", ->
-			controller.logic = (_data)-> "G"
-			args = UserController.prototype.extractLogicArguments.apply controller, [{a: 'a', b: 'b', c: 'c'}]
+			controller_logic = (_data)-> "G"
+			args = FuncDetails.dataToArgs controller_logic, {a: 'a', b: 'b', c: 'c'}
 			assert.deepEqual(args, [{a: 'a', b: 'b', c: 'c'}])
 	
 		it "should compile all the data into one variable", ->
-			controller.logic = (a, _data)-> "G"
-			args = UserController.prototype.extractLogicArguments.apply controller, [{a: 'a', b: 'b', c: 'c'}]
+			controller_logic = (a, _data)-> "G"
+			args = FuncDetails.dataToArgs controller_logic, {a: 'a', b: 'b', c: 'c'}
 			assert.deepEqual(args, ['a', {b: 'b', c: 'c'}])
 
 	describe "getRouteDetails", ->
@@ -128,7 +125,7 @@ describe "UserController", ->
 				value = routeDetails.logic username, "wrongpassword"
 			, /Invalid username or password/
 
-	describe "validators", ->
+	describe "controller validators", ->
 		controller = null
 		beforeEach ->
 			routeDetails = UserController.getRouteDetails "add"
@@ -218,9 +215,11 @@ describe "UserController", ->
 				done()
 			, (error)->
 				done(error)
+	
+	describe 'Validator', ->
 		
 		it "should get the appropriate messages", (done)->
-			message = Validator.validate
+			Validator.validate
 				name:
 					required: true
 					type: "text"
@@ -268,6 +267,8 @@ describe "UserController", ->
 				assert.equal result.field, "username"
 				assert.equal result.error[0], "is required"
 				done()
+			.fail (error)->
+				done error
 
 	describe "front-end functionality", ->
 		it "should give me all the routes", ->

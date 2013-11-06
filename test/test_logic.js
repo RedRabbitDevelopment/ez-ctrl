@@ -12,8 +12,9 @@ base = require('../index');
 Validator = base.Validator;
 
 describe("UserController", function() {
-  var UserController;
+  var FuncDetails, UserController;
   UserController = TestData.UserController;
+  FuncDetails = base.FuncDetails;
   beforeEach(function() {
     return TestData.resetData();
   });
@@ -59,39 +60,28 @@ describe("UserController", function() {
     });
   });
   describe("extractLogicArguments", function() {
-    var controller;
-    controller = null;
-    beforeEach(function() {
-      return controller = {
-        logic: function(b, a, c) {
-          return "G";
-        },
-        extractArguments: UserController.prototype.extractArguments
-      };
-    });
     it("should get all the arguments", function() {
-      var args;
-      args = UserController.prototype.extractLogicArguments.apply(controller, [
-        {
-          a: 'a',
-          b: 'b',
-          c: 'c'
-        }
-      ]);
+      var args, controller_logic;
+      controller_logic = function(b, a, c) {
+        return "G";
+      };
+      args = FuncDetails.dataToArgs(controller_logic, {
+        a: 'a',
+        b: 'b',
+        c: 'c'
+      });
       return assert.deepEqual(args, ['b', 'a', 'c']);
     });
     it("should compile all the data into one variable", function() {
-      var args;
-      controller.logic = function(_data) {
+      var args, controller_logic;
+      controller_logic = function(_data) {
         return "G";
       };
-      args = UserController.prototype.extractLogicArguments.apply(controller, [
-        {
-          a: 'a',
-          b: 'b',
-          c: 'c'
-        }
-      ]);
+      args = FuncDetails.dataToArgs(controller_logic, {
+        a: 'a',
+        b: 'b',
+        c: 'c'
+      });
       return assert.deepEqual(args, [
         {
           a: 'a',
@@ -101,17 +91,15 @@ describe("UserController", function() {
       ]);
     });
     return it("should compile all the data into one variable", function() {
-      var args;
-      controller.logic = function(a, _data) {
+      var args, controller_logic;
+      controller_logic = function(a, _data) {
         return "G";
       };
-      args = UserController.prototype.extractLogicArguments.apply(controller, [
-        {
-          a: 'a',
-          b: 'b',
-          c: 'c'
-        }
-      ]);
+      args = FuncDetails.dataToArgs(controller_logic, {
+        a: 'a',
+        b: 'b',
+        c: 'c'
+      });
       return assert.deepEqual(args, [
         'a', {
           b: 'b',
@@ -189,7 +177,7 @@ describe("UserController", function() {
       }, /Invalid username or password/);
     });
   });
-  describe("validators", function() {
+  describe("controller validators", function() {
     var controller;
     controller = null;
     beforeEach(function() {
@@ -278,7 +266,7 @@ describe("UserController", function() {
         return done(error);
       });
     });
-    it("should pass custom errors", function(done) {
+    return it("should pass custom errors", function(done) {
       var routeDetails;
       routeDetails = UserController.getRouteDetails("save");
       controller = new UserController(routeDetails);
@@ -291,9 +279,10 @@ describe("UserController", function() {
         return done(error);
       });
     });
+  });
+  describe('Validator', function() {
     it("should get the appropriate messages", function(done) {
-      var message;
-      return message = Validator.validate({
+      return Validator.validate({
         name: {
           required: true,
           type: "text",
@@ -351,6 +340,8 @@ describe("UserController", function() {
         assert.equal(result.field, "username");
         assert.equal(result.error[0], "is required");
         return done();
+      }).fail(function(error) {
+        return done(error);
       });
     });
   });

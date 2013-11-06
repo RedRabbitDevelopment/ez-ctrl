@@ -109,7 +109,3 @@ module.exports = FrontEnd =
 	
 	getTabs: _.memoize (depth)->
 		("\t" while depth--).join ""
-
-console.log (->
-	console.log 'gah1'
-).toString().replace(/\n\s*/mg, "\n\t\t")

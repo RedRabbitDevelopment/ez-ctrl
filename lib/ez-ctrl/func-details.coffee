@@ -24,7 +24,7 @@ module.exports = FuncDetails =
 		args = FuncDetails.extractArguments(fn)
 		argData = []
 		unseenData = _.extend({}, data)
-		argData = (for arg, i in args
+		argData = (for arg, i in args or []
 			if arg is "_data"
 				_dataPosition = i
 				null
