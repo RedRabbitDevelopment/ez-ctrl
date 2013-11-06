@@ -1,4 +1,4 @@
-TestData = require('./test_data')
+TestData = require('../test_data/data')
 _ = require("underscore")
 assert = require('assert')
 base = require('../index')

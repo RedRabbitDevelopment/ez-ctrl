@@ -1,7 +1,6 @@
 FuncDetails = require('./func-details')
 ControllerManager = require('./manager')
 
-
 module.exports =
 	getFrontEndMethods: ()->
 		routes = ControllerManager.getAllRoutes()

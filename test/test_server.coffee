@@ -1,25 +1,17 @@
-express = require 'express'
 http = require 'http'
 Q = require 'q'
 assert = require 'assert'
 _ = require "underscore"
-TestData = require './test_data'
-ControllerManager = require('../index').ControllerManager
+TestData = require '../test_data/data'
+TestServer = require '../test_data/server'
 	
 describe "Test Server", ->
-	server = null
+	before (done)->
+		TestServer.start done
+	after (done)->
+		TestServer.close done
 	beforeEach ->
 		TestData.resetData()
-	before (done)->
-		app = express()
-		app.use express.json()
-		app.use express.urlencoded()
-		ControllerManager.registerRoutes app
-		server = http.createServer app
-		server.listen 3000, ->
-			done()
-	after (done)->
-		server.close done
 	makeRequest = (data, postData)->
 		deferred = Q.defer()
 		data.port = 3000

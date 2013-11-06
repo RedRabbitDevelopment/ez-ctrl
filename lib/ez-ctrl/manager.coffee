@@ -1,7 +1,8 @@
 _ = require('underscore')
+FrontEnd = require './frontend'
 
-module.exports = ControllerManager =
-	controllers: [],
+module.exports =
+	controllers: []
 	getAllRoutes: ()->
 		_.reduce @controllers, (memo, controller)->
 			if controller.modelName
@@ -11,3 +12,7 @@ module.exports = ControllerManager =
 	registerRoutes: (app)->
 		for controller in @controllers
 			controller.registerRoutes(app)
+		
+		app.get '/js/lib/ez-routes.js', (req, res)->
+			frontEndJS = FrontEnd.getFrontEndMethods()
+			res.end frontEndJS
