@@ -76,6 +76,7 @@ MyBaseController.prototype.logError = (error)->
 
 exports.UserController = MyBaseController.extend
 	name: "User"
+	allowedErrors: ["Invalid username or password"]
 	beforeEach: (req, res, next)->
 		middleware.userRan++
 		next()

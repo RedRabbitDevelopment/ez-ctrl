@@ -4,6 +4,9 @@ FrontEnd = require('../index').FrontEnd
 app = express()
 app.use express.json()
 app.use express.urlencoded()
+app.use express.bodyParser()
+app.use express.static(__dirname + "/server_public")
+TestData = require './data'
 FrontEnd.registerRoutes app
 
 module.exports =

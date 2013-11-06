@@ -109,6 +109,7 @@ MyBaseController.prototype.logError = function(error) {
 
 exports.UserController = MyBaseController.extend({
   name: "User",
+  allowedErrors: ["Invalid username or password"],
   beforeEach: function(req, res, next) {
     middleware.userRan++;
     return next();

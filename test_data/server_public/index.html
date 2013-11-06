@@ -1,0 +1,22 @@
+<html>
+	<head>
+	
+	</head>
+	<body>
+		<script type="text/javascript" src="/js/lib/ez-routes.js"></script>
+		<script>
+			EZController.User.query(function(response) {
+				console.assert(response.success, "Unsuccessful!");
+				console.assert(response.response.length > 0, "No Data");
+			});
+			EZController.User.postLogin("yourdeveloperfriend", "password1", function(response) {
+				console.assert(response.success, "Unsuccessful!");
+				console.assert(response.response, "Failed to login");
+			});
+			EZController.User.postLogin("yourdeveloperfriend", "password2", function(response) {
+				console.assert(!response.success, "Unsuccessful!");
+				console.assert(!response.response, "Logged in with invalid credentials");
+			});
+		</script>
+	</body>
+</html>

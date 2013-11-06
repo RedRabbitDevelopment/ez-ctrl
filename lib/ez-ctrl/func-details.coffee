@@ -8,7 +8,7 @@ module.exports = FuncDetails =
 		STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg
 
 		if _.isFunction(fn)
-	   		unless argsList = fn.argsList
+			unless argsList = fn.argsList
 				argsList = []
 				fnText = fn.toString().replace(STRIP_COMMENTS, '')
 				argDecl = fnText.match(FN_ARGS)
@@ -19,6 +19,31 @@ module.exports = FuncDetails =
 			argsList;
 		else
 			return null
+	
+	dataToArgs: (fn, data) ->
+		args = FuncDetails.extractArguments(fn)
+		argData = []
+		unseenData = _.extend({}, data)
+		argData = (for arg, i in args
+			if arg is "_data"
+				_dataPosition = i
+				null
+			else
+				delete unseenData[arg]
+				data[arg]
+		)
+		if _dataPosition?
+			argData[_dataPosition] = unseenData
+		argData
+	
+	argsToData: (argList, args)->
+		data = {}
+		for argString, i in argList or []
+			if argString is "_data"
+				data[field] = value for value, field of args[i]
+			else
+				data[argString] = args[i]
+		data
 		
 	extractArgumentString: (fn)->
 		FN_ARGS = /^function\s*[^\(]*\(\s*([^\)]*)\)/m;

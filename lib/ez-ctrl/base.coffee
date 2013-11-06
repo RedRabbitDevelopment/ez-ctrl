@@ -134,7 +134,7 @@ BaseController.prototype =
 		.then (data) =>
 			@validate(data)
 		.then (data) =>
-			logicArguments = @extractLogicArguments(data)
+			logicArguments = FuncDetails.dataToArgs(@logic, data)
 			@logic.apply(_this, logicArguments)
 		.then (response) =>
 			@sendResponse(response)
@@ -152,22 +152,6 @@ BaseController.prototype =
 			if value
 				data[field] = value
 		data
-		
-	extractLogicArguments: (data) ->
-		args = FuncDetails.extractArguments(@logic)
-		argData = []
-		unseenData = _.extend({}, data)
-		argData = (for arg, i in args
-			if arg is "_data"
-				_dataPosition = i
-				null
-			else
-				delete unseenData[arg]
-				data[arg]
-		)
-		if _dataPosition?
-			argData[_dataPosition] = unseenData
-		argData
 		
 	sendResponse: (response) ->
 		@response.json
