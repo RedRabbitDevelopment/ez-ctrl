@@ -5,7 +5,7 @@ BaseController = require('./lib/ez-ctrl/base');
 
 FrontEnd = require('./lib/ez-ctrl/frontend');
 
-Validator = require('./lib/ez-ctrl/validator');
+Validator = require('./lib/ez-validation/validator');
 
 Converter = require('./lib/ez-ctrl/converter');
 

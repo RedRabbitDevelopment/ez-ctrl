@@ -5,7 +5,7 @@ Q = require('q')
 _ = require('underscore')
 inflection = require('inflection')
 Converter = require('./converter')
-Validator = require('./validator')
+Validator = require('../ez-validation/validator')
 
 module.exports = BaseController =
 	beforeEach: []
