@@ -1,7 +1,15 @@
 FuncDetails = require('./func-details')
 ControllerManager = require('./manager')
 
-module.exports =
+module.exports = FrontEnd =
+	registerRoutes: (app)->
+		for controller in ControllerManager.controllers
+			controller.registerRoutes(app)
+		
+		app.get '/js/lib/ez-routes.js', (req, res)->
+			frontEndJS = FrontEnd.getFrontEndMethods()
+			res.end frontEndJS
+
 	getFrontEndMethods: ()->
 		routes = ControllerManager.getAllRoutes()
 		ZController = {}

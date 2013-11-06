@@ -1,5 +1,4 @@
 _ = require('underscore')
-FrontEnd = require './frontend'
 
 module.exports =
 	controllers: []
@@ -9,10 +8,3 @@ module.exports =
 				memo[controller.modelName] = controller.getRoutes()
 			memo;
 		, {}
-	registerRoutes: (app)->
-		for controller in @controllers
-			controller.registerRoutes(app)
-		
-		app.get '/js/lib/ez-routes.js', (req, res)->
-			frontEndJS = FrontEnd.getFrontEndMethods()
-			res.end frontEndJS

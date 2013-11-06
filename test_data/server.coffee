@@ -1,10 +1,10 @@
 express = require 'express'
 http = require 'http'
-ControllerManager = require('../index').ControllerManager
+FrontEnd = require('../index').FrontEnd
 app = express()
 app.use express.json()
 app.use express.urlencoded()
-ControllerManager.registerRoutes app
+FrontEnd.registerRoutes app
 
 module.exports =
 	start: (cb)->
