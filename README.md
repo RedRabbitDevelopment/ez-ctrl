@@ -6,7 +6,7 @@ var EZController = require('ez-ctrl').BaseController;
 UserController = BaseController.extend({
   name: "User",
   routes: {
-    getAll: function() { // Anything with "getAll" automatically is get /users
+    query: function() { // Anything with "query" automatically is get /users
       // Return raw data which is translated into JSON
       return UserData;
     },
@@ -199,7 +199,7 @@ UserController = BaseController.extend({
   crud routes:
   The following are crud routes that are made easier for you:
     
-  getAll: gets /users
+  query: gets /users
   get: gets /users/:id
   add: puts /users
   save: posts /users/:id
@@ -208,7 +208,7 @@ UserController = BaseController.extend({
   The default method can be overridden by adding a method parameter in the route:
     
     routes: {
-      getAll: {
+      query: {
         method: "post",
         logic: function() {
           // Do stuff

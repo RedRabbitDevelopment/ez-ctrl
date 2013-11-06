@@ -80,7 +80,7 @@ exports.UserController = MyBaseController.extend
 		middleware.userRan++
 		next()
 	routes:
-		getAll: ()-> # get /users Anything with "getAll" automatically is get /<tableize>
+		query: ()-> # get /users Anything with "query" automatically is get /<tableize>
 			# Get the users
 			UserData
 		
@@ -173,7 +173,7 @@ exports.AsyncUserController = MyBaseController.extend
 		middleware.asyncRan++
 		next()
 	routes:
-		getAll: -> #get /users Anything with "getAll" automatically is get /<tableize>
+		query: -> #get /users Anything with "query" automatically is get /<tableize>
 			# Get the users
 			deferred = Q.defer()
 			setTimeout ->

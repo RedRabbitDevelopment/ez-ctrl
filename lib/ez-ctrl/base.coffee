@@ -41,7 +41,7 @@ module.exports = BaseController =
 		usesId = false
 		routeDetails = @routes[route]
 		switch route
-			when "getAll"
+			when "query"
 				method = "get"
 				pattern = @basePattern
 			when "get"

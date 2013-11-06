@@ -68,8 +68,8 @@ describe "UserController", ->
 			assert.deepEqual(args, ['a', {b: 'b', c: 'c'}])
 
 	describe "getRouteDetails", ->
-		it "should work with getAll", ->
-			routeDetails = UserController.getRouteDetails "getAll"
+		it "should work with query", ->
+			routeDetails = UserController.getRouteDetails "query"
 			assert.equal routeDetails.method, "get"
 			assert.equal routeDetails.pattern, "/users"
 			assert.ok _.isFunction(routeDetails.logic)

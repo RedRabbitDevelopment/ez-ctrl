@@ -114,7 +114,7 @@ exports.UserController = MyBaseController.extend({
     return next();
   },
   routes: {
-    getAll: function() {
+    query: function() {
       return UserData;
     },
     get: {
@@ -249,7 +249,7 @@ exports.AsyncUserController = MyBaseController.extend({
     return next();
   },
   routes: {
-    getAll: function() {
+    query: function() {
       var deferred;
       deferred = Q.defer();
       setTimeout(function() {

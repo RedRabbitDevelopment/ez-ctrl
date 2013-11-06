@@ -121,9 +121,9 @@ describe("UserController", function() {
     });
   });
   describe("getRouteDetails", function() {
-    it("should work with getAll", function() {
+    it("should work with query", function() {
       var routeDetails, users;
-      routeDetails = UserController.getRouteDetails("getAll");
+      routeDetails = UserController.getRouteDetails("query");
       assert.equal(routeDetails.method, "get");
       assert.equal(routeDetails.pattern, "/users");
       assert.ok(_.isFunction(routeDetails.logic));
