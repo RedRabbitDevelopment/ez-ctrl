@@ -6,10 +6,11 @@
 		exportObject = (object)->
 			module.exports = object
 	else
-		underscore = _
+		underscore = window._
 		EventEmitter = null
-		unless Q
-			throw new Exception "Q is required for ez-validator!"
+		unless window.Q
+			throw new Error "Q is required for ez-validator!"
+		Q = window.Q
 		exportObject = (object)->
 			window.Validator = object
 			
@@ -105,20 +106,26 @@
 				deferred = Q.defer()
 				try
 					unless @ValidationMethods[validator]
-						throw new Error("Validation Method " + validator + " does not exist")
+						Validator.trigger? "error",
+							error: "MissingMethod"
+							validator: validator
+							validatorData: validatorData
+						throw new Error("DoesNotExist")
 					deferred.resolve @ValidationMethods[validator] value, validatorData, field, controllerName
 				catch e
 					deferred.reject e.message
 				deferred.promise
 
 			translateValidationError: (validator, validatorResult, validatorData, controllerName)->
-				if @ValidationMessages[validator]
+				if validatorResult is "DoesNotExist"
+					validationMessage = "Validation method '#{validator}' does not exist"
+				else if @ValidationMessages[validator]
 					if _.isFunction(@ValidationMessages[validator])
 						validationMessage = @ValidationMessages[validator](validatorResult, validatorData, controllerName)
 					else
 						validationMessage = @ValidationMessages[validator]
 				else
-					Validator?.trigger "error",
+					Validator.trigger? "error",
 						error: "MissingMessage"
 						validator: validator
 						validatorResult: validatorResult
@@ -153,7 +160,7 @@
 								"requirement " + data.error + " not recognized"
 				default: "is not understood"
 
-			ValidationMethods:
+			ValidationMethods: 
 				required: (value, details)->
 					value? is details
 					

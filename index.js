@@ -3,9 +3,9 @@ var BaseController, ControllerManager, Converter, FrontEnd, FuncDetails, Validat
 
 BaseController = require('./lib/ez-ctrl/base');
 
-FrontEnd = require('./lib/ez-ctrl/frontend');
+FrontEnd = require('./lib/ez-access/frontend');
 
-Validator = require('./lib/ez-validation/validator');
+Validator = require('./lib/ez-access/validator');
 
 Converter = require('./lib/ez-ctrl/converter');
 
