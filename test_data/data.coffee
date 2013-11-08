@@ -48,8 +48,6 @@ Validator.registerValidator "inDb", (value, data, field, controllerName)->
 	, 25
 	deferred.promise
 
-Validator.on "error", console.log
-
 exports.ErrorHandler = ErrorHandler =
 	expect: (callback)->
 		@callback = callback

@@ -1,5 +1,4 @@
 (->
-			
 
 	# Validator file is on both the front end and the backend
 	loadValidator = (Q, _, validate)->
@@ -17,9 +16,7 @@
 					if errors.length > 0
 						errors = _.reduce errors, (memo, result)->
 							reason = result.reason
-							unless memo[reason.field]
-								memo[reason.field] = []
-							memo[reason.field] = memo[reason.field].concat(reason.errors)
+							memo[reason.field] = reason.errors
 							memo
 						, {}
 						deferred.reject
@@ -33,6 +30,7 @@
 			Returns a promise that either resolves, or rejects with a list of errors: i.e.
 				field: field
 				errors: ['must be less than 8', 'must exist']
+			Please note that required needs to be run first
 			###
 			validateField: (validators, field, value, controllerName)->
 				promises = []
@@ -47,11 +45,7 @@
 						promises.push @runValidate value, validator, validatorData, field, controllerName
 				Q.allSettled(promises).then (results)->
 					deferred = Q.defer()
-					readableErrors = []
-					for result in results
-						if result.state isnt "fulfilled"
-							error = result.reason
-							readableErrors.push error
+					readableErrors = (result.reason for result in results when result.state isnt "fulfilled")
 					if readableErrors.length > 0
 						deferred.reject
 							errors: readableErrors
@@ -73,7 +67,7 @@
 						validator = 'is' + validatorData.substr(0, 1).toUpperCase() + validatorData.substr(1)
 					unless @ValidationMethods[validator]
 						args = [value]
-						args.push @ValidationMessages[validator] if @ValidationMessages[validator]
+						args.push @Messages[validator] if @Messages[validator]
 						if (checker = check.apply(null, args))[validator]
 							validatorData = [validatorData] unless _.isArray validatorData
 							checker[validator].apply checker, validatorData
@@ -89,23 +83,25 @@
 			registerValidator: (name, fn)->
 				@ValidationMethods[name] = fn
 				
-			ValidationMessages:
+			Messages:
 				required: "is required"
 				isAlphanumeric: "must be alphanumeric"
 
 			ValidationMethods:
 				required: (value)->
-					throw new Error(Validator.ValidationMessages['required']) unless !!value
+					throw new Error(Validator.Messages['required']) unless !!value
 		
 		Validator
 		
 	unless typeof process is 'undefined' or !process.versions
 		underscore = require('underscore')
-		validator = require 'validator'
+		validate = require 'validator'
 		Q = require('q')
 		exportObject = (object)->
 			module.exports = object
 	else
+		unless window._
+			throw new Error "underscore.js is required for ez-validator"
 		underscore = window._
 		unless window.Q
 			throw new Error "Q.js is required for ez-validator!"

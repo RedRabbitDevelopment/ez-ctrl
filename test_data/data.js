@@ -69,8 +69,6 @@ Validator.registerValidator("inDb", function(value, data, field, controllerName)
   return deferred.promise;
 });
 
-Validator.on("error", console.log);
-
 exports.ErrorHandler = ErrorHandler = {
   expect: function(callback) {
     return this.callback = callback;
