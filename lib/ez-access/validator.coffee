@@ -1,26 +1,8 @@
 (->
-	unless typeof process is 'undefined' or !process.versions
-		EventEmitter = require('events').EventEmitter
-		underscore = require('underscore')
-		validator = require 'validator'
-		Q = require('q')
-		exportObject = (object)->
-			module.exports = object
-	else
-		underscore = window._
-		EventEmitter = null
-		unless window.Q
-			throw new Error "Q.js is required for ez-validator!"
-		unless window.validate
-			throw new Error "validator.js is required for ez-validator!"
-		Q = window.Q
-		validate = window.validate
-		exportObject = (object)->
-			window.Validator = object
 			
 
 	# Validator file is on both the front end and the backend
-	loadValidator = (exportObject, Q, _, EventEmitter, validate)->
+	loadValidator = (Q, _, EventEmitter, validate)->
 		check = validate.check
 		
 		Validator =
@@ -97,7 +79,7 @@
 							checker[validator].apply checker, validatorData
 							deferred.resolve()
 						else
-							Validator.trigger? "error",
+							Validator.emit? "error",
 								error: "MissingMethod"
 								validator: validator
 								validatorData: validatorData
@@ -126,10 +108,23 @@
 		
 		Validator
 		
-	unless window?.define
-		exportObject loadValidator exportObject, Q, underscore, EventEmitter, validate
+	unless typeof process is 'undefined' or !process.versions
+		EventEmitter = require('events').EventEmitter
+		underscore = require('underscore')
+		validator = require 'validator'
+		Q = require('q')
+		exportObject = (object)->
+			module.exports = object
 	else
-		window.define 'ez-export-object', [], -> exportObject
-		window.define 'ez-event-emitter', [], -> EventEmitter
-		window.define 'Validator', ['exportObject', 'q', 'underscore', 'ez-event-emitter', 'validate'], loadValidator
+		underscore = window._
+		EventEmitter = null
+		unless window.Q
+			throw new Error "Q.js is required for ez-validator!"
+		unless window.validate
+			throw new Error "validator.js is required for ez-validator!"
+		Q = window.Q
+		validate = window.validate
+		exportObject = (object)->
+			window.Validator = object
+	exportObject loadValidator Q, underscore, EventEmitter, validate
 )()
