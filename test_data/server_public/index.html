@@ -4,6 +4,7 @@
 	</head>
 	<body>
 		<script type="text/javascript" src="/js/lib/underscore-min.js"></script>
+		<script type="text/javascript" src="/js/lib/validator-min.js"></script>
 		<script type="text/javascript" src="/js/lib/q.js"></script>
 		<script type="text/javascript" src="/js/lib/ez-access.js"></script>
 		<script type="text/javascript" src="/js/lib/ez-routes.js"></script>
@@ -14,7 +15,6 @@
 					throw new Error("Actual result differs from expected: '" + actual + "' ::: '" + expected + "'")
 				}
 			}
-		/*
 			EZAccess.User.query().then(function(response) {
 				assert(response.length > 0, true);
 			}).fail(function(error) {
@@ -32,7 +32,6 @@
 			}).fail(function(error) {
 				console.log("Error!", error);
 			});
-			*/
 			EZAccess.User.postLogin("yourdeveloperfriend").then(function(response) {
 				assert(false, "Successful for some reason!");
 			}, function(error) {

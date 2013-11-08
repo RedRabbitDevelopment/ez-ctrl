@@ -199,6 +199,7 @@ describe("UserController", function() {
       }).then(function(result) {
         return done();
       }, function(error) {
+        console.log(error);
         return done(error);
       });
     });
@@ -214,7 +215,7 @@ describe("UserController", function() {
         errors = error.error;
         assert.ok(errors.name);
         assert.equal(errors.name.length, 1);
-        assert.equal(errors.name[0], "must be greater than 8");
+        assert.equal(errors.name[0], "String is not in range");
         return done();
       }).fail(function(error) {
         return done(error);
@@ -234,8 +235,8 @@ describe("UserController", function() {
         assert.ok(errors.username);
         assert.equal(errors.username.length, 1);
         assert.equal(errors.name.length, 1);
-        assert.equal(errors.name[0], "must be greater than 8");
-        assert.equal(errors.username[0], "must be greater than 9");
+        assert.equal(errors.name[0], "String is not in range");
+        assert.equal(errors.username[0], "String is not in range");
         return done();
       }).fail(function(error) {
         return done(error);
@@ -285,25 +286,18 @@ describe("UserController", function() {
       return Validator.validate({
         name: {
           required: true,
-          type: "text",
-          length: {
-            gt: 8
-          }
+          len: 9
         },
         username: {
           required: true,
           type: 'alphaNumeric',
           unique: true,
-          length: {
-            gt: 9
-          }
+          len: 9
         },
         password: {
           required: true,
           type: 'alphaNumeric',
-          length: {
-            gt: 8
-          }
+          len: 8
         }
       }, {
         name: "Booya Baby"
@@ -320,25 +314,52 @@ describe("UserController", function() {
         return done(error);
       });
     });
-    it("should get the appropriate message", function() {
-      var message;
-      message = Validator.translateValidationError("required", false, true);
-      return assert.equal(message, "is required");
-    });
     it("should fail", function(done) {
       return Validator.runValidate(void 0, "required", true, "username").then(function(result) {
-        assert.equal(result, false);
+        return done(result);
+      }, function(error) {
+        assert.equal(error, 'is required');
+        return done();
+      }).fail(function(result) {
+        console.log('error', result);
+        return done(result);
+      });
+    });
+    it("should give me an appropriate error", function(done) {
+      return Validator.runValidate("no-oolong", "len", 8, "username").then(function(result) {
+        return done(result);
+      }, function(error) {
+        assert.equal(error, 'is required');
         return done();
       }).fail(function(result) {
         return done(result);
       });
     });
-    return it("should get me a readable error", function(done) {
-      return Validator.runValidateAndGetReadableError(void 0, "required", true, "username").then(function(result) {
+    it("should get me a readable error", function(done) {
+      return Validator.validateField({
+        required: true
+      }, "username", void 0, true).then(function(result) {
         return done(new Error("didn't fail"));
-      }).fail(function(result) {
+      }, function(result) {
         assert.equal(result.field, "username");
-        assert.equal(result.error[0], "is required");
+        assert.equal(result.errors.length, 1);
+        assert.equal(result.errors[0], "is required");
+        return done();
+      }).fail(function(error) {
+        return done(error);
+      });
+    });
+    return it("should get me multiple readable errors", function(done) {
+      return Validator.validateField({
+        len: 8,
+        type: "alphanumeric"
+      }, "username", "no-long", true).then(function(result) {
+        return done(new Error("didn't fail"));
+      }, function(result) {
+        assert.equal(result.field, "username");
+        assert.equal(result.errors.length, 2);
+        assert.equal(result.errors[0], "String is not in range");
+        assert.equal(result.errors[1], "must be alphanumeric");
         return done();
       }).fail(function(error) {
         return done(error);
@@ -387,9 +408,6 @@ describe("UserController", function() {
         },
         gee: {
           type: 'float'
-        },
-        wizz: {
-          type: 'text'
         }
       }, {
         booya: '5',

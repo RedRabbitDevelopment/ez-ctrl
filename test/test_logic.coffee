@@ -143,6 +143,7 @@ describe "UserController", ->
 			.then (result)->
 				done()
 			, (error)->
+				console.log error
 				done(error)
 			
 		it "should throw an error", (done)->
@@ -156,7 +157,7 @@ describe "UserController", ->
 				errors = error.error
 				assert.ok errors.name
 				assert.equal errors.name.length, 1
-				assert.equal errors.name[0], "must be greater than 8"
+				assert.equal errors.name[0], "String is not in range"
 				done()
 			.fail (error)->
 				done(error)
@@ -175,8 +176,8 @@ describe "UserController", ->
 				assert.ok errors.username
 				assert.equal errors.username.length, 1
 				assert.equal errors.name.length, 1
-				assert.equal errors.name[0], "must be greater than 8"
-				assert.equal errors.username[0], "must be greater than 9"
+				assert.equal errors.name[0], "String is not in range"
+				assert.equal errors.username[0], "String is not in range"
 				done()
 			.fail (error)->
 				done(error)
@@ -222,20 +223,16 @@ describe "UserController", ->
 			Validator.validate
 				name:
 					required: true
-					type: "text"
-					length:
-						gt: 8
+					len: 9
 				username:
 					required: true
 					type: 'alphaNumeric'
 					unique: true # Backend Only
-					length:
-						gt: 9
+					len: 9
 				password:
 					required: true
 					type: 'alphaNumeric'
-					length:
-						gt: 8
+					len: 8
 			,
 				name: "Booya Baby"
 			.then ->
@@ -249,23 +246,45 @@ describe "UserController", ->
 				done()
 			.fail (error)->
 				done error
-		
-		it "should get the appropriate message", ->
-			message = Validator.translateValidationError("required", false, true)
-			assert.equal message, "is required"
 				
 		it "should fail", (done)->
 			Validator.runValidate(undefined, "required", true, "username").then (result)->
-				assert.equal result, false
+				done(result)
+			, (error)->
+				assert.equal error, 'is required'
+				done()
+			.fail (result)->
+				console.log 'error', result
+				done(result)
+		it "should give me an appropriate error", (done)->
+			Validator.runValidate("no-oolong", "len", 8, "username").then (result)->
+				done(result)
+			, (error)->
+				assert.equal error, 'is required'
 				done()
 			.fail (result)->
 				done(result)
 		it "should get me a readable error", (done)->
-			Validator.runValidateAndGetReadableError(undefined, "required", true, "username").then (result)->
+			Validator.validateField(required: true, "username", undefined, true).then (result)->
 				done new Error "didn't fail"
-			.fail (result)->
+			, (result)->
 				assert.equal result.field, "username"
-				assert.equal result.error[0], "is required"
+				assert.equal result.errors.length, 1
+				assert.equal result.errors[0], "is required"
+				done()
+			.fail (error)->
+				done error
+		it "should get me multiple readable errors", (done)->
+			Validator.validateField(
+				len: 8
+				type: "alphanumeric"
+			, "username", "no-long", true).then (result)->
+				done new Error "didn't fail"
+			, (result)->
+				assert.equal result.field, "username"
+				assert.equal result.errors.length, 2
+				assert.equal result.errors[0], "String is not in range"
+				assert.equal result.errors[1], "must be alphanumeric"
 				done()
 			.fail (error)->
 				done error
@@ -305,7 +324,6 @@ describe "UserController", ->
 			newData = Converter.convert
 				booya: type: 'int'
 				gee: type: 'float'
-				wizz: type: 'text'
 			,
 				booya: '5'
 				gee: '77.2'

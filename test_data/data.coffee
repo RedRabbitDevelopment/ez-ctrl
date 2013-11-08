@@ -29,25 +29,22 @@ exports.getData = ()->
 exports.resetData()
 
 # Test synchronous validator
-Validator.registerValidator "unique", (validatorResult, validatorData, controllerName)->
-	if validatorData then "must be unique" else "must not be unique"
-, (value, data, field, controllerName)->
+Validator.registerValidator "unique", (value, data, field, controllerName)->
 	isUnique = true
 	for user in UserData
 		isUnique = false if user[field] is value
-	isUnique is data
+	unless isUnique is data
+		throw new Error if data then "must be unique" else "does not exist"
 
 # Test asynchronous validator
-Validator.registerValidator "inDb", (validatorResult, validatorData)->
-	if validatorData then "does not exist" else "must not exist"
-, (value, data, field, controllerName)->
+Validator.registerValidator "inDb", (value, data, field, controllerName)->
 	deferred = Q.defer()
 	setTimeout ->
 		found = UserData.length > value
 		if found is data
 			deferred.resolve()
 		else
-			deferred.reject()
+			deferred.reject(if data then "does not exist" else "must not exist")
 	, 25
 	deferred.promise
 
@@ -99,20 +96,16 @@ exports.UserController = MyBaseController.extend
 			validation:
 				name:
 					required: true
-					type: "text"
-					length:
-						gt: 8
+					len: 8
 				username:
 					required: true
-					type: 'alphaNumeric'
+					type: 'alphanumeric'
 					unique: true # Backend Only
-					length:
-						gt: 9
+					len: [9]
 				password:
 					required: true
-					type: 'alphaNumeric'
-					length:
-						gt: 8
+					type: 'alphanumeric'
+					len: [9]
 			logic: (_data)->
 				_data.id = UserData.length
 				_data.comments = []
@@ -125,17 +118,14 @@ exports.UserController = MyBaseController.extend
 					type: 'int'
 					inDb: true
 				name:
-					length:
-						gt: 8
+					len: 8
 				username:
-					type: 'alphaNumeric'
+					type: 'alphanumeric'
 					unique: true
-					length:
-						gt: 8
+					len: 8
 				password:
-					type: 'alphaNumeric'
-					length:
-						gt: 8
+					type: 'alphanumeric'
+					len: 8
 			logic: (id, _data)->
 				UserData[id][key] = value for key, value of _data
 				true
@@ -198,19 +188,15 @@ exports.AsyncUserController = MyBaseController.extend
 			validation:
 				name:
 					required: true
-					type: "text"
-					length:
-						gt: 8
+					len: 8
 				username:
 					required: true
-					type: 'alphaNumeric'
-					length:
-						gt:8
+					type: 'alphanumeric'
+					len: 8
 				password:
 					required: true
-					length:
-						gt: 8
-					type: 'alphaNumeric'
+					len: 8
+					type: 'alphanumeric'
 					unique: true # Backend Only
 			logic: (_data)->
 				deferred = Q.defer()
@@ -229,16 +215,13 @@ exports.AsyncUserController = MyBaseController.extend
 					inDb: true
 				name:
 					required: true
-					length:
-						gt: 8
+					len: 8
 				username:
 					type: 'alphaNumeric'
-					length:
-						gt: 8
+					len: 8
 				password:
 					type: 'alphaNumeric'
-					length:
-						gt: 8
+					len: 8
 			logic: (id, _data)->
 				deferred = Q.defer()
 				setTimeout ->

@@ -40,13 +40,7 @@ exports.getData = function() {
 
 exports.resetData();
 
-Validator.registerValidator("unique", function(validatorResult, validatorData, controllerName) {
-  if (validatorData) {
-    return "must be unique";
-  } else {
-    return "must not be unique";
-  }
-}, function(value, data, field, controllerName) {
+Validator.registerValidator("unique", function(value, data, field, controllerName) {
   var isUnique, user, _i, _len;
   isUnique = true;
   for (_i = 0, _len = UserData.length; _i < _len; _i++) {
@@ -55,16 +49,12 @@ Validator.registerValidator("unique", function(validatorResult, validatorData, c
       isUnique = false;
     }
   }
-  return isUnique === data;
+  if (isUnique !== data) {
+    throw new Error(data ? "must be unique" : "does not exist");
+  }
 });
 
-Validator.registerValidator("inDb", function(validatorResult, validatorData) {
-  if (validatorData) {
-    return "does not exist";
-  } else {
-    return "must not exist";
-  }
-}, function(value, data, field, controllerName) {
+Validator.registerValidator("inDb", function(value, data, field, controllerName) {
   var deferred;
   deferred = Q.defer();
   setTimeout(function() {
@@ -73,7 +63,7 @@ Validator.registerValidator("inDb", function(validatorResult, validatorData) {
     if (found === data) {
       return deferred.resolve();
     } else {
-      return deferred.reject();
+      return deferred.reject(data ? "does not exist" : "must not exist");
     }
   }, 25);
   return deferred.promise;
@@ -134,25 +124,18 @@ exports.UserController = MyBaseController.extend({
       validation: {
         name: {
           required: true,
-          type: "text",
-          length: {
-            gt: 8
-          }
+          len: 8
         },
         username: {
           required: true,
-          type: 'alphaNumeric',
+          type: 'alphanumeric',
           unique: true,
-          length: {
-            gt: 9
-          }
+          len: [9]
         },
         password: {
           required: true,
-          type: 'alphaNumeric',
-          length: {
-            gt: 8
-          }
+          type: 'alphanumeric',
+          len: [9]
         }
       },
       logic: function(_data) {
@@ -170,22 +153,16 @@ exports.UserController = MyBaseController.extend({
           inDb: true
         },
         name: {
-          length: {
-            gt: 8
-          }
+          len: 8
         },
         username: {
-          type: 'alphaNumeric',
+          type: 'alphanumeric',
           unique: true,
-          length: {
-            gt: 8
-          }
+          len: 8
         },
         password: {
-          type: 'alphaNumeric',
-          length: {
-            gt: 8
-          }
+          type: 'alphanumeric',
+          len: 8
         }
       },
       logic: function(id, _data) {
@@ -279,24 +256,17 @@ exports.AsyncUserController = MyBaseController.extend({
       validation: {
         name: {
           required: true,
-          type: "text",
-          length: {
-            gt: 8
-          }
+          len: 8
         },
         username: {
           required: true,
-          type: 'alphaNumeric',
-          length: {
-            gt: 8
-          }
+          type: 'alphanumeric',
+          len: 8
         },
         password: {
           required: true,
-          length: {
-            gt: 8
-          },
-          type: 'alphaNumeric',
+          len: 8,
+          type: 'alphanumeric',
           unique: true
         }
       },
@@ -321,21 +291,15 @@ exports.AsyncUserController = MyBaseController.extend({
         },
         name: {
           required: true,
-          length: {
-            gt: 8
-          }
+          len: 8
         },
         username: {
           type: 'alphaNumeric',
-          length: {
-            gt: 8
-          }
+          len: 8
         },
         password: {
           type: 'alphaNumeric',
-          length: {
-            gt: 8
-          }
+          len: 8
         }
       },
       logic: function(id, _data) {

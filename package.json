@@ -6,7 +6,8 @@
     "express": "~3.4.4",
     "inflection": "~1.2.6",
     "q": "~0.9.7",
-    "underscore": "~1.5.2"
+    "underscore": "~1.5.2",
+    "validator": "~2.0.0"
   },
   "devDependencies": {
     "assert": "~0.4.9"
