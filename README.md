@@ -2,6 +2,7 @@ EZController
 =======
 
 ```js
+// ServerSide
 var EZController = require('ez-ctrl').BaseController;
 UserController = BaseController.extend({
   name: "User",
@@ -94,7 +95,11 @@ UserController = BaseController.extend({
         return true;
       }
     },
-    postLogin: { // post<verb> is always /users/verb
+    postGetStuff: function() { // post<verb> is always /users/verb
+      return "Got Stuff";
+    },
+    login: {
+      method: "post",
       validation: {
         username: {
           required: true,
@@ -145,6 +150,17 @@ UserController = BaseController.extend({
   }
 });
 
+// Client-side
+
+ez.User.login(username, password).then(function(result) { // result is the result of the logic function
+  alert("Booya!");
+}).fail(function(reason) {
+  if(reason == "Invalid username or password") {
+    alert(reason);
+  } else if(reason.error === "validate") {
+    console.log(reason.errors);
+  }
+});
 
 ```
 
@@ -158,16 +174,16 @@ UserController = BaseController.extend({
   * Has all the same features as express
   * Decouples data retrieval, data validation, and logic for better testing
   * DRY - focus more on logic and less on sanitation
-  * DRY - validate input on the front-end and back-end simultaneously (coming soon!)
+  * DRY - easily validate input on the front-end and back-end with one simply definition!
 
 ## Philosophy
 
-  The EZController philosophy was inspired by Ruby on Rails, but with a few
-  changes. The basic idea is to make testing for validation, routing, and
-  logic built right in, by removing most references to req and res in the
-  business logic of the application.
+  The EZController is not just a Ruby on Rails inspired application. The basic idea
+  is that generally your front-end application is ignorant of the server and just makes
+  guesses. The server already knows where it's endpoints are, and already runs validation
+  on the input, why not expose that information to the browser?
   
-  Also, in the future, we hope to be able to create a way for the developers
+  We have created a way for the developers
   to reuse the validation code on the front-end, essentially building 
   front-end and back-end validation at the same time.
   
@@ -340,6 +356,19 @@ UserController = BaseController.extend({
   converterName: name to use in the type parameter
   converter: a function(value):
     value: the value to be converted
+
+### Front End Use
+  After defining the controllers on the back-end, the API can easily accessed through a frontend library.
+  Example:
+    // On the browser
+    User.login(username, password).then(function(result) {
+      // do stuff
+    }).fail(function(error) {
+      // do stuff
+    });
+  
+  Neat trick, the validation runs client side for quicker responses to errors! No more do you have to write validation code for both the client and
+  server sides.
   
 ## License
 
