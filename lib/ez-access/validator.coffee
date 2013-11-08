@@ -2,7 +2,7 @@
 			
 
 	# Validator file is on both the front end and the backend
-	loadValidator = (Q, _, EventEmitter, validate)->
+	loadValidator = (Q, _, validate)->
 		check = validate.check
 		
 		Validator =
@@ -79,10 +79,6 @@
 							checker[validator].apply checker, validatorData
 							deferred.resolve()
 						else
-							Validator.emit? "error",
-								error: "MissingMethod"
-								validator: validator
-								validatorData: validatorData
 							throw new Error("Validation method '#{validator}' does not exist")
 					else
 						deferred.resolve @ValidationMethods[validator] value, validatorData, field, controllerName
@@ -100,16 +96,10 @@
 			ValidationMethods:
 				required: (value)->
 					throw new Error(Validator.ValidationMessages['required']) unless !!value
-
-		# Extend EventEmitter
-		if EventEmitter
-			EventEmitter.call(Validator);
-			Validator.__proto__ = EventEmitter.prototype;
 		
 		Validator
 		
 	unless typeof process is 'undefined' or !process.versions
-		EventEmitter = require('events').EventEmitter
 		underscore = require('underscore')
 		validator = require 'validator'
 		Q = require('q')
@@ -117,7 +107,6 @@
 			module.exports = object
 	else
 		underscore = window._
-		EventEmitter = null
 		unless window.Q
 			throw new Error "Q.js is required for ez-validator!"
 		unless window.validate
@@ -126,5 +115,5 @@
 		validate = window.validate
 		exportObject = (object)->
 			window.Validator = object
-	exportObject loadValidator Q, underscore, EventEmitter, validate
+	exportObject loadValidator Q, underscore, validate
 )()
