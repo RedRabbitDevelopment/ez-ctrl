@@ -39,12 +39,9 @@
 			###
 			validateField: (validators, field, value, controllerName)->
 				promises = []
-				# Skip if value is empty and it isn't required
+				# fail if the value is missing
 				unless value
-					if validators.required
-						promises.push @runValidate(value, 'required', true, field, controllerName)
-					else
-						return true
+					promises.push @runValidate(value, 'required', true, field, controllerName)
 				else if validators
 					for validator, validatorData of validators
 						promises.push @runValidate value, validator, validatorData, field, controllerName

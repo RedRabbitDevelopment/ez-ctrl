@@ -80,15 +80,8 @@ exports.UserController = MyBaseController.extend
 			# Get the users
 			UserData
 		
-		get: # get /users/:id Anything with "get" automatically is get /<tableize>/:id
-			validation:
-				id:
-					required: true
-					type: 'int'
-					inDb: true
-					
-			logic: (id)->
-				UserData[id]
+		get: (id)-> # get /users/:id Anything with "get" automatically is get /<tableize>/:id
+			UserData[id]
 				
 		add: # put /users Anything with "add" automatically is put /<tableize>
 			validation:
