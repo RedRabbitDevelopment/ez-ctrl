@@ -8,7 +8,12 @@
 			validate: (validation, data, controllerName)->
 				promises = []
 				for field, validatorData of validation
-					promises.push @validateField(validatorData, field, data[field], controllerName)
+					# don't validate the field if the field is empty and not required
+					if data[field] or validatorData.required
+						delete validatorData.default
+						promises.push @validateField(validatorData, field, data[field], controllerName)
+					else if validatorData.default
+						data[field] = validatorData.default
 				Q.allSettled(promises).then (results)->
 					deferred = Q.defer()
 					errors = _.filter results, (result)->
