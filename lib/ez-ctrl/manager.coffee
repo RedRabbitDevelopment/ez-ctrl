@@ -6,5 +6,5 @@ module.exports =
 		_.reduce @controllers, (memo, controller)->
 			if controller.modelName
 				memo[controller.modelName] = controller.getRoutes()
-			memo;
+			memo
 		, {}
