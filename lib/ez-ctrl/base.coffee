@@ -85,6 +85,9 @@ module.exports = BaseController =
 			usesId = routeDetails.usesId
 		logic = if _.isFunction(routeDetails) then routeDetails else routeDetails.logic
 		validation = routeDetails.validation || {}
+		# Add default id validation
+		if usesId and not validation.id
+			validation.id = required: true
 		middleware = if routeDetails.before
 			if _.isFunction routeDetails.before
 				[routeDetails.before]
