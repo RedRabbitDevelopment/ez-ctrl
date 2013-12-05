@@ -1,26 +1,32 @@
 _ = require 'underscore'
 ControllerManager = require('../ez-ctrl/manager')
 FuncDetails = require('../ez-ctrl/func-details')
+Q = require 'q'
 
 frontEndJS = null
 
-module.exports = FrontEnd =
-	registerRoutes: (app)->
-		for controller in ControllerManager.controllers
-			controller.registerRoutes(app)
-		
-		app.get '/js/lib/ez-routes.js', (req, res)->
-			unless frontEndJS
-				frontEndJS = FrontEnd.getFrontEndMethods()
-			res.setHeader 'Content-Type', 'application/x-javascript; charset=UTF-8'
-			res.end frontEndJS
-		app.get '/js/lib/ez-access.js', (req, res)->
-			res.sendfile __dirname + "/ez-access.js"
-		app.get '/js/lib/ez-validation.js', (req, res)->
-			res.sendfile __dirname + "/validator.js"
+module.exports = class FrontEnd
+	registerRoutes: (app, dirname)->
+		initPromise = if dirname
+			@controllerManager = new ControllerManager()
+			@controllerManager.readdir(dirname)
+		else
+			@controllerManager = ControllerManager
+			Q.when true
+		initPromise.then =>
+			@controllerManager.registerRoutes app
+			app.get '/js/lib/ez-routes.js', (req, res)->
+				unless frontEndJS
+					frontEndJS = @getFrontEndMethods()
+				res.setHeader 'Content-Type', 'application/x-javascript; charset=UTF-8'
+				res.end frontEndJS
+			app.get '/js/lib/ez-access.js', (req, res)->
+				res.sendfile __dirname + "/ez-access.js"
+			app.get '/js/lib/ez-validation.js', (req, res)->
+				res.sendfile __dirname + "/validator.js"
 
 	getFrontEndMethods: ()->
-		routes = ControllerManager.getAllRoutes()
+		routes = @controllerManager.getAllRoutes()
 		EZAccess = {}
 		EZAccess._extractData = FuncDetails.argsToData
 		for controller, controllerDetails of routes
