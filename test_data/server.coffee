@@ -7,6 +7,8 @@ app.use express.urlencoded()
 app.use express.bodyParser()
 app.use express.static(__dirname + "/server_public")
 TestData = require './data'
+frontEnd.addController TestData.UserController
+frontEnd.addController TestData.AsyncUserController
 frontEnd.registerRoutes app
 
 module.exports =

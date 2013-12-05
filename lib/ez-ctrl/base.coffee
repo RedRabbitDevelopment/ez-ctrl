@@ -1,5 +1,4 @@
 FuncDetails = require('./func-details')
-ControllerManager = require('./manager')
 Converter = require('./converter')
 Q = require('q')
 _ = require('underscore')
@@ -24,7 +23,6 @@ module.exports = BaseController =
 		NewController.beforeEach = @extendArray 'beforeEach', options.beforeEach
 		_.extend(NewController.prototype, @prototype)
 		NewController.prototype.allowedErrors = @extendArray.call @prototype, 'allowedErrors', options.allowedErrors
-		ControllerManager.controllers.push(NewController)
 		NewController
 	
 	extendArray: (name, extend)->

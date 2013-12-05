@@ -3,6 +3,7 @@ _ = require("underscore")
 assert = require('assert')
 base = require('../index')
 Validator = base.Validator
+FrontEnd = base.FrontEnd
 
 describe "UserController", ->
 	UserController = TestData.UserController
@@ -291,7 +292,10 @@ describe "UserController", ->
 
 	describe "front-end functionality", ->
 		it "should give me all the routes", ->
-			allRoutes = base.ControllerManager.getAllRoutes()
+			frontEnd = new FrontEnd()
+			frontEnd.addController TestData.UserController
+			frontEnd.addController TestData.AsyncUserController
+			allRoutes = frontEnd.controllerManager.getAllRoutes()
 			assert.ok allRoutes.AsyncUser and allRoutes.User
 	
 		it "should give me a string", ->

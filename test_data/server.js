@@ -20,6 +20,10 @@
 
   TestData = require('./data');
 
+  frontEnd.addController(TestData.UserController);
+
+  frontEnd.addController(TestData.AsyncUserController);
+
   frontEnd.registerRoutes(app);
 
   module.exports = {

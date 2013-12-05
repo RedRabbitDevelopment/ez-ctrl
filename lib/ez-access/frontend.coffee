@@ -6,12 +6,13 @@ Q = require 'q'
 frontEndJS = null
 
 module.exports = class FrontEnd
+	constructor: ->
+		@controllerManager = new ControllerManager()
+
 	registerRoutes: (app, dirname)->
 		initPromise = if dirname
-			@controllerManager = new ControllerManager()
 			@controllerManager.readdir(dirname)
 		else
-			@controllerManager = ControllerManager
 			Q.when true
 		initPromise.then =>
 			@controllerManager.registerRoutes app
@@ -24,6 +25,9 @@ module.exports = class FrontEnd
 				res.sendfile __dirname + "/ez-access.js"
 			app.get '/js/lib/ez-validation.js', (req, res)->
 				res.sendfile __dirname + "/validator.js"
+	
+	addController: (ctrl)->
+		@controllerManager.addController ctrl
 
 	getFrontEndMethods: ()->
 		routes = @controllerManager.getAllRoutes()
