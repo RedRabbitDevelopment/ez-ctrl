@@ -1,4 +1,6 @@
 _ = require('underscore')
+Q = require 'q'
+fs = require 'fs'
 
 module.exports = class ControllerManager
 	constructor: ->
@@ -10,11 +12,13 @@ module.exports = class ControllerManager
 			memo
 		, {}
 	readdir: (dirname)->
-		Q.fninvoke(fs.readdir, dirname).then (files)=>
+		Q.nfcall(fs.readdir, dirname).then (files)=>
 			for file in files
-				if index = file.indexOf '.js'
+				unless -1 is index = file.indexOf '.js'
 					file = file.substr 0, index
-					@addController require file
+					Controller = require dirname + "/" + file
+					if Controller.isController and not Controller.isAbstract
+						@addController Controller
 	registerRoutes: (app)->
 		for controller in @controllers
 			controller.registerRoutes app

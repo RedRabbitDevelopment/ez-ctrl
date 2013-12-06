@@ -7,6 +7,8 @@ Converter = require('./converter')
 Validator = require('../ez-access/validator')
 
 module.exports = BaseController =
+	isController: true
+	isAbstract: true
 	beforeEach: []
 	extend: (options) ->
 		NewController = (routeDetails) ->
@@ -17,6 +19,7 @@ module.exports = BaseController =
 				BaseController.setBaseData.call(@, NewController.modelName)
 			return
 		_.extend(NewController, this)
+		NewController.isAbstract = false
 		if options.name
 			NewController.setBaseData(options.name)
 		_.extend NewController, options
@@ -139,8 +142,10 @@ BaseController.prototype =
 			@logic.apply(_this, logicArguments)
 		.then (response) =>
 			@sendResponse(response)
-		, (reason) =>
+		.fail (reason) =>
 			@sendErrorResponse(reason)
+		.fail (reason) =>
+			console.log "EZController Error unhandled", reason, reason?.stack
 		
 	
 	getRequestData: (field) ->

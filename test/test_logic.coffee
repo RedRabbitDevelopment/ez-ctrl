@@ -4,9 +4,10 @@ assert = require('assert')
 base = require('../index')
 Validator = base.Validator
 FrontEnd = base.FrontEnd
+UserController = require '../test_data/routes/users'
+AsyncUserController = require '../test_data/routes/async_users'
 
 describe "UserController", ->
-	UserController = TestData.UserController
 	FuncDetails = base.FuncDetails
 	beforeEach ->
 		TestData.resetData()
@@ -144,7 +145,6 @@ describe "UserController", ->
 			.then (result)->
 				done()
 			, (error)->
-				console.log error
 				done(error)
 			
 		it "should throw an error", (done)->
@@ -255,7 +255,6 @@ describe "UserController", ->
 				assert.equal error, 'is required'
 				done()
 			.fail (result)->
-				console.log 'error', result
 				done(result)
 		it "should give me an appropriate error", (done)->
 			Validator.runValidate("no-oolong", "len", 8, "username").then (result)->
@@ -293,8 +292,8 @@ describe "UserController", ->
 	describe "front-end functionality", ->
 		it "should give me all the routes", ->
 			frontEnd = new FrontEnd()
-			frontEnd.addController TestData.UserController
-			frontEnd.addController TestData.AsyncUserController
+			frontEnd.addController UserController
+			frontEnd.addController AsyncUserController
 			allRoutes = frontEnd.controllerManager.getAllRoutes()
 			assert.ok allRoutes.AsyncUser and allRoutes.User
 	

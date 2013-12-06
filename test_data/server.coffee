@@ -6,17 +6,15 @@ app.use express.json()
 app.use express.urlencoded()
 app.use express.bodyParser()
 app.use express.static(__dirname + "/server_public")
-TestData = require './data'
-frontEnd.addController TestData.UserController
-frontEnd.addController TestData.AsyncUserController
-frontEnd.registerRoutes app
-
+wait = frontEnd.registerRoutes(app, __dirname + "/routes").fail (error)->
+	console.log 'FAIL', error, error?.stack
 module.exports =
 	start: (cb)->
 		unless cb
 			cb = ->
 		@server = http.createServer app
-		@server.listen 3000, cb
+		wait.then =>
+			@server.listen 3000, cb
 	close: (cb)->
 		unless cb
 			cb = ->
