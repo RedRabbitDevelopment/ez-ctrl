@@ -196,8 +196,14 @@ ez.User.login(username, password).then(function(result) { // result is the resul
 ### ControllerManager.registerRoutes(app)
   In order to allow your express server to route to your different logic methods, express needs to be aware of them.
   
-    ControllerManager = require('ez-ctrl').ControllerManager;
-    ControllerManager.registerRoutes(app);
+    FrontEnd = require('ez-ctrl').FrontEnd;
+    frontEnd = new FrontEnd()
+    frontEnd.addController(UserController);
+    frontEnd.registerRoutes(app);
+
+  Or, if you keep all your controllers in one directory, you can declare it like this:
+
+    frontEnd.registerRoutes(app, __dirname + "/routes");
 
 ### BaseController.extend()
 
