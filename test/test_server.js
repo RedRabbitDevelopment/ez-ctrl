@@ -165,7 +165,23 @@
           return done(error);
         });
       });
-      it("should give me required error", function(done) {
+      it('should give me required error', function(done) {
+        return makeRequest({
+          method: "POST",
+          path: "/users/login"
+        }, {
+          username: "NathanTate",
+          password: "GAH"
+        }).then(function(data) {
+          assert.ok(data);
+          assert.equal(data.success, false);
+          assert.equal(data.error, 'Invalid username or password');
+          return done();
+        }).fail(function(error) {
+          return done(error);
+        });
+      });
+      it("should give me required validation error", function(done) {
         return makeRequest({
           method: "PUT",
           path: "/users"

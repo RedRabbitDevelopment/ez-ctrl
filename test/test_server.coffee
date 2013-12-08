@@ -124,7 +124,21 @@ describe "Test Server", ->
 				done()
 			.fail (error)->
 				done error
-		it "should give me required error", (done)->
+		it 'should give me required error', (done)->
+			makeRequest
+				method: "POST"
+				path: "/users/login"
+			,
+				username: "NathanTate"
+				password: "GAH"
+			.then (data)->
+				assert.ok data
+				assert.equal data.success, false
+				assert.equal data.error, 'Invalid username or password'
+				done()
+			.fail (error)->
+				done error
+		it "should give me required validation error", (done)->
 			makeRequest
 				method: "PUT",
 				path: "/users"

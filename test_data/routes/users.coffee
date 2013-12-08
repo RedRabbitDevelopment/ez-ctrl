@@ -3,6 +3,7 @@ MyBaseController = require './'
 data = require '../data'
 middleware = data.middleware
 UserData = data.UserData
+UserError = require('../../').UserError
 
 module.exports = MyBaseController.extend
 	name: "User"
@@ -66,8 +67,8 @@ module.exports = MyBaseController.extend
 						if user.password is password
 							return true
 						else
-							throw new Error("Invalid username or password")
-				throw new Error("Invalid username or password")
+							throw new UserError("Invalid username or password")
+				throw new UserError("Invalid username or password")
 		faulty: ()->
 			method = null
 			# Purposefully throw error
