@@ -92,6 +92,8 @@
 			ValidationMethods:
 				required: (value)->
 					throw new Error(Validator.Messages['required']) unless !!value
+				isFile: ->
+					true
 		
 		Validator
 		

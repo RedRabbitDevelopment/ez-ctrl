@@ -178,7 +178,6 @@ BaseController.prototype =
 						data[field] = value
 			)(field, value)
 		Q.all(promises).then ->
-			console.log data
 			data
 		
 	sendResponse: (response) ->
