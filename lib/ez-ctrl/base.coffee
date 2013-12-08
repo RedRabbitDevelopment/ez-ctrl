@@ -6,6 +6,8 @@ inflection = require('inflection')
 Converter = require('./converter')
 Validator = require('../ez-access/validator')
 UserError = require './userError'
+multiparty = require 'multiparty'
+util = require 'util'
 
 module.exports = BaseController =
 	isController: true
@@ -147,16 +149,37 @@ BaseController.prototype =
 			console.log "EZController Error unhandled", reason, reason?.stack
 		
 	
-	getRequestData: (field) ->
-		@request.param(field)
+	getRequestData: (field, type) ->
+		if type is 'file'
+			if @files
+				@files[field]
+			else
+				@parseFiles().then =>
+					@files[field]
+		else
+			Q.fcall => @request.param(field)
 		
+	parseFiles: ->
+		form = new multiparty.Form()
+		Q.ninvoke(form, 'parse', @request).spread( (fields, files)->
+			@files = files
+		).fail (error)->
+			if error.message is 'Expected CR Received 45'
+				@files = {}
+			else
+				throw error
+
 	getData: () ->
 		data = {}
-		for field, value of @validation
-			value = @getRequestData field
-			if value
-				data[field] = value
-		data
+		promises = for field, value of @validation
+			( (field, value)=>
+				@getRequestData(field, value.type).then (value)->
+					if value
+						data[field] = value
+			)(field, value)
+		Q.all(promises).then ->
+			console.log data
+			data
 		
 	sendResponse: (response) ->
 		@response.json
