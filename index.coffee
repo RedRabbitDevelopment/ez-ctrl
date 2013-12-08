@@ -4,6 +4,7 @@ Validator = require('./lib/ez-access/validator')
 Converter = require('./lib/ez-ctrl/converter')
 ControllerManager = require('./lib/ez-ctrl/manager')
 FuncDetails = require('./lib/ez-ctrl/func-details')
+UserError = require './lib/ez-ctrl/userError'
 
 module.exports =
 	BaseController: BaseController
@@ -12,3 +13,4 @@ module.exports =
 	Validator: Validator
 	Converter: Converter
 	ControllerManager: ControllerManager
+	UserError: UserError

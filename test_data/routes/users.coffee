@@ -6,7 +6,6 @@ UserData = data.UserData
 
 module.exports = MyBaseController.extend
 	name: "User"
-	allowedErrors: ["Invalid username or password"]
 	beforeEach: (req, res, next)->
 		middleware.userRan++
 		next()

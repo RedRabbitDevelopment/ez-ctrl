@@ -174,8 +174,8 @@
         }).then(function(data) {
           assert.ok(data);
           assert.equal(data.success, false);
-          assert.equal(data.error.username[0], "is required");
-          assert.equal(data.error.password[0], "is required");
+          assert.equal(data.errors.username[0], "is required");
+          assert.equal(data.errors.password[0], "is required");
           return done();
         }).fail(function(error) {
           return done(error);

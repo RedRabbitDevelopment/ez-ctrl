@@ -5,6 +5,7 @@ _ = require('underscore')
 inflection = require('inflection')
 Converter = require('./converter')
 Validator = require('../ez-access/validator')
+UserError = require './userError'
 
 module.exports = BaseController =
 	isController: true
@@ -25,7 +26,6 @@ module.exports = BaseController =
 		_.extend NewController, options
 		NewController.beforeEach = @extendArray 'beforeEach', options.beforeEach
 		_.extend(NewController.prototype, @prototype)
-		NewController.prototype.allowedErrors = @extendArray.call @prototype, 'allowedErrors', options.allowedErrors
 		NewController
 	
 	extendArray: (name, extend)->
@@ -127,7 +127,6 @@ module.exports = BaseController =
 			@registerRoute(app, routeDetails)
 			
 BaseController.prototype =
-	allowedErrors: ['validate']
 	handleRequest: (req, res) ->
 		@request = req
 		@response = res
@@ -165,21 +164,25 @@ BaseController.prototype =
 			response: response
 			
 	sendErrorResponse: (error) ->
-		errorType = if error and error.message then error.message else error
 		# Only allow deliberate messages
-		if -1 isnt @allowedErrors.indexOf errorType
-			message = if error.error then error.error else errorType
-		else
+		message = unless error instanceof UserError
 			if _.isFunction @logError
 				@logError(error)
-			message = "Server Error"
+			"Server Error"
+		else
+			errors = error.errors
+			error.message
 		@response.json
 			success: false
 			error: message
+			errors: errors
 	
 	convert: (data) ->
 		Converter.convert @validation, data
 	
 	validate: (data) ->
-		Validator.validate @validation, data, @modelName
+		Validator.validate(@validation, data, @modelName).fail (error)->
+			e = new UserError 'Validate'
+			e.errors = error.error
+			throw e
 	

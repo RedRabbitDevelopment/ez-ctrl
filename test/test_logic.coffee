@@ -155,10 +155,11 @@ describe "UserController", ->
 			.then (result)->
 				done new Error("Didn't throw an error")
 			, (error)->
-				errors = error.error
+				errors = error.errors
 				assert.ok errors.name
+				assert.equal error.message, 'Validate'
 				assert.equal errors.name.length, 1
-				assert.equal errors.name[0], "String is not in range"
+				assert.equal errors.name[0], 'String is not in range'
 				done()
 			.fail (error)->
 				done(error)
@@ -172,7 +173,7 @@ describe "UserController", ->
 			.then (result)->
 				done new Error("Didn't throw an error")
 			, (error)->
-				errors = error.error
+				errors = error.errors
 				assert.ok errors.name
 				assert.ok errors.username
 				assert.equal errors.username.length, 1
@@ -195,7 +196,7 @@ describe "UserController", ->
 			.then (result)->
 				done new Error("Didn't throw an error")
 			, (error)->
-				errors = error.error
+				errors = error.errors
 				assert.ok errors.username
 				assert.ok errors.id
 				assert.equal errors.username.length, 1
