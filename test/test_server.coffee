@@ -152,6 +152,21 @@ describe "Test Server", ->
 				done()
 			.fail (error)->
 				done error
+		it 'shouldn\'t let me use an array when a string is required', (done)->
+			makeRequest
+				method: 'PUT'
+				path: '/users'
+			,
+				name: ['booya', 'baby']
+				username: 'ggggggggg'
+				password: 'hahahahahaha'
+			.then (data)->
+				assert.ok data
+				assert.equal data.success, false
+				assert.equal data.errors.name[0], 'must be a string'
+				done()
+			.fail (error)->
+				done error
 		describe "middleware", ->
 			it "should run base and user", (done)->
 				makeRequest

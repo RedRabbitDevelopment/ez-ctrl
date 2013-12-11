@@ -152,18 +152,18 @@ BaseController.prototype =
 	getRequestData: (field, type) ->
 		if type is 'file'
 			if @files
-				@files[field]
+				@files[field]?[0]
 			else
 				@parseFiles().then =>
-					@files[field]
+					@files?[field]?[0]
 		else
 			Q.fcall => @request.param(field)
 		
 	parseFiles: ->
 		form = new multiparty.Form()
-		Q.ninvoke(form, 'parse', @request).spread( (fields, files)->
+		Q.ninvoke(form, 'parse', @request).spread( (fields, files)=>
 			@files = files
-		).fail (error)->
+		).fail (error)=>
 			if error.message is 'Expected CR Received 45'
 				@files = {}
 			else

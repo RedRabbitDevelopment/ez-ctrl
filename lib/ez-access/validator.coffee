@@ -88,11 +88,19 @@
 			Messages:
 				required: "is required"
 				isAlphanumeric: "must be alphanumeric"
+				isBoolean: "must be a boolean"
+				isText: 'must be a string'
 
 			ValidationMethods:
 				required: (value)->
 					throw new Error(Validator.Messages['required']) unless !!value
+				isBoolean: (value)->
+					value is true or value is false
 				isFile: ->
+					true
+				isText: (value)->
+					unless _.isString value
+						throw new Error Validator.Messages.isText
 					true
 		
 		Validator

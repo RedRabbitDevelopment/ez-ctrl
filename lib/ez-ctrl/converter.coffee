@@ -1,3 +1,4 @@
+_ = require 'underscore'
 
 ConverterMethods =
 	# Doesn't run parseInt, because that will just concatenate the decimal!
@@ -6,6 +7,12 @@ ConverterMethods =
 	
 	float: (value)->
 		return parseFloat(value)
+	
+	boolean: (value)->
+		if _.isString value
+			value is 'true'
+		else
+			!!value
 
 module.exports = Converter =
 	convert: (types, data)->

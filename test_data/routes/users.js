@@ -31,6 +31,7 @@
         validation: {
           name: {
             required: true,
+            type: 'text',
             len: 8
           },
           username: {

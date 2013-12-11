@@ -197,6 +197,23 @@
           return done(error);
         });
       });
+      it('shouldn\'t let me use an array when a string is required', function(done) {
+        return makeRequest({
+          method: 'PUT',
+          path: '/users'
+        }, {
+          name: ['booya', 'baby'],
+          username: 'ggggggggg',
+          password: 'hahahahahaha'
+        }).then(function(data) {
+          assert.ok(data);
+          assert.equal(data.success, false);
+          assert.equal(data.errors.name[0], 'must be a string');
+          return done();
+        }).fail(function(error) {
+          return done(error);
+        });
+      });
       return describe("middleware", function() {
         it("should run base and user", function(done) {
           return makeRequest({

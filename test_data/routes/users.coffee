@@ -22,6 +22,7 @@ module.exports = MyBaseController.extend
 			validation:
 				name:
 					required: true
+					type: 'text'
 					len: 8
 				username:
 					required: true
