@@ -354,7 +354,7 @@
           return done(error);
         });
       });
-      return it("should get me multiple readable errors", function(done) {
+      it("should get me multiple readable errors", function(done) {
         return Validator.validateField({
           len: 8,
           type: "alphanumeric"
@@ -369,6 +369,68 @@
         }).fail(function(error) {
           return done(error);
         });
+      });
+      it('should be able to handle complex validation', function(done) {
+        return Validator.validate({
+          array: {
+            type: ['string']
+          },
+          object: {
+            type: {
+              booya: {
+                required: true,
+                type: 'string'
+              },
+              other: {
+                required: false,
+                type: 'int'
+              }
+            }
+          }
+        }, {
+          array: ['booya', 'one', 'two'],
+          object: {
+            booya: 'STRING',
+            other: 5
+          }
+        }).then(function() {
+          return done();
+        }, function(error) {
+          console.log(error);
+          return done();
+        });
+      });
+      return it('should be able to give us a complex error', function(done) {
+        return Validator.validate({
+          array: {
+            type: ['string']
+          },
+          object: {
+            type: {
+              booya: {
+                required: true,
+                type: 'string'
+              },
+              other: {
+                required: false,
+                type: 'int'
+              }
+            }
+          }
+        }, {
+          array: ['booya', 5, 'two'],
+          object: {
+            booya: 'STRING'
+          }
+        }).fail(function(result) {
+          var _ref;
+          assert.ok(result != null ? (_ref = result.errors) != null ? _ref.array : void 0 : void 0);
+          assert.not.ok(result.errors.object);
+          assert.equals(result.errors.array[0], 'should be an array of strings');
+          return done();
+        }).then(function(result) {
+          return done(new Error('Got Result'));
+        }).fail(done);
       });
     });
     describe("front-end functionality", function() {

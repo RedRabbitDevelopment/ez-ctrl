@@ -106,6 +106,28 @@
           throw new UserError("Invalid username or password");
         }
       },
+      complexInput: {
+        validation: {
+          array: {
+            type: ['string']
+          },
+          object: {
+            type: {
+              booya: {
+                required: true,
+                type: 'string'
+              },
+              other: {
+                required: false,
+                type: 'int'
+              }
+            }
+          }
+        },
+        logic: function(array, object) {
+          return true;
+        }
+      },
       faulty: function() {
         var method;
         method = null;

@@ -70,6 +70,20 @@ module.exports = MyBaseController.extend
 						else
 							throw new UserError("Invalid username or password")
 				throw new UserError("Invalid username or password")
+		complexInput:
+			validation:
+				array:
+					type: ['string']
+				object:
+					type:
+						booya:
+							required: true
+							type: 'string'
+						other:
+							required: false
+							type: 'int'
+			logic: (array, object)->
+				true
 		faulty: ()->
 			method = null
 			# Purposefully throw error

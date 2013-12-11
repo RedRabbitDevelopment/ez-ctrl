@@ -289,7 +289,53 @@ describe "UserController", ->
 				done()
 			.fail (error)->
 				done error
-
+		it 'should be able to handle complex validation', (done)->
+			Validator.validate
+				array:
+					type: ['string']
+				object:
+					type:
+						booya:
+							required: true
+							type: 'string'
+						other:
+							required: false
+							type: 'int'
+			,
+				array: ['booya', 'one', 'two']
+				object:
+					booya: 'STRING'
+					other: 5
+			.then ->
+				done()
+			, (error)->
+				console.log error
+				done()
+		it 'should be able to give us a complex error', (done)->
+			Validator.validate
+				array:
+					type: ['string']
+				object:
+					type:
+						booya:
+							required: true
+							type: 'string'
+						other:
+							required: false
+							type: 'int'
+			,
+				array: ['booya', 5, 'two']
+				object:
+					booya: 'STRING'
+			.fail (result)->
+				assert.ok result?.errors?.array
+				assert.not.ok result.errors.object
+				assert.equals result.errors.array[0], 'should be an array of strings'
+				done()
+			.then (result)->
+				done new Error 'Got Result'
+			.fail done
+			
 	describe "front-end functionality", ->
 		it "should give me all the routes", ->
 			frontEnd = new FrontEnd()
