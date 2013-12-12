@@ -109,19 +109,7 @@
       complexInput: {
         validation: {
           array: {
-            type: ['string']
-          },
-          object: {
-            type: {
-              booya: {
-                required: true,
-                type: 'string'
-              },
-              other: {
-                required: false,
-                type: 'int'
-              }
-            }
+            type: ['text']
           }
         },
         logic: function(array, object) {

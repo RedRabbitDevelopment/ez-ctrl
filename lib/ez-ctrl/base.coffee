@@ -147,7 +147,6 @@ BaseController.prototype =
 			@sendErrorResponse(reason)
 		.fail (reason) =>
 			console.log "EZController Error unhandled", reason, reason?.stack
-		
 	
 	getRequestData: (field, type) ->
 		if type is 'file'
@@ -203,8 +202,4 @@ BaseController.prototype =
 		Converter.convert @validation, data
 	
 	validate: (data) ->
-		Validator.validate(@validation, data, @modelName).fail (error)->
-			e = new UserError 'Validate'
-			e.errors = error.error
-			throw e
-	
+		Validator.validate(@validation, data, @modelName)

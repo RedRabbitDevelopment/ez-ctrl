@@ -2,6 +2,7 @@ _ = require('underscore')
 validate = require 'validator'
 check = validate.check
 Q = require('q')
+UserError = require '../ez-ctrl/userError'
 
 module.exports = Validator =
 	validate: (validation, data, controllerName)->
@@ -20,12 +21,14 @@ module.exports = Validator =
 			if errors.length > 0
 				errors = _.reduce errors, (memo, result)->
 					reason = result.reason
+					# exit validation if there was an unexpected error
+					throw reason if reason instanceof Error
 					memo[reason.field] = reason.errors
 					memo
 				, {}
-				deferred.reject
-					message: "validate"
-					error: errors
+				error = new UserError 'Validate'
+				error.errors = errors
+				deferred.reject error
 			else
 				deferred.resolve(data)
 			deferred.promise
@@ -46,7 +49,12 @@ module.exports = Validator =
 				promises.push @runValidate value, validator, validatorData, field, controllerName
 		Q.allSettled(promises).then (results)->
 			deferred = Q.defer()
-			readableErrors = (result.reason for result in results when result.state isnt "fulfilled")
+			readableErrors = (for result in results when result.state isnt "fulfilled"
+				if result.reason instanceof Error
+					# Throw error and exit validation for any unexpected errors
+					throw result.reason
+				result.reason
+			)
 			if readableErrors.length > 0
 				deferred.reject
 					errors: readableErrors
@@ -62,24 +70,42 @@ module.exports = Validator =
 		type: "int" => isInt
 	###
 	runValidate: (value, validator, validatorData, field, controllerName)->
-		deferred = Q.defer()
-		try
+		Q.fcall =>
 			if validator is "type"
-				validator = 'is' + validatorData.substr(0, 1).toUpperCase() + validatorData.substr(1)
+				if _.isString validatorData
+					validator = 'is' + validatorData.substr(0, 1).toUpperCase() + validatorData.substr(1)
+				else
+					if _.isArray validatorData
+						validators = validatorData[0]
+						deferred.reject @Messages.isArray unless _.isArray value
+						if _.isString validators
+							validators = type: validators
+						else
+							# TODO: support more complex array validation
+							throw new Error 'only types are supported by array validators'
+						return Q.all(for value_part in value
+							@validateField(validators, field, value_part, controllerName)
+						).fail ->
+							throw new UserError "should be an array of " + validators.type
+					else
+						# TODO: support object validation
+						throw new Error "Validation method 'is#{validatorData}' does not exist"
 			unless @ValidationMethods[validator]
 				args = [value]
 				args.push @Messages[validator] if @Messages[validator]
 				if (checker = check.apply(null, args))[validator]
 					validatorData = [validatorData] unless _.isArray validatorData
-					checker[validator].apply checker, validatorData
-					deferred.resolve()
+					try
+						checker[validator].apply checker, validatorData
+					catch e
+						throw new UserError e.message
+					true
 				else
 					throw new Error("Validation method '#{validator}' does not exist")
 			else
-				deferred.resolve @ValidationMethods[validator] value, validatorData, field, controllerName
-		catch e
-			deferred.reject e.message
-		deferred.promise
+				@ValidationMethods[validator] value, validatorData, field, controllerName
+		.fail (error)->
+			Q.reject if error instanceof UserError then error.message else error
 			
 	registerValidator: (name, fn)->
 		@ValidationMethods[name] = fn
@@ -89,17 +115,19 @@ module.exports = Validator =
 		isAlphanumeric: "must be alphanumeric"
 		isBoolean: "must be a boolean"
 		isText: 'must be a string'
+		isArray: 'must be an array'
 
 	ValidationMethods:
 		required: (value)->
-			throw new Error(Validator.Messages['required']) unless !!value
+			throw new UserError(Validator.Messages['required']) unless !!value
 		isBoolean: (value)->
-			value is true or value is false
+			unless value is true or value is false
+				throw new UserError Validator.Messages.isBoolean
+			true
 		isFile: ->
 			true
 		isText: (value)->
 			unless _.isString value
-				throw new Error Validator.Messages.isText
+				throw new UserError Validator.Messages.isText
 			true
-		
 		

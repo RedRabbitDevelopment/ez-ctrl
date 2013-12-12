@@ -1,6 +1,7 @@
 Q = require('q')
 base = require('../index')
 Validator = base.Validator
+UserError = base.UserError
 
 exports.middleware = middleware = {}
 exports.UserData = UserData = []
@@ -32,7 +33,7 @@ Validator.registerValidator "unique", (value, data, field, controllerName)->
 	for user in UserData
 		isUnique = false if user[field] is value
 	unless isUnique is data
-		throw new Error if data then "must be unique" else "does not exist"
+		throw new UserError if data then "must be unique" else "does not exist"
 
 # Test asynchronous validator
 Validator.registerValidator "inDb", (value, data, field, controllerName)->
