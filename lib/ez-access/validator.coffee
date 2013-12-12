@@ -77,7 +77,7 @@ module.exports = Validator =
 				else
 					if _.isArray validatorData
 						validators = validatorData[0]
-						deferred.reject @Messages.isArray unless _.isArray value
+						throw new UserError @Messages.isArray unless _.isArray value
 						if _.isString validators
 							validators = type: validators
 						else
