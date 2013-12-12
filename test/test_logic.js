@@ -4,7 +4,7 @@
 
   TestData = require('../test_data/data');
 
-  _ = require("underscore");
+  _ = require('underscore');
 
   assert = require('assert');
 
@@ -20,58 +20,58 @@
 
   UserError = base.UserError;
 
-  describe("UserController", function() {
+  describe('UserController', function() {
     var FuncDetails;
     FuncDetails = base.FuncDetails;
     beforeEach(function() {
       return TestData.resetData();
     });
-    describe("initialization", function() {
-      return it("should initialize all their data", function() {
-        assert.equal(UserController.modelName, "User");
-        return assert.equal(UserController.basePattern, "/users");
+    describe('initialization', function() {
+      return it('should initialize all their data', function() {
+        assert.equal(UserController.modelName, 'User');
+        return assert.equal(UserController.basePattern, '/users');
       });
     });
-    describe("extractArguments", function() {
-      it("should get all the arguments", function() {
+    describe('extractArguments', function() {
+      it('should get all the arguments', function() {
         var args;
         args = FuncDetails.extractArguments(function(a, b, c) {});
         return assert.deepEqual(args, ['a', 'b', 'c']);
       });
-      it("shouldn't care about whitespace", function() {
+      it('shouldn\'t care about whitespace', function() {
         var args;
         args = FuncDetails.extractArguments(function( a,	 b, 
 				c) {});
         return assert.deepEqual(args, ['a', 'b', 'c']);
       });
-      it("shouldn't care about comments", function() {
+      it('shouldn\'t care about comments', function() {
         var args;
         args = FuncDetails.extractArguments(function(/* ab */a, 
 				// booya stuff
-				b, /* d, */c) /*don't mess with */{
+				b, /* d, */c) /*don\'t mess with */{
 				
-				/* don't mess with */ });
+				/* don\'t mess with */ });
         return assert.deepEqual(args, ['a', 'b', 'c']);
       });
-      return it("should care about the whitespace and comments", function() {
+      return it('should care about the whitespace and comments', function() {
         var argString, compareTo;
         argString = FuncDetails.extractArgumentString(function(/* ab */a, 
 				// booya stuff
 				b, /* d, */c) /*don't mess with */{
 				
 				/* don't mess with */ });
-        compareTo = "/* ab */a, ";
-        compareTo += "				// booya stuff";
-        compareTo += "				b, /* d, */c";
-        argString = argString.replace(/\n/g, "");
+        compareTo = '/* ab */a, ';
+        compareTo += '				// booya stuff';
+        compareTo += '				b, /* d, */c';
+        argString = argString.replace(/\n/g, '');
         return assert.equal(argString, compareTo);
       });
     });
-    describe("extractLogicArguments", function() {
-      it("should get all the arguments", function() {
+    describe('extractLogicArguments', function() {
+      it('should get all the arguments', function() {
         var args, controller_logic;
         controller_logic = function(b, a, c) {
-          return "G";
+          return 'G';
         };
         args = FuncDetails.dataToArgs(controller_logic, {
           a: 'a',
@@ -80,10 +80,10 @@
         });
         return assert.deepEqual(args, ['b', 'a', 'c']);
       });
-      it("should compile all the data into one variable", function() {
+      it('should compile all the data into one variable', function() {
         var args, controller_logic;
         controller_logic = function(_data) {
-          return "G";
+          return 'G';
         };
         args = FuncDetails.dataToArgs(controller_logic, {
           a: 'a',
@@ -98,10 +98,10 @@
           }
         ]);
       });
-      return it("should compile all the data into one variable", function() {
+      return it('should compile all the data into one variable', function() {
         var args, controller_logic;
         controller_logic = function(a, _data) {
-          return "G";
+          return 'G';
         };
         args = FuncDetails.dataToArgs(controller_logic, {
           a: 'a',
@@ -116,38 +116,38 @@
         ]);
       });
     });
-    describe("getRouteDetails", function() {
-      it("should work with query", function() {
+    describe('getRouteDetails', function() {
+      it('should work with query', function() {
         var routeDetails, users;
-        routeDetails = UserController.getRouteDetails("query");
-        assert.equal(routeDetails.method, "get");
-        assert.equal(routeDetails.pattern, "/users");
+        routeDetails = UserController.getRouteDetails('query');
+        assert.equal(routeDetails.method, 'get');
+        assert.equal(routeDetails.pattern, '/users');
         assert.ok(_.isFunction(routeDetails.logic));
         users = routeDetails.logic();
         return assert.equal(users.length, 3);
       });
-      it("should work with get", function() {
+      it('should work with get', function() {
         var routeDetails, user;
-        routeDetails = UserController.getRouteDetails("get");
-        assert.equal(routeDetails.method, "get");
+        routeDetails = UserController.getRouteDetails('get');
+        assert.equal(routeDetails.method, 'get');
         assert.ok(_.isFunction(routeDetails.logic));
         user = routeDetails.logic(2);
         return assert.deepEqual(user, {
-          name: "Baby Tate",
-          username: "soonToCome",
-          password: "password3"
+          name: 'Baby Tate',
+          username: 'soonToCome',
+          password: 'password3'
         });
       });
-      it("should work with add", function() {
+      it('should work with add', function() {
         var data, johnnyboy, routeDetails, value;
-        routeDetails = UserController.getRouteDetails("add");
-        assert.equal(routeDetails.method, "put");
-        assert.equal(routeDetails.pattern, "/users");
+        routeDetails = UserController.getRouteDetails('add');
+        assert.equal(routeDetails.method, 'put');
+        assert.equal(routeDetails.pattern, '/users');
         assert.ok(_.isFunction(routeDetails.logic));
         johnnyboy = {
-          name: "Johnny Johnson",
-          username: "johnnyboy",
-          password: "password4"
+          name: 'Johnny Johnson',
+          username: 'johnnyboy',
+          password: 'password4'
         };
         value = routeDetails.logic(johnnyboy);
         assert.ok(value);
@@ -155,43 +155,41 @@
         assert.ok(data[3]);
         return assert.deepEqual(data[3], johnnyboy);
       });
-      it("should work with save", function() {
+      it('should work with save', function() {
         var data, newName, routeDetails, value;
-        routeDetails = UserController.getRouteDetails("save");
-        assert.equal(routeDetails.method, "post");
+        routeDetails = UserController.getRouteDetails('save');
+        assert.equal(routeDetails.method, 'post');
         assert.ok(_.isFunction(routeDetails.logic));
-        newName = "Shirley Tate";
+        newName = 'Shirley Tate';
         value = routeDetails.logic(1, {
           name: newName
         });
         assert.okvalue;
         data = TestData.getData();
         assert.ok(data[1]);
-        assert.ok(data[1].username, "hotstuff5");
+        assert.ok(data[1].username, 'hotstuff5');
         return assert.equal(data[1].name, newName);
       });
-      return it("should work with a custom method", function() {
+      return it('should work with a custom method', function() {
         var password, routeDetails, username, value;
-        routeDetails = UserController.getRouteDetails("postLogin");
-        assert.equal(routeDetails.method, "post");
-        assert.equal(routeDetails.pattern, "/users/login");
+        routeDetails = UserController.getRouteDetails('postLogin');
+        assert.equal(routeDetails.method, 'post');
+        assert.equal(routeDetails.pattern, '/users/login');
         assert.ok(_.isFunction(routeDetails.logic));
-        username = "hotstuff5";
-        password = "password2";
+        username = 'hotstuff5';
+        password = 'password2';
         value = routeDetails.logic(username, password);
         assert.ok(value);
         return assert.throws(function() {
-          return value = routeDetails.logic(username, "wrongpassword");
+          return value = routeDetails.logic(username, 'wrongpassword');
         }, /Invalid username or password/);
       });
     });
-    describe("controller validators", function() {
+    describe('controller validators', function() {
       var controller;
       controller = null;
       beforeEach(function() {
-        var routeDetails;
-        routeDetails = UserController.getRouteDetails("add");
-        return controller = new UserController(routeDetails);
+        return controller = UserController.getController('add');
       });
       it('should get validation', function() {
         assert.ok(controller.validation);
@@ -199,24 +197,24 @@
         assert.equal(controller.validation.username.required, true);
         return assert.equal(controller.validation.password.required, true);
       });
-      it("should pass", function(done) {
+      it('should pass', function(done) {
         return controller.validate({
-          name: "Kelly Johnson",
-          username: "kellyJohnson",
-          password: "password8"
+          name: 'Kelly Johnson',
+          username: 'kellyJohnson',
+          password: 'password8'
         }).then(function(result) {
           return done();
         }, function(error) {
           return done(error);
         });
       });
-      it("should throw an error", function(done) {
+      it('should throw an error', function(done) {
         return controller.validate({
-          name: "Kel",
-          username: "kellyJohnson",
-          password: "password8"
+          name: 'Kel',
+          username: 'kellyJohnson',
+          password: 'password8'
         }).then(function(result) {
-          return done(new Error("Didn't throw an error"));
+          return done(new Error('Didn\'t throw an error'));
         }, function(error) {
           var errors;
           errors = error.errors;
@@ -229,13 +227,13 @@
           return done(error);
         });
       });
-      it("should throw multiple errors", function(done) {
+      it('should throw multiple errors', function(done) {
         return controller.validate({
-          name: "Kel",
-          username: "kel",
-          password: "password8"
+          name: 'Kel',
+          username: 'kel',
+          password: 'password8'
         }).then(function(result) {
-          return done(new Error("Didn't throw an error"));
+          return done(new Error('Didn\'t throw an error'));
         }, function(error) {
           var errors;
           errors = error.errors;
@@ -243,24 +241,22 @@
           assert.ok(errors.username);
           assert.equal(errors.username.length, 1);
           assert.equal(errors.name.length, 1);
-          assert.equal(errors.name[0], "String is not in range");
-          assert.equal(errors.username[0], "String is not in range");
+          assert.equal(errors.name[0], 'String is not in range');
+          assert.equal(errors.username[0], 'String is not in range');
           return done();
         }).fail(function(error) {
           return done(error);
         });
       });
-      it("should throw custom errors", function(done) {
-        var routeDetails;
-        routeDetails = UserController.getRouteDetails("save");
-        controller = new UserController(routeDetails);
+      it('should throw custom errors', function(done) {
+        controller = UserController.getController('save');
         return controller.validate({
           id: 18,
-          name: "Kelsey Johnson",
-          username: "yourdeveloperfriend",
-          password: "password8"
+          name: 'Kelsey Johnson',
+          username: 'yourdeveloperfriend',
+          password: 'password8'
         }).then(function(result) {
-          return done(new Error("Didn't throw an error"));
+          return done(new Error('Didn\'t throw an error'));
         }, function(error) {
           var errors;
           errors = error.errors;
@@ -269,20 +265,18 @@
           assert.ok(errors.id);
           assert.equal(errors.username.length, 1);
           assert.equal(errors.id.length, 1);
-          assert.equal(errors.id[0], "does not exist");
-          assert.equal(errors.username[0], "must be unique");
+          assert.equal(errors.id[0], 'does not exist');
+          assert.equal(errors.username[0], 'must be unique');
           return done();
         }).fail(function(error) {
           return done(error);
         });
       });
-      return it("should pass custom errors", function(done) {
-        var routeDetails;
-        routeDetails = UserController.getRouteDetails("save");
-        controller = new UserController(routeDetails);
+      return it('should pass custom errors', function(done) {
+        controller = UserController.getController('save');
         return controller.validate({
           id: 2,
-          name: "Kelsey Johnson"
+          name: 'Kelsey Johnson'
         }).then(function(result) {
           return done();
         }, function(error) {
@@ -290,8 +284,37 @@
         });
       });
     });
-    describe("front-end functionality", function() {
-      it("should give me all the routes", function() {
+    describe('testing logic', function() {
+      it('should work as a promise even if the logic isn\'t.', function(done) {
+        var controller;
+        controller = UserController.getController('postLogin');
+        return controller.runLogic({
+          password: 'password1',
+          username: 'yourdeveloperfriend'
+        }).then(function(result) {
+          assert.ok(result);
+          assert.equal(result, true);
+          return done();
+        }).fail(done);
+      });
+      return it('should catch the error as a promise as well.', function(done) {
+        var controller;
+        controller = UserController.getController('postLogin');
+        return controller.runLogic({
+          password: 'notThePassword',
+          username: 'yourdeveloperfriend'
+        }).then(function(result) {
+          return done(new Error('shouldn\'t have resolved.' + JSON.stringify(result)));
+        }).fail(function(error) {
+          assert.ok(error);
+          assert.equal(error.constructor, UserError);
+          assert.equal(error.message, 'Invalid username or password');
+          return done();
+        });
+      });
+    });
+    describe('front-end functionality', function() {
+      it('should give me all the routes', function() {
         var allRoutes, frontEnd;
         frontEnd = new FrontEnd();
         frontEnd.addController(UserController);
@@ -299,35 +322,35 @@
         allRoutes = frontEnd.controllerManager.getAllRoutes();
         return assert.ok(allRoutes.AsyncUser && allRoutes.User);
       });
-      return it("should give me a string", function() {
+      return it('should give me a string', function() {
         /* Not done
         			frontEndMethods = base.FrontEnd.getFrontEndMethods()
         			assert.ok frontEndMethods
         			try {
         				FrontEnd = eval(frontEndMethods)
         			} catch(e) {
-        				assert.fail("", e)
+        				assert.fail('', e)
         			}
         */
 
       });
     });
-    return describe("converter", function() {
+    return describe('converter', function() {
       var Converter;
       Converter = base.Converter;
-      it("should convert a string to an integer", function() {
-        return assert.strictEqual(Converter.convertField("5", "int"), 5);
+      it('should convert a string to an integer', function() {
+        return assert.strictEqual(Converter.convertField('5', 'int'), 5);
       });
-      it("should convert a string to an float", function() {
-        return assert.strictEqual(Converter.convertField("55.5", "float"), 55.5);
+      it('should convert a string to an float', function() {
+        return assert.strictEqual(Converter.convertField('55.5', 'float'), 55.5);
       });
-      it("shouldn't convert something it doesn't recognize", function() {
-        return assert.equal(Converter.convertField("abcda", "fakeType"), "abcda");
+      it('shouldn\'t convert something it doesn\'t recognize', function() {
+        return assert.equal(Converter.convertField('abcda', 'fakeType'), 'abcda');
       });
-      it("should convert a non-integer string to NaN", function() {
-        return assert.ok(_.isNaN(Converter.convertField("abcda", "int")));
+      it('should convert a non-integer string to NaN', function() {
+        return assert.ok(_.isNaN(Converter.convertField('abcda', 'int')));
       });
-      return it("should convert a whole group of values", function() {
+      return it('should convert a whole group of values', function() {
         var newData;
         newData = Converter.convert({
           booya: {
@@ -343,7 +366,7 @@
         });
         assert.strictEqual(newData.booya, 5);
         assert.strictEqual(newData.gee, 77.2);
-        return assert.strictEqual(newData.wizz, "12");
+        return assert.strictEqual(newData.wizz, '12');
       });
     });
   });

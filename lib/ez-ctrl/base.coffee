@@ -114,8 +114,7 @@ module.exports = BaseController =
 		@beforeEach.concat routeDetails.middleware
 	
 	handleRequest: (routeDetails, req, res, next) ->
-		ThisController = this
-		controller = new ThisController(routeDetails)
+		controller = new this(routeDetails)
 		controller.handleRequest(req, res)
 	
 	getRoutes: () ->
@@ -127,26 +126,38 @@ module.exports = BaseController =
 		routes = @getRoutes()
 		for route, routeDetails of routes
 			@registerRoute(app, routeDetails)
-			
+	
+	getController: (route)->
+		routeDetails = @getRouteDetails route
+		controller = new this routeDetails
+
 BaseController.prototype =
 	handleRequest: (req, res) ->
 		@request = req
 		@response = res
-		Q.when().then () =>
+		Q.fcall =>
 			@getData()
 		.then (data) =>
-			@convert(data)
-		.then (data) =>
-			@validate(data)
-		.then (data) =>
-			logicArguments = FuncDetails.dataToArgs(@logic, data)
-			@logic.apply(_this, logicArguments)
+			@getResponse data
 		.then (response) =>
 			@sendResponse(response)
 		.fail (reason) =>
 			@sendErrorResponse(reason)
 		.fail (reason) =>
 			console.log "EZController Error unhandled", reason, reason?.stack
+	
+	getResponse: (data)->
+		Q.fcall =>
+			@convert(data)
+		.then (data) =>
+			@validate(data)
+		.then (data) =>
+			@runLogic(data)
+	
+	runLogic: (data)->
+		Q.fcall =>
+			logicArguments = FuncDetails.dataToArgs(@logic, data)
+			@logic.apply(_this, logicArguments)
 	
 	getRequestData: (field, type) ->
 		if type is 'file'
@@ -201,5 +212,7 @@ BaseController.prototype =
 	convert: (data) ->
 		Converter.convert @validation, data
 	
-	validate: (data) ->
+	validate: (data)->
 		Validator.validate(@validation, data, @modelName)
+	
+
