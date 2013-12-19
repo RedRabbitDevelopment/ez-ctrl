@@ -16,7 +16,7 @@ module.exports = FuncDetails =
 					arg.replace FN_ARG, (all, underscore, name)->
 						argsList.push(name)
 				fn.argsList = argsList
-			argsList;
+			argsList
 		else
 			return null
 	
@@ -40,7 +40,7 @@ module.exports = FuncDetails =
 		data = {}
 		for argString, i in argList or []
 			if argString is "_data"
-				data[field] = value for value, field of args[i]
+				data[field] = value for field, value of args[i]
 			else
 				data[argString] = args[i]
 		data

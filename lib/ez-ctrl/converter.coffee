@@ -13,6 +13,9 @@ ConverterMethods =
 			value is 'true'
 		else
 			!!value
+	
+	date: (value)->
+		new Date(value)
 
 module.exports = Converter =
 	convert: (types, data)->

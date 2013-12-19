@@ -16,13 +16,15 @@ module.exports = class FrontEnd
 			Q.when true
 		initPromise.then =>
 			@controllerManager.registerRoutes app
-			app.get '/js/lib/ez-routes.js', (req, res)->
+			app.get '/js/lib/ez-routes.js', (req, res)=>
 				unless frontEndJS
 					frontEndJS = @getFrontEndMethods()
 				res.setHeader 'Content-Type', 'application/x-javascript; charset=UTF-8'
 				res.end frontEndJS
 			app.get '/js/lib/ez-access.js', (req, res)->
 				res.sendfile __dirname + "/ez-access.js"
+			app.get '/js/lib/ez-access-angular.js', (req, res)->
+				res.sendfile __dirname + "/ez-access-angular.js"
 			app.get '/js/lib/ez-validation.js', (req, res)->
 				res.sendfile __dirname + "/validator.js"
 	
@@ -34,7 +36,6 @@ module.exports = class FrontEnd
 		EZAccess = {}
 		EZAccess._extractData = FuncDetails.argsToData
 		for controller, controllerDetails of routes
-			
 			EZAccess[controller] = {}
 			EZAccess[controller]._routeDetails = {}
 			for funcName, funcDetails of controllerDetails
@@ -52,10 +53,11 @@ module.exports = class FrontEnd
 		@convertToFrontEnd EZAccess
 	
 	convertToFrontEnd: (object)->
-		output = ""
+		output = "define(['ez-access'], function (EZAccess) {\n"
 		for field, value of object
 			output += "EZAccess['#{field}'] = " + @convertToFrontEndRaw value
 			output += ";\n"
+		output += "});"
 		output
 	
 	convertToFrontEndRaw: (object, depth = 0)->

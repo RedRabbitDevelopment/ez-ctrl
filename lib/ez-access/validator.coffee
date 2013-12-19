@@ -116,6 +116,7 @@ module.exports = Validator =
 		isBoolean: "must be a boolean"
 		isText: 'must be a string'
 		isArray: 'must be an array'
+		isDate: 'must be a date'
 
 	ValidationMethods:
 		required: (value)->
@@ -123,6 +124,10 @@ module.exports = Validator =
 		isBoolean: (value)->
 			unless value is true or value is false
 				throw new UserError Validator.Messages.isBoolean
+			true
+		isDate: (value)->
+			unless value instanceof Date
+				throw new UserError Validator.Messages.isDate
 			true
 		isFile: ->
 			true
