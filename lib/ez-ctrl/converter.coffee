@@ -26,7 +26,14 @@ module.exports = Converter =
 		data
 	
 	convertField: (value, type)->
-		if(ConverterMethods[type])
+		if _.isArray type or _.isArray value
+			unless _.isArray type and _.isArray value
+				value
+			else
+				for index, val in value
+					value[index] = @convertField val, type[0]
+				value
+		else if(ConverterMethods[type])
 			ConverterMethods[type](value)
 		else
 			value
