@@ -13,7 +13,7 @@ define ['q'], (q)->
 					param
 			).join "/"
 		_constructQuery: (data)->
-			result = for key, value of data or {} when value
+			result = for key, value of data or {} when value?
 				encodeURIComponent(key) + "=" + encodeURIComponent(value)
 			if result.length > 0
 				"?" + result.join "&"
