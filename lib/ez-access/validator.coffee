@@ -120,7 +120,7 @@ module.exports = Validator =
 
 	ValidationMethods:
 		required: (value)->
-			throw new UserError(Validator.Messages['required']) unless !!value
+			throw new UserError(Validator.Messages['required']) unless value?
 		isBoolean: (value)->
 			unless value is true or value is false
 				throw new UserError Validator.Messages.isBoolean
