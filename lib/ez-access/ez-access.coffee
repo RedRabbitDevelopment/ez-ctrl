@@ -1,6 +1,23 @@
 # Note this is a front-end file!
 define ['q'], (q)->
 	this.EZAccess =
+		eventualObject: (promise)->
+			shell = {}
+			promise.then (result)->
+				for key, value of result
+					shell[key] = value
+			shell
+		eventualArray: (promise)->
+			shell = []
+			promise.then (result)->
+				for value, i in result
+					shell.push result[i]
+			shell
+		eventualValue: (promise)->
+			shell = value: null
+			promise.then (result)->
+				shell.value = result
+			shell
 		_constructPath: (pattern, data)->
 			params = pattern.split '/'
 			(for param in params
