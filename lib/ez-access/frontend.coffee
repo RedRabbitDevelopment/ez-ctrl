@@ -53,11 +53,10 @@ module.exports = class FrontEnd
 		@convertToFrontEnd EZAccess
 	
 	convertToFrontEnd: (object)->
-		output = "require('ez-access'); function (EZAccess) {\n"
+		output = "EZAccess = require('ez-access');\n"
 		for field, value of object
 			output += "EZAccess['#{field}'] = " + @convertToFrontEndRaw value
 			output += ";\n"
-		output += "};"
 		output
 	
 	convertToFrontEndRaw: (object, depth = 0)->
