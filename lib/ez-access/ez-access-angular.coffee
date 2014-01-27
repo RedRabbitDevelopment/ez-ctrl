@@ -11,7 +11,7 @@
 )( (angular, EZAccess, EZRoutes)->
 	angular.module('ez.access', [])
 	.service('EZAccess', ['$http', ($http)->
-		angular.extend @, window.EZAccess
+		angular.extend @, EZAccess
 		EZAccess._makeRequestBase = (method, path, data)->
 			args = [path]
 			args.push data if method isnt 'get'
