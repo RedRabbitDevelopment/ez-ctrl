@@ -4,7 +4,7 @@
 		validate = require 'validator'
 		Q = require('q')
 		UserError = require '../ez-ctrl/userError'
-		module.exports = generator(_, validate, Q, UserError
+		module.exports = generator(_, validate, Q, UserError)
 	else if define and define.amd
 		define ['underscore', 'validate', 'q', 'UserError'], generator
 	else
