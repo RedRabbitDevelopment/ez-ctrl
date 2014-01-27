@@ -1,10 +1,10 @@
 ((generator)->
-	if exports and module.exports
+	if exports? and module.exports
 		angular = require 'angular'
 		EZAccess = require 'ez-access'
 		require 'ez-routes'
 		module.exports = generator(angular, EZAccess, EZRoutes)
-	else if define and define.amd
+	else if define? and define.amd
 		define ['angular', 'ez-access', 'ez-routes'], generator
 	else
 		window.EZAccessA = generator(angular, EZAccess)

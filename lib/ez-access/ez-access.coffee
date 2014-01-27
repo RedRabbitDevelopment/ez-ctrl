@@ -1,9 +1,9 @@
 # Note this is a front-end file!
 ( (generator)->
-	if exports and module.exports
+	if exports? and module.exports
 		Q = require 'q'
 		module.exports = generator(Q)
-	else if define and define.amd
+	else if define? and define.amd
 		define ['q'], generator
 	else
 		window.EZAccess = generator(Q)
