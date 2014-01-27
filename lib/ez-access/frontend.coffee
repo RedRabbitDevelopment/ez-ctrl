@@ -62,7 +62,7 @@ module.exports = class FrontEnd
 	} else {
 		window.EZRoutes = generator(window.EZAccess);
 	}
-)(function(EZAccess) {
+})(function(EZAccess) {
 		"
 		for field, value of object
 			output += "EZAccess['#{field}'] = " + @convertToFrontEndRaw value, 1
