@@ -53,11 +53,25 @@ module.exports = class FrontEnd
 		@convertToFrontEnd EZAccess
 	
 	convertToFrontEnd: (object)->
-		output = "EZAccess = require('ez-access');\n"
+		output = "
+(function(generator) {
+	if(typeof module !== 'undefined' && module.exports) {
+		module.exports = generator(require('EZAccess'));
+	} else if (typeof define !== 'undefined' && define.amd) {
+		define(['ez-access'], generator);
+	} else {
+		window.EZRoutes = generator(window.EZAccess);
+	}
+)(function(EZAccess) {
+		"
 		for field, value of object
-			output += "EZAccess['#{field}'] = " + @convertToFrontEndRaw value
+			output += "EZAccess['#{field}'] = " + @convertToFrontEndRaw value, 1
 			output += ";\n"
+		output += "
+});
+		"
 		output
+
 	
 	convertToFrontEndRaw: (object, depth = 0)->
 		tabs = @getTabs depth
