@@ -81,3 +81,4 @@ this.EZAccess =
 			xmlhttp.setRequestHeader('Content-Type', 'application/json')
 			xmlhttp.send JSON.stringify data
 		deferred.promise
+module.exports = this.EZAccess
