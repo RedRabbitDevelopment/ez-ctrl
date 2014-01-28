@@ -56,7 +56,7 @@ module.exports = class FrontEnd
 		output = "
 (function(generator) {
 	if(typeof module !== 'undefined' && module.exports) {
-		module.exports = generator(require('EZAccess'));
+		module.exports = generator(require('ez-access'));
 	} else if (typeof define !== 'undefined' && define.amd) {
 		define(['ez-access'], generator);
 	} else {
