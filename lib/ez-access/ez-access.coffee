@@ -11,15 +11,17 @@
 	EZAccess =
 		eventualObject: (promise)->
 			shell = {}
-			promise.then (result)->
+			shell._promise = promise.then (result)->
 				for key, value of result
 					shell[key] = value
+				shell
 			shell
 		eventualArray: (promise)->
 			shell = []
-			promise.then (result)->
+			shell._promise = promise.then (result)->
 				for value, i in result
 					shell.push result[i]
+				shell
 			shell
 		eventualValue: (promise)->
 			shell = value: null
