@@ -98,3 +98,11 @@ describe 'Validator', ->
 			assert.equal result.errors.array[0], 'should be an array of text'
 			done()
 		.fail done
+	it 'should pass on 0 or empty string', (done)->
+		Validator.validate
+			name: required: true
+		,
+			name: 0
+		.then (result)->
+			done()
+		.fail done

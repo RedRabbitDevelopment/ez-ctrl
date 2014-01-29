@@ -113,6 +113,18 @@ describe "Test Server", ->
 				done()
 			.fail (error)->
 				done error
+		it 'shouldnt fail on a 0', (done)->
+			makeRequest
+				method: 'POST'
+				path: '/users/test-zero'
+			,
+				name: 0
+			.then (data)->
+				assert.ok data
+				assert.equal data.success, true
+				assert.equal data.response, 'Result'
+				done()
+			.fail done
 		it "should use an id", (done)->
 			makeRequest
 				method: "GET",

@@ -184,7 +184,7 @@ BaseController.prototype =
 		promises = for field, value of @validation
 			( (field, value)=>
 				@getRequestData(field, value.type).then (value)->
-					if value
+					if value?
 						data[field] = value
 			)(field, value)
 		Q.all(promises).then ->

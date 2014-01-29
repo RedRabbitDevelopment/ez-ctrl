@@ -109,7 +109,7 @@
         }
       });
     });
-    return it('should be able to give us a complex error', function(done) {
+    it('should be able to give us a complex error', function(done) {
       return Validator.validate({
         array: {
           type: ['text']
@@ -123,6 +123,17 @@
         assert.ok(result instanceof UserError);
         assert.ok(result != null ? (_ref = result.errors) != null ? _ref.array : void 0 : void 0);
         assert.equal(result.errors.array[0], 'should be an array of text');
+        return done();
+      }).fail(done);
+    });
+    return it('should pass on 0 or empty string', function(done) {
+      return Validator.validate({
+        name: {
+          required: true
+        }
+      }, {
+        name: 0
+      }).then(function(result) {
         return done();
       }).fail(done);
     });

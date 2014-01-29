@@ -134,6 +134,17 @@
         logic: function(id) {
           return "Result";
         }
+      },
+      postTestZero: {
+        validation: {
+          name: {
+            type: 'int',
+            required: true
+          }
+        },
+        logic: function(name) {
+          return 'Result';
+        }
       }
     }
   });

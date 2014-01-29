@@ -152,6 +152,19 @@
           return done(error);
         });
       });
+      it('shouldnt fail on a 0', function(done) {
+        return makeRequest({
+          method: 'POST',
+          path: '/users/test-zero'
+        }, {
+          name: 0
+        }).then(function(data) {
+          assert.ok(data);
+          assert.equal(data.success, true);
+          assert.equal(data.response, 'Result');
+          return done();
+        }).fail(done);
+      });
       it("should use an id", function(done) {
         return makeRequest({
           method: "GET",

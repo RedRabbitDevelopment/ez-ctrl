@@ -90,5 +90,12 @@ module.exports = MyBaseController.extend
 			usesId: true,
 			logic: (id)->
 				"Result"
+		postTestZero:
+			validation:
+				name:
+					type: 'int'
+					required: true
+			logic: (name)->
+				'Result'
 
 
