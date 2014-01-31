@@ -2,12 +2,13 @@
 ( (generator)->
 	if exports? and module.exports
 		Q = require 'q'
-		module.exports = generator(Q)
+		_ = require 'underscore'
+		module.exports = generator(Q, _)
 	else if define? and define.amd
-		define ['q'], generator
+		define ['q', 'underscore'], generator
 	else
-		window.EZAccess = generator(Q)
-)((Q)->
+		window.EZAccess = generator(Q, _)
+)((Q, _)->
 	EZAccess =
 		eventualObject: (promise)->
 			shell = {}
@@ -39,11 +40,29 @@
 				else
 					param
 			).join "/"
+		_serialize: (obj, prefix)->
+			str = []
+			if obj.length?
+				for value, i in obj
+					key = if prefix then prefix + "[]" else i
+					if value isnt undefined
+						str.push if typeof value is 'object'
+							@_serialize(value, key)
+						else
+							encodeURIComponent(key) + "=" + encodeURIComponent(value)
+			else
+				for key, value of obj
+					key = if prefix then prefix + "[" + key + "]" else key
+					if value isnt undefined
+						str.push if typeof value is 'object'
+							@_serialize(value, key)
+						else
+							encodeURIComponent(key) + "=" + encodeURIComponent(value)
+			str.join "&"
 		_constructQuery: (data)->
-			result = for key, value of data or {} when value?
-				encodeURIComponent(key) + "=" + encodeURIComponent(value)
+			result = @_serialize(data)
 			if result.length > 0
-				"?" + result.join "&"
+				"?" + result
 			else
 				""
 		_isFunction: (obj)->
