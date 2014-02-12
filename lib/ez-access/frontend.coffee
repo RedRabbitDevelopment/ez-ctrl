@@ -47,7 +47,7 @@ module.exports = class FrontEnd
 					validation: funcDetails.validation
 					argList: FuncDetails.extractArguments funcDetails.logic
 				funcString = "(function(" + argString + ") {\n" +
-				"	return EZAccess._makeRequest(this._routeDetails['" + funcName + "'], arguments);\n" +
+				"	return EZAccess._makeRequest(this._routeDetails['" + funcName + "'], arguments, '" + controller + "');\n" +
 				"});";
 				EZAccess[controller][funcName] = eval(funcString)
 		@convertToFrontEnd EZAccess
@@ -93,7 +93,7 @@ module.exports = class FrontEnd
 		else if _.isNumber(object) or _.isBoolean object
 			"#{object}"
 		else if _.isString object
-			"'#{object}'"
+			"'#{object.replace('"', '\\"').replace("'", "\\'")}'"
 		else
 			'undefined'
 	
