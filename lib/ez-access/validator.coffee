@@ -49,7 +49,7 @@
 		validateField: (validators, field, value, controllerName)->
 			promises = []
 			# fail if the value is missing
-			unless value
+			unless value?
 				promises.push @runValidate(value, 'required', true, field, controllerName)
 			else if validators
 				for validator, validatorData of validators
