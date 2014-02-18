@@ -126,7 +126,7 @@
         return done();
       }).fail(done);
     });
-    return it('should pass on 0 or empty string', function(done) {
+    it('should pass on 0 or empty string', function(done) {
       return Validator.validate({
         name: {
           required: true
@@ -134,6 +134,32 @@
       }, {
         name: 0
       }).then(function(result) {
+        return done();
+      }).fail(done);
+    });
+    return it('should test other validation on 0 or empty string', function(done) {
+      return Validator.validate({
+        name: {
+          required: false,
+          type: 'text',
+          len: [[1]]
+        },
+        age: {
+          required: false,
+          type: 'int'
+        }
+      }, {
+        name: '',
+        age: 'ha'
+      }).then(function(result) {
+        return assert.ok(false, 'Shouldnt have resolved with ' + json_encode(result));
+      }, function(error) {
+        var _ref, _ref1;
+        assert.ok(error != null ? error.errors : void 0);
+        assert.equal((_ref = error.errors.age) != null ? _ref.length : void 0, 1);
+        assert.equal(error.errors.age[0], 'Invalid integer');
+        assert.equal((_ref1 = error.errors.name) != null ? _ref1.length : void 0, 1);
+        assert.equal(error.errors.name[0], 'String is not in range');
         return done();
       }).fail(done);
     });
