@@ -13,12 +13,16 @@ module.exports = class ControllerManager
 		, {}
 	readdir: (dirname)->
 		Q.nfcall(fs.readdir, dirname).then (files)=>
-			for file in files
-				unless -1 is index = file.indexOf '.js'
-					file = file.substr 0, index
-					Controller = require dirname + "/" + file
-					if Controller.isController and not Controller.isAbstract
-						@addController Controller
+      @loadFiles files, '.js'
+      if @controllers.length is 0
+        @loadFiles files, '.coffee'
+  loadFiles: (files, ext)->
+    for file in files
+      unless -1 is index = file.indexOf ext
+        file = file.substr 0, index
+        Controller = require dirname + "/" + file
+        if Controller.isController and not Controller.isAbstract
+          @addController Controller
 	registerRoutes: (app)->
 		for controller in @controllers
 			controller.registerRoutes app
