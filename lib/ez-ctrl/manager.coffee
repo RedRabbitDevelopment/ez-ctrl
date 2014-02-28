@@ -18,7 +18,7 @@ module.exports = class ControllerManager
         @loadFiles dirname, files, '.coffee'
   loadFiles: (dirname, files, ext)->
     for file in files
-      unless -1 is index = file.indexOf ext
+      if -1 isnt index = file.indexOf ext and -1 is file.indexOf '.spec' + ext
         file = file.substr 0, index
         Controller = require dirname + "/" + file
         if Controller.isController and not Controller.isAbstract
