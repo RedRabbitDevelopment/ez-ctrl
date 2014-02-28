@@ -13,7 +13,7 @@ module.exports = class ControllerManager
     , {}
   readdir: (dirname)->
     Q.nfcall(fs.readdir, dirname).then (files)=>
-      @loadFiles files, '.js'
+      @loadFiles dirname, files, '.js'
       if @controllers.length is 0
         @loadFiles dirname, files, '.coffee'
   loadFiles: (dirname, files, ext)->
