@@ -1,46 +1,46 @@
 <html>
-	<head>
-	
-	</head>
-	<body>
-		<script type="text/javascript" src="/js/lib/underscore-min.js"></script>
-		<script type="text/javascript" src="/js/lib/validator-min.js"></script>
-		<script type="text/javascript" src="/js/lib/q.js"></script>
-		<script type="text/javascript" src="/js/lib/ez-access.js"></script>
-		<script type="text/javascript" src="/js/lib/ez-routes.js"></script>
-		<script type="text/javascript" src="/js/lib/ez-validation.js"></script>
-		<script>
-			assert = function(actual, expected) {
-				if(actual !== expected) {
-					throw new Error("Actual result differs from expected: '" + actual + "' ::: '" + expected + "'")
-				}
-			}
-			EZAccess.User.query().then(function(response) {
-				assert(response.length > 0, true);
-			}).fail(function(error) {
-				console.log("Error!", error);
-			});
-			EZAccess.User.postLogin("yourdeveloperfriend", "password1").then(function(response) {
-				assert(response, true);
-			}).fail(function(error) {
-				console.log("Error!", error);
-			});
-			EZAccess.User.postLogin("yourdeveloperfriend", "password2").then(function(response) {
-				assert(false, "Successful for some reason!");
-			}, function(error) {
-				assert(error, "Invalid username or password");
-			}).fail(function(error) {
-				console.log("Error!", error);
-			});
-			EZAccess.User.postLogin("yourdeveloperfriend").then(function(response) {
-				assert(false, "Successful for some reason!");
-			}, function(error) {
-				assert(error.message, "validate");
-				assert(error.error.password.length, 1);
-				assert(error.error.password[0], 'is required');
-			}).fail(function(error) {
-				console.log("Error!", error);
-			});
-		</script>
-	</body>
+  <head>
+  
+  </head>
+  <body>
+    <script type="text/javascript" src="/js/lib/underscore-min.js"></script>
+    <script type="text/javascript" src="/js/lib/validator-min.js"></script>
+    <script type="text/javascript" src="/js/lib/q.js"></script>
+    <script type="text/javascript" src="/js/lib/ez-access.js"></script>
+    <script type="text/javascript" src="/js/lib/ez-routes.js"></script>
+    <script type="text/javascript" src="/js/lib/ez-validation.js"></script>
+    <script>
+      assert = function(actual, expected) {
+        if(actual !== expected) {
+          throw new Error("Actual result differs from expected: '" + actual + "' ::: '" + expected + "'")
+        }
+      }
+      EZAccess.User.query().then(function(response) {
+        assert(response.length > 0, true);
+      }).fail(function(error) {
+        console.log("Error!", error);
+      });
+      EZAccess.User.postLogin("yourdeveloperfriend", "password1").then(function(response) {
+        assert(response, true);
+      }).fail(function(error) {
+        console.log("Error!", error);
+      });
+      EZAccess.User.postLogin("yourdeveloperfriend", "password2").then(function(response) {
+        assert(false, "Successful for some reason!");
+      }, function(error) {
+        assert(error, "Invalid username or password");
+      }).fail(function(error) {
+        console.log("Error!", error);
+      });
+      EZAccess.User.postLogin("yourdeveloperfriend").then(function(response) {
+        assert(false, "Successful for some reason!");
+      }, function(error) {
+        assert(error.message, "validate");
+        assert(error.error.password.length, 1);
+        assert(error.error.password[0], 'is required');
+      }).fail(function(error) {
+        console.log("Error!", error);
+      });
+    </script>
+  </body>
 </html>

@@ -5,14 +5,14 @@
 # through UserErrors.
 ###
 class UserError
-	constructor: ->
-		err = Error.apply @, arguments
-		@stack = err.stack
-		@message = err.message
-		@isUserError = true
-		@
+  constructor: ->
+    err = Error.apply @, arguments
+    @stack = err.stack
+    @message = err.message
+    @isUserError = true
+    @
 
 UserError.prototype = Object.create Error.prototype,
-	constructor: value: UserError
+  constructor: value: UserError
 
 module.exports = UserError

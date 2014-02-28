@@ -7,10 +7,10 @@ FuncDetails = require('./lib/ez-ctrl/func-details')
 UserError = require './lib/ez-ctrl/userError'
 
 module.exports =
-	BaseController: BaseController
-	FrontEnd: FrontEnd
-	FuncDetails: FuncDetails
-	Validator: Validator
-	Converter: Converter
-	ControllerManager: ControllerManager
-	UserError: UserError
+  BaseController: BaseController
+  FrontEnd: FrontEnd
+  FuncDetails: FuncDetails
+  Validator: Validator
+  Converter: Converter
+  ControllerManager: ControllerManager
+  UserError: UserError

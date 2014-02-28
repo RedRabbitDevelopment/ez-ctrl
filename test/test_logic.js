@@ -40,29 +40,29 @@
       });
       it('shouldn\'t care about whitespace', function() {
         var args;
-        args = FuncDetails.extractArguments(function( a,	 b, 
-				c) {});
+        args = FuncDetails.extractArguments(function( a,   b, 
+        c) {});
         return assert.deepEqual(args, ['a', 'b', 'c']);
       });
       it('shouldn\'t care about comments', function() {
         var args;
         args = FuncDetails.extractArguments(function(/* ab */a, 
-				// booya stuff
-				b, /* d, */c) /*don\'t mess with */{
-				
-				/* don\'t mess with */ });
+        // booya stuff
+        b, /* d, */c) /*don\'t mess with */{
+        
+        /* don\'t mess with */ });
         return assert.deepEqual(args, ['a', 'b', 'c']);
       });
       return it('should care about the whitespace and comments', function() {
         var argString, compareTo;
         argString = FuncDetails.extractArgumentString(function(/* ab */a, 
-				// booya stuff
-				b, /* d, */c) /*don't mess with */{
-				
-				/* don't mess with */ });
+        // booya stuff
+        b, /* d, */c) /*don't mess with */{
+        
+        /* don't mess with */ });
         compareTo = '/* ab */a, ';
-        compareTo += '				// booya stuff';
-        compareTo += '				b, /* d, */c';
+        compareTo += '        // booya stuff';
+        compareTo += '        b, /* d, */c';
         argString = argString.replace(/\n/g, '');
         return assert.equal(argString, compareTo);
       });
@@ -324,13 +324,13 @@
       });
       return it('should give me a string', function() {
         /* Not done
-        			frontEndMethods = base.FrontEnd.getFrontEndMethods()
-        			assert.ok frontEndMethods
-        			try {
-        				FrontEnd = eval(frontEndMethods)
-        			} catch(e) {
-        				assert.fail('', e)
-        			}
+        frontEndMethods = base.FrontEnd.getFrontEndMethods()
+        assert.ok frontEndMethods
+        try {
+          FrontEnd = eval(frontEndMethods)
+        } catch(e) {
+          assert.fail('', e)
+        }
         */
 
       });
