@@ -2,11 +2,14 @@ Q = require('q')
 MyBaseController = require './'
 data = require '../data'
 middleware = data.middleware
+beforeEach = data.beforeEach
 UserData = data.UserData
 UserError = require('../../').UserError
 
 module.exports = MyBaseController.extend
   name: "User"
+  beforeEach: ->
+    beforeEach.userRan++
   middleware: (req, res, next)->
     middleware.userRan++
     next()

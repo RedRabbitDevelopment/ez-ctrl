@@ -2,10 +2,16 @@ Q = require('q')
 MyBaseController = require './'
 data = require '../data'
 middleware = data.middleware
+beforeEach = data.beforeEach
 UserData = data.UserData
 
 module.exports = MyBaseController.extend
   name: "AsyncUser"
+  beforeEach: [->
+    beforeEach.asyncRan++
+  , ->
+    beforeEach.asyncRan++
+  ]
   middleware: (req, res, next)->
     middleware.asyncRan++
     next()
@@ -95,3 +101,8 @@ module.exports = MyBaseController.extend
           deferred.reject("Invalid username or password")
         , 25
         deferred.promise
+    beforeEachCrazy:
+      before: ->
+        beforeEach.other.crazy = true
+      logic: ->
+        true

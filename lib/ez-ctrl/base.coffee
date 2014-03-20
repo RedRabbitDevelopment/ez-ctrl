@@ -96,15 +96,16 @@ module.exports = BaseController =
     # Add default id validation
     if usesId and not validation.id
       validation.id = required: true
-    middleware = if routeDetails.before
-      if _.isFunction routeDetails.before
-        [routeDetails.before]
+    middleware = if routeDetails.middleware
+      if _.isFunction routeDetails.middleware
+        [routeDetails.middleware]
       else
-        routeDetails.before
+        routeDetails.middleware
     else
       []
     
     method: method
+    route: route
     logic: logic
     before: before
     pattern: pattern
@@ -156,9 +157,9 @@ BaseController.prototype =
   
   runBefore: (data, i = 0)->
     if i < @before.length
-      Q.fcall(=> @applyFunction(fn, data))
+      Q.fcall(=> @applyFunction(@before[i], data))
       .then =>
-        @runBefore data, i++
+        @runBefore data, i + 1
     else
       data
 

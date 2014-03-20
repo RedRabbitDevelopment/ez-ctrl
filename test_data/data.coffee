@@ -4,6 +4,7 @@ Validator = base.Validator
 UserError = base.UserError
 
 exports.middleware = middleware = {}
+exports.beforeEach = beforeEach = {}
 exports.UserData = UserData = []
 exports.resetData = ()->
   UserData.splice 0, 5,
@@ -21,6 +22,10 @@ exports.resetData = ()->
   middleware.myBaseRan = 0
   middleware.userRan = 0
   middleware.asyncRan = 0
+  beforeEach.myBaseRan = 0
+  beforeEach.userRan = 0
+  beforeEach.asyncRan = 0
+  beforeEach.other = {}
   
 exports.getData = ()->
   UserData.slice 0

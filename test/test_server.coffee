@@ -202,4 +202,38 @@ describe "Test Server", ->
           done()
         .fail (reason)->
           done reason
-    
+    describe "beforeEach", ->
+      it "should run base and user", (done)->
+        makeRequest
+          method: "GET"
+          path: '/users/1'
+        .then (data)->
+          assert.equal TestData.beforeEach.myBaseRan, 1
+          assert.equal TestData.beforeEach.userRan, 1
+          assert.equal TestData.beforeEach.asyncRan, 0
+          done()
+        .fail (reason)->
+          done reason
+      it "should run base and async", (done)->
+        makeRequest
+          method: "GET"
+          path: '/async_users/1'
+        .then (data)->
+          assert.equal TestData.beforeEach.myBaseRan, 1
+          assert.equal TestData.beforeEach.userRan, 0
+          assert.equal TestData.beforeEach.asyncRan, 2
+          done()
+        .fail (reason)->
+          done reason
+      it "should run on before too", (done)->
+        makeRequest
+          method: "GET"
+          path: '/async_users/before-each-crazy'
+        .then (data)->
+          assert.equal TestData.beforeEach.myBaseRan, 1
+          assert.equal TestData.beforeEach.userRan, 0
+          assert.equal TestData.beforeEach.asyncRan, 2
+          assert.ok TestData.beforeEach.other.crazy
+          done()
+        .fail (reason)->
+          done reason
