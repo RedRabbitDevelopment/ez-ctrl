@@ -6,7 +6,7 @@ UserData = data.UserData
 
 module.exports = MyBaseController.extend
   name: "AsyncUser"
-  beforeEach: (req, res, next)->
+  middleware: (req, res, next)->
     middleware.asyncRan++
     next()
   routes:

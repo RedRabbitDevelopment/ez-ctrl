@@ -8,7 +8,7 @@ ErrorHandler = data.ErrorHandler
 
 module.exports = MyBaseController = BaseController.extend
   isAbstract: true
-  beforeEach:  (req, res, next)->
+  middleware:  (req, res, next)->
     middleware.myBaseRan++
     next()
 

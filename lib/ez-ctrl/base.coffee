@@ -13,6 +13,7 @@ module.exports = BaseController =
   isController: true
   isAbstract: true
   beforeEach: []
+  middleware: []
   extend: (options) ->
     NewController = (routeDetails) ->
       _.extend(this, routeDetails)
@@ -27,6 +28,7 @@ module.exports = BaseController =
       NewController.setBaseData(options.name)
     _.extend NewController, options
     NewController.beforeEach = @extendArray 'beforeEach', options.beforeEach
+    NewController.middleware = @extendArray 'middleware', options.middleware
     _.extend(NewController.prototype, @prototype)
     NewController
   
@@ -82,6 +84,9 @@ module.exports = BaseController =
         
     if routeDetails.method
       method = routeDetails.method
+    before = []
+    before = before.concat @beforeEach if @beforeEach
+    before = before.concat routeDetails.before if routeDetails.before
     if routeDetails.pattern
       pattern = routeDetails.pattern
     if routeDetails.usesId
@@ -101,6 +106,7 @@ module.exports = BaseController =
     
     method: method
     logic: logic
+    before: before
     pattern: pattern
     validation: validation
     usesId: usesId
@@ -111,7 +117,7 @@ module.exports = BaseController =
     app[routeDetails.method](routeDetails.pattern, middleware, @handleRequest.bind(this, routeDetails))
   
   getMiddleWare: (routeDetails)->
-    @beforeEach.concat routeDetails.middleware
+    @middleware.concat routeDetails.middleware
   
   handleRequest: (routeDetails, req, res, next) ->
     controller = new this(routeDetails)
@@ -138,6 +144,8 @@ BaseController.prototype =
     Q.fcall =>
       @getData()
     .then (data) =>
+      @runBefore data
+    .then (data) =>
       @getResponse data
     .then (response) =>
       @sendResponse(response)
@@ -146,18 +154,29 @@ BaseController.prototype =
     .fail (reason) =>
       console.log "EZController Error unhandled", reason, reason?.stack
   
+  runBefore: (data, i = 0)->
+    if i < @before.length
+      Q.fcall(=> @applyFunction(fn, data))
+      .then =>
+        @runBefore data, i++
+    else
+      data
+
   getResponse: (data)->
     Q.fcall =>
       @convert(data)
     .then (data) =>
       @validate(data)
     .then (data) =>
-      @runLogic(data)
-  
+      @runLogic data
+
   runLogic: (data)->
     Q.fcall =>
-      logicArguments = FuncDetails.dataToArgs(@logic, data)
-      @logic.apply(_this, logicArguments)
+      @applyFunction @logic, data
+  
+  applyFunction: (fn, data)->
+    args = FuncDetails.dataToArgs(fn, data)
+    fn.apply(@, args)
   
   getRequestData: (field, type) ->
     if type is 'file'

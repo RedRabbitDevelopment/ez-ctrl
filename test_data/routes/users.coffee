@@ -7,7 +7,7 @@ UserError = require('../../').UserError
 
 module.exports = MyBaseController.extend
   name: "User"
-  beforeEach: (req, res, next)->
+  middleware: (req, res, next)->
     middleware.userRan++
     next()
   routes:

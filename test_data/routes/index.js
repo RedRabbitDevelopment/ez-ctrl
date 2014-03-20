@@ -18,7 +18,7 @@
 
   module.exports = MyBaseController = BaseController.extend({
     isAbstract: true,
-    beforeEach: function(req, res, next) {
+    middleware: function(req, res, next) {
       middleware.myBaseRan++;
       return next();
     }

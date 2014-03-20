@@ -14,7 +14,7 @@
 
   module.exports = MyBaseController.extend({
     name: "AsyncUser",
-    beforeEach: function(req, res, next) {
+    middleware: function(req, res, next) {
       middleware.asyncRan++;
       return next();
     },

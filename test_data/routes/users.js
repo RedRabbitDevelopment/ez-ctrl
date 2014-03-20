@@ -16,7 +16,7 @@
 
   module.exports = MyBaseController.extend({
     name: "User",
-    beforeEach: function(req, res, next) {
+    middleware: function(req, res, next) {
       middleware.userRan++;
       return next();
     },
