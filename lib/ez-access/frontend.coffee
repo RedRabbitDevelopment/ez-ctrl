@@ -68,10 +68,10 @@ module.exports = class FrontEnd
     for field, value of object
       output += "EZAccess['#{field}'] = " + @convertToFrontEndRaw value, 1
       output += ";\n"
+    output += "EZAccess.hostname = '#{hostname}';\n" if hostname
     output += "
 });\n
     "
-    output += "EZAccess.hostname = '#{hostname}';\n" if hostname
     output
 
   
