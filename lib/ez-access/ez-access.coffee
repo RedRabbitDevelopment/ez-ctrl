@@ -40,8 +40,8 @@
         else
           param
       ).join "/"
-      if EZAccess.pathname
-        "//#{EZAccess.pathname}#{path}"
+      if EZAccess.hostname
+        "//#{EZAccess.hostname}#{path}"
       else
         path
     _serialize: (obj, prefix)->
