@@ -31,7 +31,7 @@
       shell
     _constructPath: (pattern, data)->
       params = pattern.split '/'
-      (for param in params
+      path = (for param in params
         if variables = param.match /^:(.*?)(\(.*?\))?$/
           variable = variables[1]
           value = data[variable]
@@ -40,6 +40,10 @@
         else
           param
       ).join "/"
+      if EZAccess.pathname
+        "//#{EZAccess.pathname}#{path}"
+      else
+        path
     _serialize: (obj, prefix)->
       str = []
       if obj.length?

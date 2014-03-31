@@ -32,7 +32,7 @@ module.exports = class FrontEnd
   addController: (ctrl)->
     @controllerManager.addController ctrl
 
-  getFrontEndMethods: ()->
+  getFrontEndMethods: (hostname)->
     routes = @controllerManager.getAllRoutes()
     EZAccess = {}
     EZAccess._extractData = FuncDetails.argsToData
@@ -49,7 +49,8 @@ module.exports = class FrontEnd
           argList: FuncDetails.extractArguments funcDetails.logic
         funcString = "(function(" + argString + ") {\n" +
         "  return EZAccess._makeRequest(this._routeDetails['" + funcName + "'], arguments, '" + controller + "');\n" +
-        "});";
+        "});\n"
+        funcString += "EZAccess.hostname = '#{hostname}';\n" if hostname
         EZAccess[controller][funcName] = eval(funcString)
     @convertToFrontEnd EZAccess
   
