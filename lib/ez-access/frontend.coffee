@@ -50,11 +50,10 @@ module.exports = class FrontEnd
         funcString = "(function(" + argString + ") {\n" +
         "  return EZAccess._makeRequest(this._routeDetails['" + funcName + "'], arguments, '" + controller + "');\n" +
         "});\n"
-        funcString += "EZAccess.hostname = '#{hostname}';\n" if hostname
         EZAccess[controller][funcName] = eval(funcString)
-    @convertToFrontEnd EZAccess
+    @convertToFrontEnd EZAccess, hostname
   
-  convertToFrontEnd: (object)->
+  convertToFrontEnd: (object, hostname)->
     output = "
 (function(generator) {
   if(typeof module !== 'undefined' && module.exports) {
@@ -72,6 +71,7 @@ module.exports = class FrontEnd
     output += "
 });
     "
+    output += "EZAccess.hostname = '#{hostname}'" if hostname
     output
 
   
@@ -88,7 +88,7 @@ module.exports = class FrontEnd
       output += tabs + "]"
       output
     else if _.isObject object
-      output = "{\n";
+      output = "{\n"
       output += tabs2 + (field + ": " + @convertToFrontEndRaw(value, depth + 1) for field, value of object).join(",\n" + tabs2) + "\n"
       output += tabs + "}"
       output
