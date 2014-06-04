@@ -4,7 +4,7 @@ fs = require 'fs'
 
 module.exports = class ControllerManager
   constructor: ->
-    @controllers = []
+    @controllers = {}
   getAllRoutes: ()->
     _.reduce @controllers, (memo, controller)->
       if controller.modelName
