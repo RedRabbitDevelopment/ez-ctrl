@@ -23,7 +23,7 @@ module.exports = class ControllerManager
         Controller = require dirname + "/" + file
         @addController Controller
   registerRoutes: (app)->
-    for controller of @controllers
+    for name, controller of @controllers
       controller.registerRoutes app
   
   addController: (ctrl)->
