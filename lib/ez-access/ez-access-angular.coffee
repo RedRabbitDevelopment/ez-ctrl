@@ -7,6 +7,7 @@
   else if define? and define.amd
     define ['angular', 'ez-access', 'ez-routes'], generator
   else
+    {angular, EZAccess} = window
     window.EZAccessA = generator(angular, EZAccess)
 )( (angular, EZAccess, EZRoutes)->
   angular.module('ez.access', [])

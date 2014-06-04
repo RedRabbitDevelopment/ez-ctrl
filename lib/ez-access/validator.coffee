@@ -8,7 +8,8 @@
   else if define? and define.amd
     define ['underscore', 'validate', 'q', 'UserError'], generator
   else
-    window.Validator = generator(_, validate, Q, UserError)
+    {_, validator, Q, UserError} = window
+    window.Validator = generator(_, validator, Q, UserError)
 )((_, validate, Q, UserError)->
   check = validate.check
   Validator =
