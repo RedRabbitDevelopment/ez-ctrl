@@ -19,7 +19,7 @@ module.exports = class ControllerManager
   loadFiles: (dirname, files, ext)->
     for file in files
       hasExtension = -1 isnt (index = file.indexOf(ext))
-      isTest = -1 is file.indexOf '.spec' + ext
+      isTest = -1 isnt file.indexOf '.spec' + ext
       isHidden = 0 is file.indexOf '.'
       if hasExtension and not isTest and not isHidden
         file = file.substr 0, index
