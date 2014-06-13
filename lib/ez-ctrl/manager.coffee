@@ -31,5 +31,5 @@ module.exports = class ControllerManager
   
   addController: (ctrl)->
     if ctrl and ctrl.isController and not ctrl.isAbstract
-      @controllers[ctrl.name] = ctrl
+      @controllers[ctrl.modelName] = ctrl
 
