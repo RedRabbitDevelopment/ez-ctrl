@@ -29,7 +29,7 @@ module.exports = BaseController =
     _.extend NewController, options
     NewController.beforeEach = @extendArray 'beforeEach', options.beforeEach
     NewController.middleware = @extendArray 'middleware', options.middleware
-    _.extend(NewController.prototype, @prototype)
+    _.extend(NewController.prototype, @prototype, options.methods)
     NewController
   
   extendArray: (name, extend)->
