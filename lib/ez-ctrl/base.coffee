@@ -24,9 +24,9 @@ module.exports = BaseController =
       return
     _.extend(NewController, this)
     NewController.isAbstract = false
-    if options.name
-      NewController.setBaseData(options.name, options.idRegex)
     _.extend NewController, options
+    if options.name
+      NewController.setBaseData(options.name, NewController.idRegex)
     NewController.beforeEach = @extendArray 'beforeEach', options.beforeEach
     NewController.middleware = @extendArray 'middleware', options.middleware
     _.extend(NewController.prototype, @prototype, options.methods)
@@ -178,6 +178,14 @@ BaseController.prototype =
   runLogic: (data)->
     Q.fcall =>
       @applyFunction @logic, data
+
+  testLogic: (data)->
+    @runLogic data
+    .then (result)->
+      unless result?
+        null
+      else
+        JSON.parse JSON.stringify result
   
   applyFunction: (fn, data)->
     args = FuncDetails.dataToArgs(fn, data)
