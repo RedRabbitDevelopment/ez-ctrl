@@ -46,6 +46,6 @@ module.exports = FuncDetails =
     data
     
   extractArgumentString: (fn)->
-    FN_ARGS = /^function\s*[^\(]*\(\s*([^\)]*)\)/m;
+    FN_ARGS = /^function\s*[^\(]*\(\s*([^\)]*)\)/m
     # No need to remove \n, just \r for consistency
     return fn.toString().match(FN_ARGS)[1].replace(/\r/g, "")

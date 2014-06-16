@@ -40,6 +40,8 @@ module.exports = class FrontEnd
       EZAccess[controller] = {}
       EZAccess[controller]._routeDetails = {}
       for funcName, funcDetails of controllerDetails
+        unless funcDetails.logic?
+          throw new Error "Controller #{controller} does not have logic for #{funcName}"
         argString = FuncDetails.extractArgumentString(funcDetails.logic)
         EZAccess[controller]._routeDetails[funcName] =
           pattern: funcDetails.pattern
