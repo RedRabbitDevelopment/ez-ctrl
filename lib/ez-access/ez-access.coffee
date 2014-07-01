@@ -43,7 +43,7 @@
       if EZAccess.hostname
         url = "//#{EZAccess.hostname}#{path}"
         if EZAccess.protocol
-          "#{EZAccess.protocol}#{url}"
+          "#{EZAccess.protocol}:#{url}"
         else
           url
       else
