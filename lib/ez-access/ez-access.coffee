@@ -41,7 +41,11 @@
           param
       ).join "/"
       if EZAccess.hostname
-        "//#{EZAccess.hostname}#{path}"
+        url = "//#{EZAccess.hostname}#{path}"
+        if EZAccess.protocol
+          "#{EZAccess.protocol}#{url}"
+        else
+          url
       else
         path
     _serialize: (obj, prefix)->

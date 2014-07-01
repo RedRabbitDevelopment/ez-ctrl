@@ -32,7 +32,7 @@ module.exports = class FrontEnd
   addController: (ctrl)->
     @controllerManager.addController ctrl
 
-  getFrontEndMethods: (hostname)->
+  getFrontEndMethods: (hostname, protocol)->
     routes = @controllerManager.getAllRoutes()
     EZAccess = {}
     EZAccess._extractData = FuncDetails.argsToData
@@ -55,7 +55,7 @@ module.exports = class FrontEnd
         EZAccess[controller][funcName] = eval(funcString)
     @convertToFrontEnd EZAccess, hostname
   
-  convertToFrontEnd: (object, hostname)->
+  convertToFrontEnd: (object, hostname, protocol)->
     output = "
 (function(generator) {
   if(typeof module !== 'undefined' && module.exports) {
@@ -71,6 +71,7 @@ module.exports = class FrontEnd
       output += "EZAccess['#{field}'] = " + @convertToFrontEndRaw value, 1
       output += ";\n"
     output += "EZAccess.hostname = '#{hostname}';\n" if hostname
+    output += "EZAccess.protocol = '#{protocol}';\n" if protocol
     output += "
 });\n
     "
