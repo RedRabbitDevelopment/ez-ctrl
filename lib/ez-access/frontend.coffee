@@ -53,7 +53,7 @@ module.exports = class FrontEnd
         "  return EZAccess._makeRequest(this._routeDetails['" + funcName + "'], arguments, '" + controller + "');\n" +
         "});\n"
         EZAccess[controller][funcName] = eval(funcString)
-    @convertToFrontEnd EZAccess, hostname
+    @convertToFrontEnd EZAccess, hostname, protocol
   
   convertToFrontEnd: (object, hostname, protocol)->
     output = "
