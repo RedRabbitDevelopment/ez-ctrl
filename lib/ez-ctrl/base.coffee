@@ -192,7 +192,7 @@ BaseController.prototype =
     fn.apply(@, args)
   
   getRequestData: (field, type) ->
-    if type is 'file'
+    if type is 'file' or type is 'image'
       if @files
         @files[field]?[0]
       else

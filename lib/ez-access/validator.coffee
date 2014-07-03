@@ -137,6 +137,8 @@
         unless value instanceof Date
           throw new UserError Validator.Messages.isDate
         true
+      isImage: ->
+        true
       isFile: ->
         true
       isText: (value)->
