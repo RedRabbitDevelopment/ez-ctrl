@@ -1,6 +1,6 @@
 {
   "name": "ez-ctrl",
-  "version": "0.4.20",
+  "version": "0.4.21",
   "main": "index.js",
   "dependencies": {
     "express": "~3.4.4",
