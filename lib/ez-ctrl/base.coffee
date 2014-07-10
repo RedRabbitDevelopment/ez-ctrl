@@ -247,4 +247,11 @@ BaseController.prototype =
   validate: (data)->
     Validator.validate(@validation, data, @modelName)
   
+  throwValidationError: (errors)->
+    @throwError 'Validation', errors
+
+  throwError: (message, errors)->
+    error = new UserError message
+    error.errors = errors
+    throw error
 
