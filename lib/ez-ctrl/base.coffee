@@ -78,7 +78,7 @@ module.exports = BaseController =
             break
         
         # Convert MakeComment into make-comment
-        remainingRoute = inflection.lodash(remainingRoute)
+        remainingRoute = inflection.underscore(remainingRoute)
         remainingRoute = inflection.dasherize(remainingRoute)
         
         if routeDetails.usesId
