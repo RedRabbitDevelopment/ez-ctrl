@@ -68,8 +68,12 @@ module.exports = class FrontEnd
 })(function(EZAccess, _) {
     "
     for field, value of object
-      output += "EZAccess['#{field}'] = _.extend({}, EZAccess, " + @convertToFrontEndRaw value, 1
-      output += ");\n"
+      if field[0] is '_'
+        output += "EZAccess['#{field}'] = " + @convertToFrontEndRaw value, 1
+      else
+        output += "EZAccess['#{field}'] = _.extend({}, EZAccess, " + @convertToFrontEndRaw value, 1
+        output += ")"
+      output += ";\n"
     output += "EZAccess.hostname = '#{hostname}';\n" if hostname
     output += "EZAccess.protocol = '#{protocol}';\n" if protocol
     output += "
