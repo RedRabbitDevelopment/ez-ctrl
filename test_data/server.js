@@ -18,7 +18,7 @@
 
   app.use(express["static"](__dirname + "/server_public"));
 
-  wait = frontEnd.registerRoutes(app, __dirname + "/routes").fail(function(error) {
+  wait = frontEnd.registerRoutes(app, __dirname + "/routes", true).fail(function(error) {
     return console.log('FAIL', error, error != null ? error.stack : void 0);
   });
 

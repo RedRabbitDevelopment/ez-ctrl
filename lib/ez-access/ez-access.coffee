@@ -9,38 +9,10 @@
   else
     window.EZAccess = generator(window.Q, window._)
 )((Q, _)->
-  EZAccess =
-    eventualObject: (promise)->
-      shell = {}
-      shell._promise = promise.then (result)->
-        for key, value of result
-          shell[key] = value
-        shell
-      shell
-    eventualArray: (promise)->
-      shell = []
-      shell._promise = promise.then (result)->
-        for value, i in result
-          shell.push result[i]
-        shell
-      shell
-    eventualValue: (promise)->
-      shell = value: null
-      promise.then (result)->
-        shell.value = result
-      shell
-    createBatch: ->
-      batchProcessor = _.extend {}, EZAccess,
-        _makeRequest: (routeDetails, args, controllerName, methodName)->
-          @requests.push
-            controllerName: controllerName
-            methodName: methodName
-            args: @_extractData routeDetails.argList, args
-        finish: ->
-          @_makeRequestBase 'GET', '/batch-get' + @_constructQuery requests: @requests
-      for key, val of batchProcessor
-        val._makeRequest = batchProcessor._makeRequest if val._makeRequest
-      batchProcessor
+
+  class BaseController
+    constructor: (@_details)->
+      _.assign @, @_details
     _constructPath: (pattern, data)->
       params = pattern.split '/'
       path = (for param in params
@@ -88,24 +60,6 @@
     _isFunction: (obj)->
       !!(obj && obj.constructor && obj.call && obj.apply)
 
-    _makeRequest: (routeDetails, args, controllerName, methodName)->
-      data = @_extractData routeDetails.argList, args
-      # TODO: Validate on the front end
-      ( (data)=>
-      #Validator.validate(routeDetails.validation, data).then (data)=>
-        path = @_constructPath routeDetails.pattern, data
-        
-        path = path + @_constructQuery(data) if routeDetails.method is 'get'
-        @_makeRequestBase(routeDetails.method, path, data)
-        .then (result)->
-          if result.success
-            result.response
-          else
-            error = new Error result.error
-            error.errors = result.errors
-            throw error
-      )(data)
-
     _makeRequestBase: (method, path, data)->
 
       deferred = Q.defer()
@@ -130,4 +84,79 @@
         xmlhttp.setRequestHeader('Content-Type', 'application/json')
         xmlhttp.send JSON.stringify data
       deferred.promise
+
+    interpretResult: (result)->
+      if result.success
+        result.response
+      else
+        error = new Error result.error
+        error.errors = result.errors
+        throw error
+
+  class Controller extends BaseController
+    _makeRequest: (routeDetails, args, controllerName, methodName)->
+      data = EZAccess._extractData routeDetails.argList, args
+      # TODO: Validate on the front end
+      ( (data)=>
+      #Validator.validate(routeDetails.validation, data).then (data)=>
+        path = @_constructPath routeDetails.pattern, data
+        
+        path = path + @_constructQuery(data) if routeDetails.method is 'get'
+        @_makeRequestBase(routeDetails.method, path, data)
+        .then @interpretResult
+      )(data)
+  class BatchController extends BaseController
+    constructor: (@_details)->
+      super
+    _makeRequest: (routeDetails, args, controllerName, methodName)->
+      args: EZAccess._extractData routeDetails.argList, args
+      controllerName: controllerName
+      methodName: methodName
+
+  class Batch extends BaseController
+    constructor: ->
+      @requests = {}
+      @num = 0
+      EZAccess.controllers.map (controllerName)=>
+        @[controllerName] = Batch[controllerName]
+    getRequestId: ->
+      @num++
+    get: (varName, request)->
+      if _.isString varName
+        @requests[varName] = request
+      else
+        for key, value of varName
+          @get key, value
+    flush: (ignoreFailures)->
+      @_makeRequestBase 'GET', "/get-batch#{@_constructQuery @requests}"
+      .then (results)=>
+        if ignoreFailures
+          results
+        else
+          _.mapValues results, @interpretResult
+        
+  EZAccess =
+    Controller: Controller
+    BatchController: BatchController
+    Batch: Batch
+    controllers: []
+    eventualObject: (promise)->
+      shell = {}
+      shell._promise = promise.then (result)->
+        for key, value of result
+          shell[key] = value
+        shell
+      shell
+    eventualArray: (promise)->
+      shell = []
+      shell._promise = promise.then (result)->
+        for value, i in result
+          shell.push result[i]
+        shell
+      shell
+    eventualValue: (promise)->
+      shell = value: null
+      promise.then (result)->
+        shell.value = result
+      shell
 )

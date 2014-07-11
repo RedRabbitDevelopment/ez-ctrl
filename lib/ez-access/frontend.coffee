@@ -28,6 +28,17 @@ module.exports = class FrontEnd
           res.sendfile __dirname + "/ez-access-angular.js"
         app.get '/js/lib/ez-validation.js', (req, res)->
           res.sendfile __dirname + "/validator.js"
+      app.get '/get-batch', (req, res)=>
+        response = {}
+        Q.all  _.map req.query, (value, key)=>
+          Controller = @controllerManager.controllers[value.controllerName]
+          controller = Controller.getController value.methodName
+          controller.run req, res, value.args
+          .then (result)->
+            response[key] = result
+        .then ->
+          res.json response
+
   
   addController: (ctrl)->
     @controllerManager.addController ctrl
@@ -36,14 +47,15 @@ module.exports = class FrontEnd
     routes = @controllerManager.getAllRoutes()
     EZAccess = {}
     EZAccess._extractData = FuncDetails.argsToData
+    controllers = {}
     for controller, controllerDetails of routes
-      EZAccess[controller] = {}
-      EZAccess[controller]._routeDetails = {}
+      controllers[controller] = {}
+      controllers[controller]._routeDetails = {}
       for funcName, funcDetails of controllerDetails
         unless funcDetails.logic?
           throw new Error "Controller #{controller} does not have logic for #{funcName}"
         argString = FuncDetails.extractArgumentString(funcDetails.logic)
-        EZAccess[controller]._routeDetails[funcName] =
+        controllers[controller]._routeDetails[funcName] =
           pattern: funcDetails.pattern
           usesId: funcDetails.usesId
           method: funcDetails.method
@@ -52,30 +64,32 @@ module.exports = class FrontEnd
         funcString = "(function(" + argString + ") {\n" +
         "  return this._makeRequest(this._routeDetails['" + funcName + "'], arguments, '" + controller + "', '" + funcName + "');\n" +
         "});\n"
-        EZAccess[controller][funcName] = eval(funcString)
-    @convertToFrontEnd EZAccess, hostname, protocol
+        controllers[controller][funcName] = eval(funcString)
+    EZAccess.hostname = hostname if hostname
+    EZAccess.protocol = protocol if protocol
+    @convertToFrontEnd EZAccess, controllers
   
-  convertToFrontEnd: (object, hostname, protocol)->
+  convertToFrontEnd: (object, controllers)->
     output = "
-(function(generator) {
-  if(typeof module !== 'undefined' && module.exports) {
-    module.exports = generator(require('ez-access'), require('lodash'));
-  } else if (typeof define !== 'undefined' && define.amd) {
-    define(['ez-access', 'lodash'], generator);
-  } else {
-    window.EZRoutes = generator(window.EZAccess, window._);
-  }
-})(function(EZAccess, _) {
+(function(generator) {\n
+  if(typeof module !== 'undefined' && module.exports) {\n
+    module.exports = generator(require('ez-access'), require('lodash'));\n
+  } else if (typeof define !== 'undefined' && define.amd) {\n
+    define(['ez-access', 'lodash'], generator);\n
+  } else {\n
+    window.EZRoutes = generator(window.EZAccess, window._);\n
+  }\n
+})(function(EZAccess, _) {\n
     "
     for field, value of object
-      if field[0] is '_'
-        output += "EZAccess['#{field}'] = " + @convertToFrontEndRaw value, 1
-      else
-        output += "EZAccess['#{field}'] = _.extend({}, EZAccess, " + @convertToFrontEndRaw value, 1
-        output += ")"
+      output += "  EZAccess['#{field}'] = " + @convertToFrontEndRaw value, 1
       output += ";\n"
-    output += "EZAccess.hostname = '#{hostname}';\n" if hostname
-    output += "EZAccess.protocol = '#{protocol}';\n" if protocol
+    for controllerName, controller of controllers
+      output += "  EZAccess['#{controllerName}'] = new EZAccess.Controller(" +
+        @convertToFrontEndRaw(controller, 1) + ");\n"
+      output += "  EZAccess.Batch['#{controllerName}'] = new EZAccess.BatchController(" +
+        @convertToFrontEndRaw(controller, 1) + ");\n"
+      output += "  EZAccess.controllers.push('#{controllerName}');\n"
     output += "
 });\n
     "
@@ -107,4 +121,4 @@ module.exports = class FrontEnd
       'undefined'
   
   getTabs: _.memoize (depth)->
-    ("\t" while depth--).join ""
+    ("  " while depth--).join ""

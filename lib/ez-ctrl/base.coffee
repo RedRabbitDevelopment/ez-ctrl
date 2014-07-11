@@ -146,18 +146,37 @@ BaseController.prototype =
   handleRequest: (req, res) ->
     @request = req
     @response = res
-    Q.fcall =>
-      @getData()
-    .then (data) =>
-      @runBefore data
-    .then (data) =>
-      @getResponse data
-    .then (response) =>
-      @sendResponse(response)
-    .fail (reason) =>
-      @sendErrorResponse(reason)
+    @steps([
+      @getData
+      @runBefore
+      @convert
+      @validate
+      @runLogic
+      @translateSuccessResponse
+    ]).fail (reason)=>
+      @translateErrorResponse reason
+    .then (result)=>
+      @send result
     .fail (reason) =>
       console.log "EZController Error unhandled", reason, reason?.stack
+
+  steps: (steps, first)->
+    promise = Q.when first
+    steps.reduce (promise, step)=>
+      promise.then step.bind @
+    , promise
+
+  run: (req, res, data)->
+    @request = req
+    @response = res
+    @steps([
+      @runBefore
+      @convert
+      @validate
+      @runLogic
+      @translateSuccessResponse
+    ], data).fail (reason)=>
+      @translateErrorResponse reason
   
   runBefore: (data, i = 0)->
     if i < @before.length
@@ -167,25 +186,19 @@ BaseController.prototype =
     else
       data
 
-  getResponse: (data)->
-    Q.fcall =>
-      @convert(data)
-    .then (data) =>
-      @validate(data)
-    .then (data) =>
-      @runLogic data
-
   runLogic: (data)->
     Q.fcall =>
       @applyFunction @logic, data
 
+  clean: (object)->
+    unless object
+      null
+    else
+      JSON.parse JSON.stringify object
+
   testLogic: (data)->
-    @runLogic data
-    .then (result)->
-      unless result?
-        null
-      else
-        JSON.parse JSON.stringify result
+    @runLogic @clean data
+    .then @clean
   
   applyFunction: (fn, data)->
     args = FuncDetails.dataToArgs(fn, data)
@@ -222,12 +235,11 @@ BaseController.prototype =
     Q.all(promises).then ->
       data
     
-  sendResponse: (response) ->
-    @response.json
-      success: true
-      response: response
+  translateSuccessResponse: (response) ->
+    success: true
+    response: response
       
-  sendErrorResponse: (error) ->
+  translateErrorResponse: (error) ->
     # Only allow deliberate messages
     message = unless error instanceof UserError
       if _.isFunction @logError
@@ -236,10 +248,14 @@ BaseController.prototype =
     else
       errors = error.errors
       error.message
-    @response.json
-      success: false
-      error: message
-      errors: errors
+    success: false
+    error: message
+    errors: errors
+
+  send: (result)->
+    unless @sent
+      @sent = true
+      @response.json result
   
   convert: (data) ->
     Converter.convert @validation, data

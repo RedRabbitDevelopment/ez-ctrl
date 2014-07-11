@@ -3,12 +3,11 @@
   
   </head>
   <body>
-    <script type="text/javascript" src="/js/lib/underscore-min.js"></script>
+    <script type="text/javascript" src="/js/lib/lodash.min.js"></script>
     <script type="text/javascript" src="/js/lib/validator-min.js"></script>
     <script type="text/javascript" src="/js/lib/q.js"></script>
     <script type="text/javascript" src="/js/lib/ez-access.js"></script>
     <script type="text/javascript" src="/js/lib/ez-routes.js"></script>
-    <script type="text/javascript" src="/js/lib/ez-validation.js"></script>
     <script>
       assert = function(actual, expected) {
         if(actual !== expected) {
@@ -17,30 +16,49 @@
       }
       EZAccess.User.query().then(function(response) {
         assert(response.length > 0, true);
-      }).fail(function(error) {
-        console.log("Error!", error);
-      });
+      }).done();
       EZAccess.User.postLogin("yourdeveloperfriend", "password1").then(function(response) {
         assert(response, true);
-      }).fail(function(error) {
-        console.log("Error!", error);
-      });
+      }).done();
       EZAccess.User.postLogin("yourdeveloperfriend", "password2").then(function(response) {
         assert(false, "Successful for some reason!");
       }, function(error) {
-        assert(error, "Invalid username or password");
-      }).fail(function(error) {
-        console.log("Error!", error);
-      });
+        assert(error.message, "Invalid username or password");
+      }).done();
       EZAccess.User.postLogin("yourdeveloperfriend").then(function(response) {
         assert(false, "Successful for some reason!");
       }, function(error) {
-        assert(error.message, "validate");
-        assert(error.error.password.length, 1);
-        assert(error.error.password[0], 'is required');
-      }).fail(function(error) {
-        console.log("Error!", error);
+        assert(error.message, "Validate");
+        assert(error.errors.password.length, 1);
+        assert(error.errors.password[0], 'is required');
+      }).done();
+      var batch = new EZAccess.Batch();
+      batch.get('user', batch.User.get(1));
+      batch.get('user2', batch.User.get(2));
+      batch.flush().then(function(response) {
+        assert(response.user.name, 'Shirle Tate');
+        assert(response.user2.name, 'Baby Tate');
+      }).done();
+      batch = new EZAccess.Batch();
+      batch.get({
+        user: batch.User.get(1),
+        user2: batch.User.get(2)
       });
+      batch.flush().then(function(response) {
+        assert(response.user.name, 'Shirle Tate');
+        assert(response.user2.name, 'Baby Tate');
+      }).done();
+      batch = new EZAccess.Batch();
+      batch.get({
+        user: batch.User.get(1),
+        user2: batch.User.get(2)
+      });
+      batch.get('user3', batch.User.get(3));
+      batch.flush().then(function(response) {
+        assert(response.user.name, 'Shirle Tate');
+        assert(response.user2.name, 'Baby Tate');
+        assert(response.user3.name, 'Nathan Tate');
+      }).done();
     </script>
   </body>
 </html>
