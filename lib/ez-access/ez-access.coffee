@@ -29,6 +29,18 @@
       promise.then (result)->
         shell.value = result
       shell
+    createBatch: ->
+      batchProcessor = _.extend {}, EZAccess,
+        _makeRequest: (routeDetails, args, controllerName, methodName)->
+          @requests.push
+            controllerName: controllerName
+            methodName: methodName
+            args: @_extractData routeDetails.argList, args
+        finish: ->
+          @_makeRequestBase 'GET', '/batch-get' + @_constructQuery requests: @requests
+      for key, val of batchProcessor
+        val._makeRequest = batchProcessor._makeRequest if val._makeRequest
+      batchProcessor
     _constructPath: (pattern, data)->
       params = pattern.split '/'
       path = (for param in params
@@ -52,20 +64,20 @@
       str = []
       if obj.length?
         for value, i in obj
-          key = if prefix then prefix + "[]" else i
+          key = if prefix then "#{prefix}[#{i}]" else i
           if value isnt undefined
             str.push if typeof value is 'object'
               @_serialize(value, key)
             else
-              encodeURIComponent(key) + "=" + encodeURIComponent(value)
+              key + "=" + encodeURIComponent(value)
       else
         for key, value of obj
-          key = if prefix then prefix + "[" + key + "]" else key
+          key = if prefix then prefix + "[" + key + "]" else encodeURIComponent(key)
           if value isnt undefined
             str.push if typeof value is 'object'
               @_serialize(value, key)
             else
-              encodeURIComponent(key) + "=" + encodeURIComponent(value)
+              key + "=" + encodeURIComponent(value)
       str.join "&"
     _constructQuery: (data)->
       result = @_serialize(data)
