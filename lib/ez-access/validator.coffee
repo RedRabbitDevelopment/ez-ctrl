@@ -1,12 +1,12 @@
 ((generator)->
   if exports? and module.exports
-    _ = require('underscore')
+    _ = require('lodash')
     validate = require 'validator'
     Q = require('q')
     UserError = require '../ez-ctrl/userError'
     module.exports = generator(_, validate, Q, UserError)
   else if define? and define.amd
-    define ['underscore', 'validate', 'q', 'UserError'], generator
+    define ['lodash', 'validate', 'q', 'UserError'], generator
   else
     {_, validator, Q, UserError} = window
     window.Validator = generator(_, validator, Q, UserError)

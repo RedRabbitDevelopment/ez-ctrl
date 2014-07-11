@@ -1,5 +1,5 @@
 TestData = require('../test_data/data')
-_ = require('underscore')
+_ = require('lodash')
 assert = require('assert')
 base = require('../index')
 Validator = base.Validator

@@ -1,4 +1,4 @@
-_ = require 'underscore'
+_ = require 'lodash'
 ControllerManager = require('../ez-ctrl/manager')
 FuncDetails = require('../ez-ctrl/func-details')
 Q = require 'q'
@@ -50,7 +50,7 @@ module.exports = class FrontEnd
           validation: funcDetails.validation
           argList: FuncDetails.extractArguments funcDetails.logic
         funcString = "(function(" + argString + ") {\n" +
-        "  return EZAccess._makeRequest(this._routeDetails['" + funcName + "'], arguments, '" + controller + "');\n" +
+        "  return @_makeRequest(this._routeDetails['" + funcName + "'], arguments, '" + controller + "');\n" +
         "});\n"
         EZAccess[controller][funcName] = eval(funcString)
     @convertToFrontEnd EZAccess, hostname, protocol
@@ -59,17 +59,17 @@ module.exports = class FrontEnd
     output = "
 (function(generator) {
   if(typeof module !== 'undefined' && module.exports) {
-    module.exports = generator(require('ez-access'));
+    module.exports = generator(require('ez-access'), require('lodash'));
   } else if (typeof define !== 'undefined' && define.amd) {
-    define(['ez-access'], generator);
+    define(['ez-access', 'lodash'], generator);
   } else {
-    window.EZRoutes = generator(window.EZAccess);
+    window.EZRoutes = generator(window.EZAccess, window._);
   }
-})(function(EZAccess) {
+})(function(EZAccess, _) {
     "
     for field, value of object
-      output += "EZAccess['#{field}'] = " + @convertToFrontEndRaw value, 1
-      output += ";\n"
+      output += "EZAccess['#{field}'] = _.extend({}, EZAccess, " + @convertToFrontEndRaw value, 1
+      output += ");\n"
     output += "EZAccess.hostname = '#{hostname}';\n" if hostname
     output += "EZAccess.protocol = '#{protocol}';\n" if protocol
     output += "

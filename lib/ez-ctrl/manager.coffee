@@ -1,4 +1,4 @@
-_ = require('underscore')
+_ = require('lodash')
 Q = require 'q'
 fs = require 'fs'
 

@@ -8,7 +8,7 @@
 
   assert = require('assert');
 
-  _ = require("underscore");
+  _ = require("lodash");
 
   TestData = require('../test_data/data');
 

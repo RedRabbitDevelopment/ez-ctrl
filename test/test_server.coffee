@@ -1,7 +1,7 @@
 http = require 'http'
 Q = require 'q'
 assert = require 'assert'
-_ = require "underscore"
+_ = require "lodash"
 TestData = require '../test_data/data'
 TestServer = require '../test_data/server'
   

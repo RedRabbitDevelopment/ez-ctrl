@@ -2,10 +2,10 @@
 ( (generator)->
   if exports? and module.exports
     Q = require 'q'
-    _ = require 'underscore'
+    _ = require 'lodash'
     module.exports = generator(Q, _)
   else if define? and define.amd
-    define ['q', 'underscore'], generator
+    define ['q', 'lodash'], generator
   else
     window.EZAccess = generator(Q, _)
 )((Q, _)->
@@ -40,10 +40,10 @@
         else
           param
       ).join "/"
-      if EZAccess.hostname
-        url = "//#{EZAccess.hostname}#{path}"
-        if EZAccess.protocol
-          "#{EZAccess.protocol}:#{url}"
+      if @hostname
+        url = "//#{@hostname}#{path}"
+        if @protocol
+          "#{@protocol}:#{url}"
         else
           url
       else

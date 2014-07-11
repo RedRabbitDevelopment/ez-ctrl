@@ -1,7 +1,7 @@
 FuncDetails = require('./func-details')
 Converter = require('./converter')
 Q = require('q')
-_ = require('underscore')
+_ = require('lodash')
 inflection = require('inflection')
 Converter = require('./converter')
 Validator = require('../ez-access/validator')
@@ -78,7 +78,7 @@ module.exports = BaseController =
             break
         
         # Convert MakeComment into make-comment
-        remainingRoute = inflection.underscore(remainingRoute)
+        remainingRoute = inflection.lodash(remainingRoute)
         remainingRoute = inflection.dasherize(remainingRoute)
         
         if routeDetails.usesId

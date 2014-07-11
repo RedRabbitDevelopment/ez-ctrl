@@ -1,4 +1,4 @@
-_ = require 'underscore'
+_ = require 'lodash'
 
 ConverterMethods =
   # Doesn't run parseInt, because that will just concatenate the decimal!

@@ -1,4 +1,4 @@
-_ = require('underscore')
+_ = require('lodash')
 
 module.exports = FuncDetails =
   extractArguments: (fn)->
@@ -13,7 +13,7 @@ module.exports = FuncDetails =
         fnText = fn.toString().replace(STRIP_COMMENTS, '')
         argDecl = fnText.match(FN_ARGS)
         for arg in argDecl[1].split(FN_ARG_SPLIT)
-          arg.replace FN_ARG, (all, underscore, name)->
+          arg.replace FN_ARG, (all, lodash, name)->
             argsList.push(name)
         fn.argsList = argsList
       argsList
