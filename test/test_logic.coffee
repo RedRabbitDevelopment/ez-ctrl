@@ -242,24 +242,22 @@ describe 'UserController', ->
         done()
       
   describe 'front-end functionality', ->
-    it 'should give me all the routes', ->
+    frontEnd = null
+    beforeEach ->
       frontEnd = new FrontEnd()
       frontEnd.addController UserController
       frontEnd.addController AsyncUserController
+    it 'should give me all the routes', ->
       allRoutes = frontEnd.controllerManager.getAllRoutes()
       assert.ok allRoutes.AsyncUser and allRoutes.User
   
     it 'should give me a string', ->
-      ### Not done
-      frontEndMethods = base.FrontEnd.getFrontEndMethods()
+      frontEndMethods = frontEnd.getFrontEndMethods()
       assert.ok frontEndMethods
-      try {
-        FrontEnd = eval(frontEndMethods)
-      } catch(e) {
+      try
+        #FrontEnd = eval(frontEndMethods)
+      catch e
         assert.fail('', e)
-      }
-      ###
-  
 
   describe 'converter', ->
     Converter = base.Converter

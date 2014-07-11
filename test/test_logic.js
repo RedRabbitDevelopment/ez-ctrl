@@ -314,25 +314,28 @@
       });
     });
     describe('front-end functionality', function() {
-      it('should give me all the routes', function() {
-        var allRoutes, frontEnd;
+      var frontEnd;
+      frontEnd = null;
+      beforeEach(function() {
         frontEnd = new FrontEnd();
         frontEnd.addController(UserController);
-        frontEnd.addController(AsyncUserController);
+        return frontEnd.addController(AsyncUserController);
+      });
+      it('should give me all the routes', function() {
+        var allRoutes;
         allRoutes = frontEnd.controllerManager.getAllRoutes();
         return assert.ok(allRoutes.AsyncUser && allRoutes.User);
       });
       return it('should give me a string', function() {
-
-        /* Not done
-        frontEndMethods = base.FrontEnd.getFrontEndMethods()
-        assert.ok frontEndMethods
+        var e, frontEndMethods;
+        frontEndMethods = frontEnd.getFrontEndMethods();
+        assert.ok(frontEndMethods);
         try {
-          FrontEnd = eval(frontEndMethods)
-        } catch(e) {
-          assert.fail('', e)
+
+        } catch (_error) {
+          e = _error;
+          return assert.fail('', e);
         }
-         */
       });
     });
     return describe('converter', function() {
