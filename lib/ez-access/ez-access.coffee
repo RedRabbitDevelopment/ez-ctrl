@@ -96,7 +96,7 @@
 
     _makeRequestBase: (method, path, data)->
 
-      deferred = q.defer()
+      deferred = Q.defer()
       xmlhttp = if window.XMLHttpRequest
         new XMLHttpRequest()
       else
