@@ -7,7 +7,7 @@
   else if define? and define.amd
     define ['q', 'lodash'], generator
   else
-    window.EZAccess = generator(Q, _)
+    window.EZAccess = generator(window.Q, window._)
 )((Q, _)->
   EZAccess =
     eventualObject: (promise)->
