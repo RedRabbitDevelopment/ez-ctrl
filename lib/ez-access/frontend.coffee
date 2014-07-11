@@ -50,7 +50,7 @@ module.exports = class FrontEnd
           validation: funcDetails.validation
           argList: FuncDetails.extractArguments funcDetails.logic
         funcString = "(function(" + argString + ") {\n" +
-        "  return this._makeRequest(this._routeDetails['" + funcName + "'], arguments, '" + controller + "');\n" +
+        "  return this._makeRequest(this._routeDetails['" + funcName + "'], arguments, '" + controller + "', '" + funcName + "');\n" +
         "});\n"
         EZAccess[controller][funcName] = eval(funcString)
     @convertToFrontEnd EZAccess, hostname, protocol

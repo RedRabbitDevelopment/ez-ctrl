@@ -76,7 +76,7 @@
     _isFunction: (obj)->
       !!(obj && obj.constructor && obj.call && obj.apply)
 
-    _makeRequest: (routeDetails, args)->
+    _makeRequest: (routeDetails, args, controllerName, methodName)->
       data = @_extractData routeDetails.argList, args
       # TODO: Validate on the front end
       ( (data)=>
