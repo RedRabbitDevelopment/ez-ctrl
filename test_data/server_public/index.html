@@ -53,7 +53,7 @@
         user: batch.User.get(1),
         user2: batch.User.get(2)
       });
-      batch.get('user3', batch.User.get(3));
+      batch.get('user3', batch.User.get(0));
       batch.flush().then(function(response) {
         assert(response.user.name, 'Shirle Tate');
         assert(response.user2.name, 'Baby Tate');
