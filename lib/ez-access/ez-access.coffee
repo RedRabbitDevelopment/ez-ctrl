@@ -128,7 +128,7 @@
         for key, value of varName
           @get key, value
     flush: (ignoreFailures)->
-      @_makeRequestBase 'GET', "/get-batch#{@_constructQuery @requests}"
+      @_makeRequestBase 'get', "/get-batch#{@_constructQuery @requests}"
       .then (results)=>
         if ignoreFailures
           results
