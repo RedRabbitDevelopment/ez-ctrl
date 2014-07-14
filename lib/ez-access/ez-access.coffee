@@ -136,6 +136,7 @@
           _.mapValues results, @interpretResult
         
   EZAccess =
+    BaseController: BaseController
     Controller: Controller
     BatchController: BatchController
     Batch: Batch
