@@ -24,10 +24,10 @@
         else
           param
       ).join "/"
-      if @hostname
-        url = "//#{@hostname}#{path}"
-        if @protocol
-          "#{@protocol}:#{url}"
+      if EZAccess.hostname
+        url = "//#{EZAccess.hostname}#{path}"
+        if EZAccess.protocol
+          "#{EZAccess.protocol}:#{url}"
         else
           url
       else
@@ -128,7 +128,16 @@
         for key, value of varName
           @get key, value
     flush: (ignoreFailures)->
-      @_makeRequestBase 'get', "/get-batch#{@_constructQuery @requests}"
+      path = "/get-batch#{@_constructQuery @requests}"
+      url = if EZAccess.hostname
+        url = "//#{EZAccess.hostname}#{path}"
+        if EZAccess.protocol
+          "#{EZAccess.protocol}:#{url}"
+        else
+          url
+      else
+        path
+      @_makeRequestBase 'get', url
       .then (results)=>
         if ignoreFailures
           results
