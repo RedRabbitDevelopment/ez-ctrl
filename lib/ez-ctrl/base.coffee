@@ -57,11 +57,11 @@ module.exports = BaseController =
         method = "get"
         pattern = @individualPattern
         usesId = true
-      when "add" or "put"
-        method = "put"
-        pattern = @basePattern
-      when "save" or 'post'
+      when "add" or "post"
         method = "post"
+        pattern = @basePattern
+      when "save" or 'put'
+        method = "put"
         pattern = @individualPattern
         usesId = true
       when "delete"
