@@ -34,7 +34,9 @@
         path
     _serialize: (obj, prefix)->
       str = []
-      if obj.length?
+      unless obj?
+        null
+      else if obj.length?
         for value, i in obj
           key = if prefix then "#{prefix}[#{i}]" else i
           if value isnt undefined
