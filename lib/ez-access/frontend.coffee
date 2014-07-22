@@ -33,7 +33,7 @@ module.exports = class FrontEnd
         Q.all  _.map req.query, (value, key)=>
           Controller = @controllerManager.controllers[value.controllerName]
           controller = Controller.getController value.methodName
-          controller.run req, res, value.args
+          controller.run req, res, (value.args or {})
           .then (result)->
             response[key] = result
         .then ->

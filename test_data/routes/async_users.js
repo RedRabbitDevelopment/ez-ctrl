@@ -28,13 +28,22 @@
       return next();
     },
     routes: {
-      query: function() {
-        var deferred;
-        deferred = Q.defer();
-        setTimeout(function() {
-          return deferred.resolve(UserData);
-        }, 25);
-        return deferred.promise;
+      query: {
+        validation: {
+          optional: {
+            type: 'int',
+            required: false,
+            "default": 5
+          }
+        },
+        logic: function(optional) {
+          var deferred;
+          deferred = Q.defer();
+          setTimeout(function() {
+            return deferred.resolve(UserData);
+          }, 25);
+          return deferred.promise;
+        }
       },
       get: {
         validation: {

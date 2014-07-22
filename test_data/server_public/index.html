@@ -54,6 +54,7 @@
         user2: batch.User.get(2)
       });
       batch.get('user3', batch.User.get(0));
+      batch.get('users', batch.AsyncUser.query());
       batch.flush().then(function(response) {
         assert(response.user.name, 'Shirle Tate');
         assert(response.user2.name, 'Baby Tate');

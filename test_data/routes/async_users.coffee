@@ -16,13 +16,19 @@ module.exports = MyBaseController.extend
     middleware.asyncRan++
     next()
   routes:
-    query: -> #get /users Anything with "query" automatically is get /<tableize>
-      # Get the users
-      deferred = Q.defer()
-      setTimeout ->
-        deferred.resolve(UserData)
-      , 25
-      deferred.promise
+    query: #get /users Anything with "query" automatically is get /<tableize>
+      validation:
+        optional:
+          type: 'int'
+          required: false
+          default: 5
+      logic: (optional)->
+        # Get the users
+        deferred = Q.defer()
+        setTimeout ->
+          deferred.resolve(UserData)
+        , 25
+        deferred.promise
     
     get: # get /users/:id Anything with "get" automatically is get /<tableize>/:id
       validation:
