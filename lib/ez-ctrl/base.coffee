@@ -126,7 +126,7 @@ module.exports = BaseController =
   
   handleRequest: (routeDetails, req, res, next) ->
     controller = new this(routeDetails)
-    controller.handleRequest(req, res)
+    controller.handleRequest(req, res, next)
   
   getRoutes: () ->
     routes = {}
@@ -143,9 +143,10 @@ module.exports = BaseController =
     controller = new this routeDetails
 
 BaseController.prototype =
-  handleRequest: (req, res) ->
+  handleRequest: (req, res, next) ->
     @request = req
     @response = res
+    @next = next
     @steps([
       @getData
       @runBefore
