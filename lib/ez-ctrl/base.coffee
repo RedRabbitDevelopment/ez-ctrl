@@ -17,6 +17,7 @@ module.exports = BaseController =
   extend: (options) ->
     NewController = (routeDetails) ->
       _.extend(this, routeDetails)
+      @forked = []
       if _.isFunction @initialize
         @initialize()
       if options.name
@@ -178,6 +179,12 @@ BaseController.prototype =
       @translateSuccessResponse
     ], data).fail (reason)=>
       @translateErrorResponse reason
+    .then =>
+      Q.allSettled @forked
+      .fail (results)->
+        results.forEach (result)->
+          unless result.state is 'fulfilled'
+            console.log 'ForkError: ', result.reason
   
   runBefore: (data, i = 0)->
     if i < @before.length
