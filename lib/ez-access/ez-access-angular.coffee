@@ -9,6 +9,7 @@
   else
     {angular, EZAccess} = window
     window.EZAccessA = generator(angular, EZAccess)
+    delete window.EZAccess
 )( (angular, EZAccess, EZRoutes)->
   angular.module('ez.access', [])
   .service('EZAccess', ['$http', ($http)->
