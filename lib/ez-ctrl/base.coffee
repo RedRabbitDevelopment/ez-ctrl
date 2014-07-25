@@ -160,13 +160,22 @@ BaseController.prototype =
     .then (result)=>
       @send result
     .fail (reason) =>
-      console.log "EZController Error unhandled", reason, reason?.stack
+      @logError 'UnhandledError', reason
     .then =>
-      Q.allSettled @forked
-      .fail (results)->
-        results.forEach (result)->
-          unless result.state is 'fulfilled'
-            console.log 'ForkError: ', result.reason
+      @handleForked()
+
+  handleForked: ->
+    Q.allSettled @forked
+    .then (results)=>
+      results.forEach (result)=>
+        unless result.state is 'fulfilled'
+          @logError 'ForkError', result.reason
+
+  logError: (errTitle, error)->
+    console.log "errTitle #{@getDisplayName()}: ", error, error?.stack
+
+  getDisplayName: ->
+    "#{@modelName}.#{@route}"
 
   steps: (steps, first)->
     promise = Q.when first
@@ -185,6 +194,8 @@ BaseController.prototype =
       @translateSuccessResponse
     ], data).fail (reason)=>
       @translateErrorResponse reason
+    .then =>
+      @handleForked()
   
   runBefore: (data, i = 0)->
     if i < @before.length
