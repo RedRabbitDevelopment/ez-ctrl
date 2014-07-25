@@ -171,9 +171,6 @@ BaseController.prototype =
         unless result.state is 'fulfilled'
           @logError 'ForkError', result.reason
 
-  logError: (errTitle, error)->
-    console.log "errTitle #{@getDisplayName()}: ", error, error?.stack
-
   getDisplayName: ->
     "#{@modelName}.#{@route}"
 
@@ -262,7 +259,7 @@ BaseController.prototype =
     # Only allow deliberate messages
     message = unless error instanceof UserError
       if _.isFunction @logError
-        @logError(error)
+        @logError('ServerError', error)
       "Server Error"
     else
       errors = error.errors
