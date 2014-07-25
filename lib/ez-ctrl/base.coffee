@@ -191,8 +191,9 @@ BaseController.prototype =
       @translateSuccessResponse
     ], data).fail (reason)=>
       @translateErrorResponse reason
-    .then =>
+    .then (result)=>
       @handleForked()
+      result
   
   runBefore: (data, i = 0)->
     if i < @before.length
