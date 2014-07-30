@@ -1,6 +1,6 @@
 {
   "name": "ez-ctrl",
-  "version": "0.4.49",
+  "version": "0.4.50",
   "main": "index.js",
   "dependencies": {
     "angular": "~1.2.7",
