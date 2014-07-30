@@ -108,7 +108,10 @@ module.exports = BaseController =
         routeDetails.middleware
     else
       []
+
+    returnType = routeDetails.return or 'json'
     
+    returnType: returnType
     method: method
     route: route
     logic: logic
@@ -253,8 +256,11 @@ BaseController.prototype =
       data
     
   translateSuccessResponse: (response) ->
-    success: true
-    response: response
+    if @returnType is 'json'
+      success: true
+      response: response
+    else
+      response
       
   translateErrorResponse: (error) ->
     # Only allow deliberate messages
@@ -265,14 +271,26 @@ BaseController.prototype =
     else
       errors = error.errors
       error.message
-    success: false
-    error: message
-    errors: errors
+    if @returnType is 'json'
+      success: false
+      error: message
+      errors: errors
+    else
+      @next error
+      @sent = true
 
   send: (result)->
     unless @sent
       @sent = true
-      @response.json result
+      @_send(result)
+
+  _send: (result)->
+    switch @returnType
+      when 'stream'
+        @response.pipe result
+      else
+        @response.json result
+    
   
   convert: (data) ->
     Converter.convert @validation, data
