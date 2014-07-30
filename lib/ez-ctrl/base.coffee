@@ -287,7 +287,7 @@ BaseController.prototype =
   _send: (result)->
     switch @returnType
       when 'stream'
-        @response.pipe result
+        result.pipe @response
       else
         @response.json result
     
