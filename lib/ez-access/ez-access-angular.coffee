@@ -8,17 +8,16 @@
     define ['angular', 'ez-access', 'ez-routes'], generator
   else
     {angular, EZAccess} = window
-    window.EZAccessA = generator(angular, EZAccess)
+    generator(angular, EZAccess)
     delete window.EZAccess
 )( (angular, EZAccess, EZRoutes)->
   angular.module('ez.access', [])
-  .service('EZAccess', ['$http', ($http)->
-    angular.extend @, EZAccess
+  .factory('EZAccess', ['$http', ($http)->
     EZAccess.BaseController.prototype._makeRequestBase = (method, path, data)->
       args = [path]
       args.push data if method isnt 'get'
       $http[method].apply($http, args).then (response)->
         response.data
-    @
+    EZAccess
   ])
 )
