@@ -111,7 +111,7 @@ module.exports = BaseController =
 
     returnType = routeDetails.return or 'json'
     
-    routeDetails: routeDetails
+    details: routeDetails
     returnType: returnType
     method: method
     route: route
