@@ -299,7 +299,7 @@ BaseController.prototype =
     Validator.validate(@validation, data, @modelName)
   
   throwValidationError: (errors)->
-    @throwError 'Validation', errors
+    @throwError 'Validate', errors
 
   throwError: (message, errors)->
     error = new UserError message
