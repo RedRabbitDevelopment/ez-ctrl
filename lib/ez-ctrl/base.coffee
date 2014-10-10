@@ -117,6 +117,7 @@ module.exports = BaseController =
     route: route
     logic: logic
     before: before
+    view: routeDetails.view
     pattern: pattern
     validation: validation
     usesId: usesId
@@ -291,6 +292,8 @@ BaseController.prototype =
         result.pipe @response
       when 'raw'
         @response.end result
+      when 'view'
+        @response.render @view, result
       else
         @response.json result
     
