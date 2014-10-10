@@ -289,6 +289,8 @@ BaseController.prototype =
     switch @returnType
       when 'stream'
         result.pipe @response
+      when 'raw'
+        @response.end result
       else
         @response.json result
     
