@@ -1,180 +1,17 @@
 EZController
 =======
 
-```js
-// ServerSide
-var EZController = require('ez-ctrl').BaseController;
-UserController = BaseController.extend({
-  name: "User",
-  routes: {
-    query: function() { // Anything with "query" automatically is get /users
-      // Return raw data which is translated into JSON
-      return UserData;
-    },
-    get: { // Anything with "get" automatically is get /users/:id
-      validation: {
-        id: {
-          required: true,
-          type: 'int', // convert string inputs to integer
-          inDb: true // create custom validation
-        }
-      },
-      logic: function(id) {
-        // Note, id is already clean! No need to check if it exists!
-        // Return any promise
-        var deferred = Q.defer();
-        setTimeout(function() {
-          deferred.resolve(UserData[id]);
-        }, 25);
-        return deferred.promise;
-      }
-    },
-    add: { // Anything with "add" automatically is put /users
-      validation: {
-        name: {
-          required: true,
-          type: "text",
-          length: {
-            gt: 8
-          }
-        },
-        username: {
-          required: true,
-          type: 'alphaNumeric',
-          unique: true,
-          length: {
-            gt: 9
-          }
-        },
-        password: {
-          required: true,
-          type: 'alphaNumeric',
-          length: {
-            gt: 8
-          }
-        }
-      },
-      logic: function(data) {
-        data.id = UserData.length;
-        data.comments = []
-        UserData.push(data);
-        return true;
-      }
-    },
-    save: { // Anything with "save" automatically is post /users/:id
-      validation: {
-        id:  {
-          required: true,
-          type: 'int', 
-          inDb: true
-        },
-        name: {
-          length: {
-            gt: 8
-          }
-        },
-        username: {
-          type: 'alphaNumeric',
-          unique: true,
-          length: {
-            gt: 8
-          }
-        },
-        password: {
-          type: 'alphaNumeric',
-          length: {
-            gt: 8
-          }
-        }
-      },
-      logic: function(id, _data) {
-        // input can be (id, name, username, password) or (id, _data)
-        for(var key in _data) {
-          UserData[id][key] = _data[key];
-        }
-        return true;
-      }
-    },
-    postGetStuff: function() { // post<verb> is always /users/verb
-      return "Got Stuff";
-    },
-    login: {
-      method: "post",
-      validation: {
-        username: {
-          required: true,
-        },
-        password: {
-          required: true
-        }
-      },
-      logic: function(username, password) {
-        var user;
-        for(var id in UserData) {
-          user = UserData[id];
-          if(user.username == username) {
-            if(user.password == password) {
-              return true;
-            } else {
-              throw new Error("Invalid username or password"); // Throw errors
-            }
-          }
-        }
-        throw new Error("Invalid username or password");
-      }
-    },
-    action: { // any action is /users/action
-      validation: {
-        id: {
-          type: 'int',
-          required: true,
-          inDb: true
-        }
-      },
-      logic: function() {
-        return "Result";
-      }
-    }
-    usesIdAction: { // any action with usesId is /users/:id/action
-      validation: {
-        id: {
-          type: 'int',
-          required: true,
-          inDb: true
-        }
-      },
-      logic: function(id) {
-        return "Result";
-      }
-    }
-  }
-});
-
-// Client-side
-
-ez.User.login(username, password).then(function(result) { // result is the result of the logic function
-  alert("Booya!");
-}).fail(function(reason) {
-  if(reason == "Invalid username or password") {
-    alert(reason);
-  } else if(reason.error === "validate") {
-    console.log(reason.errors);
-  }
-});
-
-```
-
 ## Installation
 
     $ npm install ez-ctrl
 
 ## Features
 
-  * Built on [Express](https://raw.github.com/visionmedia/express)
-  * Has all the same features as express
-  * Decouples data retrieval, data validation, and logic for better testing
-  * DRY - focus more on logic and less on sanitation
-  * DRY - easily validate input on the front-end and back-end with one simply definition!
+  * DRY - Write code once, use code everywhere.
+  * Automatic generation of client-side code.
+  * Middleware, beforeEach and AfterEach.
+  * Compatible with Express, Socket.io, or any custom-run application.
+  * Only write server-side and client-side validation once.
 
 ## Philosophy
 
@@ -194,6 +31,7 @@ ez.User.login(username, password).then(function(result) { // result is the resul
   Exposed by `require('ez-controller').BaseController`.
 
 ### ControllerManager.registerRoutes(app)
+
   In order to allow your express server to route to your different logic methods, express needs to be aware of them.
   
     FrontEnd = require('ez-ctrl').FrontEnd;

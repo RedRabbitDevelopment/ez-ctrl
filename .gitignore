@@ -2,3 +2,4 @@
 *.swp
 *.sqo
 npm-debug.log
+/bin
