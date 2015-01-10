@@ -5,8 +5,6 @@ import {data} from '../test_data/models/user';
 import BasicController, {middleware} from '../test_data/routes/basic';
 import {BaseController, SuperController, OtherController} from '../test_data/routes/super';
 
-import path from 'path';
-console.log(path.extname('/booya/one').substring(1));
 describe('Calling Statically', function() {
   beforeEach(()=> {
     for(let key in middleware) delete middleware[key];
