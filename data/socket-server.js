@@ -1,7 +1,7 @@
 
 import Promise from 'bluebird';
 import SocketIO from 'socket.io';
-import SocketHandler from '../lib/ez-socket';
+import SocketHandler from '../lib/socket';
 import UserController from './routes/users';
 import http from 'http';
 

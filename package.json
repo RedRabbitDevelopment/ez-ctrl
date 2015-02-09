@@ -1,7 +1,7 @@
 {
   "name": "ez-ctrl",
   "version": "0.4.59",
-  "main": "index.js",
+  "main": "bin/index.js",
   "scripts": {
     "test": "mocha --compilers js:6to5/register",
     "build": "6to5 lib --out-dir bin"

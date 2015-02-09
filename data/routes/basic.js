@@ -1,6 +1,6 @@
 
 import Promise from 'bluebird';
-import Controller from '../../lib/ez-ctrl/base';
+import Controller from '../../lib/ez-ctrl';
 
 export var middleware = {};
 

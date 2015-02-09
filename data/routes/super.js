@@ -1,5 +1,5 @@
 
-import Controller from '../../lib/ez-ctrl/base'
+import Controller from '../../lib/ez-ctrl'
 
 export class BaseController extends Controller {}
 export class SuperController extends BaseController {}

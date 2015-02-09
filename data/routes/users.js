@@ -1,9 +1,9 @@
 
 import Promise from 'bluebird';
 import {NotFoundError} from '../../lib/userError';
-import Controller from '../../lib/ez-ctrl/base';
-import Validator from '../../lib/ez-validator';
-import Converter from '../../lib/ez-converter';
+import Controller from '../../lib/ez-ctrl';
+import Validator from '../../lib/validator';
+import Converter from '../../lib/converter';
 import User from '../models/user';
 
 var converter = new Converter();
@@ -18,9 +18,6 @@ class BaseController extends Controller {
 }
 
 export default class UserController extends BaseController {
-  constructor() {
-    super('User');
-  }
   *afterGetData() {
     yield super.afterGetData();
     yield this.afterGetDataQueued();
