@@ -1,14 +1,21 @@
 import Promise from 'bluebird';
 
-let users = [{
-  id: 0,
-  name: 'Nathan',
-  male: true
-}, {
-  id: 1,
-  male: true,
-  name: 'Kevin'
-}];
+let users = [];
+users.reset = function() {
+  users.splice(0, users.length);
+  users.push({
+    id: 0,
+    name: 'Nathan',
+    male: true
+  });
+  users.push({
+    id: 1,
+    male: true,
+    name: 'Kevin'
+  });
+};
+users.reset();
+
 export {users as data};
 
 let User = {

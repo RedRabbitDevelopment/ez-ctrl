@@ -1,15 +1,19 @@
 
 import Promise from 'bluebird';
+import {NotFoundError} from '../../lib/userError';
 import Controller from '../../lib/ez-ctrl/base';
 import Validator from '../../lib/ez-validator';
 import Converter from '../../lib/ez-converter';
 import User from '../models/user';
 
+var converter = new Converter();
+var validator = new Validator();
+
 class BaseController extends Controller {
   *afterGetData() {
     yield super.afterGetData();
-    this.data = yield Converter(this.data, this.routeDetails);
-    yield Validator(this.data, this.routeDetails);
+    this.data = yield converter.convertData(this);
+    yield validator.validateData(this);
   }
 }
 
@@ -24,6 +28,9 @@ export default class UserController extends BaseController {
       yield this.afterGetDataForQuery();
     }
   }
+  onServerError(error) {
+    UserController.serverError = error;
+  }
   afterSuccess() {
   }
   afterGetDataQueued() {
@@ -37,7 +44,7 @@ UserController.modelName = 'User';
 UserController.defineRoutes({
   query: {
     data: {
-      firstname: {
+      name: {
         type: 'string'
       },
       male: {
@@ -58,16 +65,16 @@ UserController.defineRoutes({
       }
     },
     logic(id) {
-      return User.get(id);
+      return User.get(id).then( (user)=> {
+        if(!user)
+          throw new NotFoundError();
+        return user;
+      });
     }
   },
   create: {
     data: {
-      id: {
-        type: 'int',
-        required: true
-      },
-      firstname: {
+      name: {
         type: 'string',
         required: true
       },
@@ -76,11 +83,8 @@ UserController.defineRoutes({
         required: true
       }
     },
-    *afterGetData() {
-      this.ranAfterGetData = true;
-    },
-    logic(id, _data) {
-      return User.update(id, _data);
+    logic(_data) {
+      return User.create(_data);
     }
   },
   update: {
@@ -89,7 +93,7 @@ UserController.defineRoutes({
         type: 'int',
         required: true
       },
-      firstname: {
+      name: {
         type: 'string'
       },
       male: {
@@ -120,6 +124,11 @@ UserController.defineRoutes({
     },
     logic(isMale) {
       return User.query({male: isMale});
+    }
+  },
+  getUnexpectedError: {
+    logic() {
+      throw new Error('This is unexpected');
     }
   }
 });
