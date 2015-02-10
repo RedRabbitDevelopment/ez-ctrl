@@ -1,5 +1,7 @@
 /node_modules
+/bin
 *.swp
 *.sqo
 npm-debug.log
 /bin
+/_site
