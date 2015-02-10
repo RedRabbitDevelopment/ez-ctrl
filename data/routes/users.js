@@ -6,8 +6,19 @@ import Validator from '../../lib/validator';
 import Converter from '../../lib/converter';
 import User from '../models/user';
 
-var converter = new Converter();
-var validator = new Validator();
+var models = {User};
+
+var converter = new Converter({
+  model: function* fetchModel(id) {
+    id = parseFloat(id);
+    return yield models[this.constructor.modelName].get(id);
+  }
+});
+var validator = new Validator({
+  isModel: function() {
+    return true;
+  }  
+});
 
 class BaseController extends Controller {
   *afterGetData() {
@@ -57,16 +68,15 @@ UserController.defineRoutes({
   get: {
     data: {
       id: {
-        type: 'int',
-        required: true
+        type: 'model',
+        required: false,
+        rename: 'user'
       }
     },
-    logic(id) {
-      return User.get(id).then( (user)=> {
-        if(!user)
-          throw new NotFoundError();
-        return user;
-      });
+    logic(user) {
+      if(!user)
+        throw new NotFoundError();
+      return user;
     }
   },
   create: {
