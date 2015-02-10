@@ -1,0 +1,11 @@
+
+exclude: ['/bin']
+defaults:
+  -
+    scope:
+      path: ""
+    values:
+      author: "Nathan Tate"
+      githubUrl: "https://github.com/RedRabbitDevelopment/ez-ctrl"
+      baseUrl: "/ez-ctrl"
+      layout: "default"
