@@ -3,3 +3,4 @@
 *.swp
 *.sqo
 npm-debug.log
+/_site
