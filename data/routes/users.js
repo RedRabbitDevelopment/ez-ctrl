@@ -1,5 +1,4 @@
 
-import Promise from 'bluebird';
 import {NotFoundError} from '../../lib/userError';
 import Controller from '../../lib/ez-ctrl';
 import Validator from '../../lib/validator';

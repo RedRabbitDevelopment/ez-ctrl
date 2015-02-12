@@ -1,5 +1,4 @@
 
-import Promise from 'bluebird';
 import SocketIO from 'socket.io';
 import SocketHandler from '../lib/socket';
 import UserController from './routes/users';

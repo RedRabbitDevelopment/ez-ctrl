@@ -1,15 +1,15 @@
 
 import 'should';
 import _ from 'lodash';
-import Promise from 'bluebird';
+import BlueBird from 'bluebird';
 import request from 'request';
 import start from '../data/express-server';
 import {data} from '../data/models/user';
 import UserController from '../data/routes/users';
-var requestAsync = Promise.promisify(request);
-var co = Promise.coroutine;
+var requestAsync = BlueBird.promisify(request);
+var co = BlueBird.coroutine;
 
-request = Promise.promisifyAll(request);
+request = BlueBird.promisifyAll(request);
 
 describe('Express Controller', ()=> {
   var server;

@@ -1,4 +1,3 @@
-import Promise from 'bluebird';
 
 let users = [];
 users.reset = function() {

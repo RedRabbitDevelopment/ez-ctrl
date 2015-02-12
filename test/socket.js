@@ -3,9 +3,9 @@ import 'should';
 import {data} from '../data/models/user';
 import UserController from '../data/routes/users';
 import SocketServer from '../data/socket-server';
-import Promise from 'bluebird';
+import BlueBird from 'bluebird';
 import SocketClient from 'socket.io-client';
-let co = Promise.coroutine;
+let co = BlueBird.coroutine;
 
 describe('Socket Handler', ()=> {
   var close;

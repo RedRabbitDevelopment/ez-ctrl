@@ -1,6 +1,5 @@
 
 import express from 'express';
-import Promise from 'bluebird';
 import ExpressHandler from '../lib/express';
 import BasicController, {middleware} from './routes/basic';
 import UserController from './routes/users';
