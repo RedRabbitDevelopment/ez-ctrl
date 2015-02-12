@@ -1,6 +1,9 @@
 
-import BlueBird from 'bluebird';
 import Controller from '../../lib/ez-ctrl';
+
+function delay(milli) {
+  return new Promise( (resolve)=> setTimeout(resolve, milli) );
+}
 
 export var middleware = {};
 
@@ -10,7 +13,7 @@ export default class BasicController extends Controller {
   *afterGetData() {yield this.callMiddleWare('afterGetData'); }
   *afterSuccess() {yield this.callMiddleWare('afterSuccess'); }
   *callMiddleWare(name) {
-    yield BlueBird.delay(5);
+    yield delay(5);
     if(middleware[name + 'MainDate']) throw new Error('Already ran ' + name);
     middleware[name + 'MainDate'] = Date.now();
   }
@@ -31,7 +34,7 @@ BasicController.defineRoutes({
   },
   // if logic is the only attribute, you should be able to use it.
   resolvePromise(a) {
-    return BlueBird.delay(100).then( ()=> a + ' dog');
+    return delay(100).then( ()=> a + ' dog');
   },
   * resolveGenerator() {
     let promiseResult = yield Promise.resolve('happy');
@@ -49,7 +52,7 @@ BasicController.defineRoutes({
 
 function setNow(attr) {
   return function*() {
-    yield BlueBird.delay(5);
+    yield delay(5);
     middleware[attr + 'Date'] = Date.now();
   };
 }

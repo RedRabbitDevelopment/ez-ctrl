@@ -5,7 +5,7 @@ import UserController from '../data/routes/users';
 import SocketServer from '../data/socket-server';
 import BlueBird from 'bluebird';
 import SocketClient from 'socket.io-client';
-let co = BlueBird.coroutine;
+import {co} from '../lib/generatorUtils';
 
 describe('Socket Handler', ()=> {
   var close;

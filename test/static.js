@@ -1,10 +1,9 @@
 
 import 'should';
-import BlueBird from 'bluebird';
+import {co} from '../lib/generatorUtils';
 import {data} from '../data/models/user';
 import BasicController, {middleware} from '../data/routes/basic';
 import {BaseController, SuperController, OtherController} from '../data/routes/super';
-var co = BlueBird.coroutine;
 
 describe('Calling Statically', ()=> {
   beforeEach(()=> {

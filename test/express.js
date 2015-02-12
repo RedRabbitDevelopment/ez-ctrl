@@ -1,15 +1,13 @@
 
 import 'should';
 import _ from 'lodash';
-import BlueBird from 'bluebird';
 import request from 'request';
 import start from '../data/express-server';
 import {data} from '../data/models/user';
 import UserController from '../data/routes/users';
-var requestAsync = BlueBird.promisify(request);
-var co = BlueBird.coroutine;
-
-request = BlueBird.promisifyAll(request);
+import {co, promisify, promisifyAll} from '../lib/generatorUtils';
+var requestAsync = promisify(request);
+request = promisifyAll(request);
 
 describe('Express Controller', ()=> {
   var server;
@@ -43,7 +41,7 @@ describe('Express Controller', ()=> {
       response.statusCode.should.equal(options.expectedStatus);
       return options.all ? body : body.result;
     };
-    it('should resolve', co(function*() {
+    it.only('should resolve', co(function*() {
       var result = yield* makeRequest('/basics/raw-value');
       result.should.equal(5);
     }));
