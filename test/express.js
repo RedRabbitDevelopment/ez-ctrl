@@ -41,7 +41,7 @@ describe('Express Controller', ()=> {
       response.statusCode.should.equal(options.expectedStatus);
       return options.all ? body : body.result;
     };
-    it.only('should resolve', co(function*() {
+    it('should resolve', co(function*() {
       var result = yield* makeRequest('/basics/raw-value');
       result.should.equal(5);
     }));
