@@ -1,4 +1,5 @@
 
+import Promise from 'bluebird';
 import should from 'should';
 import 'should-promised';
 import {promisify, promisifyAll, promisifyGen, co, getNext} from '../lib/generatorUtils';

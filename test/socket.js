@@ -3,7 +3,7 @@ import 'should';
 import {data} from '../data/models/user';
 import UserController from '../data/routes/users';
 import SocketServer from '../data/socket-server';
-import BlueBird from 'bluebird';
+import Promise from 'bluebird';
 import SocketClient from 'socket.io-client';
 import {co} from '../lib/generatorUtils';
 

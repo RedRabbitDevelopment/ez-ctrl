@@ -1,5 +1,6 @@
 
 import 'should';
+import Promise from 'bluebird';
 import {co} from '../lib/generatorUtils';
 import {data} from '../data/models/user';
 import BasicController, {middleware} from '../data/routes/basic';
