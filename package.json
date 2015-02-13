@@ -7,12 +7,13 @@
     "build": "6to5 lib --out-dir bin"
   },
   "dependencies": {
+    "bluebird": "^2.9.9",
     "inflection": "1.2.6",
     "lodash": "2.4.1",
     "multiparty": "3.1.0"
   },
   "devDependencies": {
-    "should-promised": "RedRabbitDevelopment/promised#master",
+    "should-promised": "0.0.5",
     "6to5": "^3.5.3",
     "bluebird": "^2.6.2",
     "angular": "1.3.2",
