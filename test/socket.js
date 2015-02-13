@@ -5,7 +5,7 @@ import UserController from '../data/routes/users';
 import SocketServer from '../data/socket-server';
 import Promise from 'bluebird';
 import SocketClient from 'socket.io-client';
-import {co} from '../lib/generatorUtils';
+var co = Promise.coroutine;
 
 describe('Socket Handler', ()=> {
   var close;
