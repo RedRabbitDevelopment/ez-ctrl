@@ -21,13 +21,13 @@ module.exports = BaseController =
       if _.isFunction @initialize
         @initialize()
       if options.name
-        BaseController.setBaseData.call(@, NewController.modelName)
+        BaseController.setBaseData.call(@, NewController.modelName, NewController.idRegex, NewController.baseRoute)
       return
     _.extend(NewController, this)
     NewController.isAbstract = false
     _.extend NewController, options
     if options.name
-      NewController.setBaseData(options.name, NewController.idRegex)
+      NewController.setBaseData(options.name, NewController.idRegex, NewController.baseRoute)
     NewController.beforeEach = @extendArray 'beforeEach', options.beforeEach
     NewController.middleware = @extendArray 'middleware', options.middleware
     _.extend(NewController.prototype, @prototype, options.methods)
@@ -36,10 +36,10 @@ module.exports = BaseController =
   extendArray: (name, extend)->
     newarray = if extend then @[name].concat extend else @[name].slice 0
 
-  setBaseData: (name, idRegex)->
+  setBaseData: (name, idRegex, baseRoute = '')->
     @modelName = name
     @tableName = inflection.tableize(@modelName)
-    @basePattern = "/" + @tableName
+    @basePattern = baseRoute + "/" + @tableName
     idPattern = if idRegex?
       if idRegex is false then '' else "(#{idRegex})"
     else
