@@ -1,6 +1,6 @@
 {
   "name": "ez-ctrl",
-  "version": "0.4.59",
+  "version": "1.0.0-rc.0.1",
   "main": "bin/index.js",
   "scripts": {
     "test": "mocha --require ./test",
