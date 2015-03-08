@@ -3,45 +3,41 @@ EZController
 
 ## Installation
 
-    $ npm install ez-ctrl
+    $ npm i -S ez-ctrl
 
 ## Features
 
   * DRY - Write code once, use code everywhere.
-  * Automatic generation of client-side code.
-  * Middleware, beforeEach and AfterEach.
+  * Automatic generation of client-side code (via gulp-ez)
+  * Middleware.
   * Compatible with Express, Socket.io, or any custom-run application.
   * Only write server-side and client-side validation once.
 
 ## Philosophy
 
-  The EZController is not just a Ruby on Rails inspired application. The basic idea
-  is that generally your front-end application is ignorant of the server and just makes
-  guesses. The server already knows where it's endpoints are, and already runs validation
-  on the input, why not expose that information to the browser?
+  The EZController is not just a Ruby on Rails inspired application. EZController is
+  all about annotating route information and passing that information down to the client
+  to create truly isomorphic code.
   
-  We have created a way for the developers
-  to reuse the validation code on the front-end, essentially building 
-  front-end and back-end validation at the same time.
+  One example use case is input validation. It's considered good practice to run input
+  validation on both the server and the client. You want the validation to run on the
+  client for ease of use and speed, but you need the validation to run on the server
+  for security reasons. Without EZController, you'd be rewriting that code in both
+  places. With EZController, you write it once (on the server), pass that information
+  down to the client, and you're set!
   
 ## API
 
 ### BaseController
 
-  Exposed by `require('ez-controller').BaseController`.
+  Exposed by `require('ez-ctrl')`.
 
 ### ControllerManager.registerRoutes(app)
 
   In order to allow your express server to route to your different logic methods, express needs to be aware of them.
   
-    FrontEnd = require('ez-ctrl').FrontEnd;
-    frontEnd = new FrontEnd()
-    frontEnd.addController(UserController);
-    frontEnd.registerRoutes(app);
-
-  Or, if you keep all your controllers in one directory, you can declare it like this:
-
-    frontEnd.registerRoutes(app, __dirname + "/routes");
+    ExpressHandler = require('ez-ctrl').ExpressHandler;
+    ExpressHandler.registerRoutes(app, [ControllerA, ControllerB]);
 
 ### BaseController.extend()
 
