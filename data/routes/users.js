@@ -8,9 +8,9 @@ import User from '../models/user';
 var models = {User};
 
 var converter = new Converter({
-  model: function* fetchModel(id) {
+  model: async function fetchModel(id) {
     id = parseFloat(id);
-    return yield models[this.constructor.modelName].get(id);
+    return await models[this.constructor.modelName].get(id);
   }
 });
 var validator = new Validator({
@@ -20,19 +20,19 @@ var validator = new Validator({
 });
 
 class BaseController extends Controller {
-  *afterGetData() {
-    yield super.afterGetData();
-    this.data = yield converter.convertData(this);
-    yield validator.validateData(this);
+  async afterGetData() {
+    await super.afterGetData();
+    this.data = await converter.convertData(this);
+    await validator.validateData(this);
   }
 }
 
 export default class UserController extends BaseController {
-  *afterGetData() {
-    yield super.afterGetData();
-    yield this.afterGetDataQueued();
+  async afterGetData() {
+    await super.afterGetData();
+    await this.afterGetDataQueued();
     if(this.routeName === 'query') {
-      yield this.afterGetDataForQuery();
+      await this.afterGetDataForQuery();
     }
   }
   onServerError(error) {

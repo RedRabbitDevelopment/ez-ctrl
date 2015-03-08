@@ -21,9 +21,6 @@ BaseController.defineRoutes({
   notOverriden() {
     return 'base';
   },
-  callOtherMethod() {
-    return this.overridden();
-  }
 });
 
 OtherController.defineRoutes({

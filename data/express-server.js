@@ -9,7 +9,7 @@ export default function start(port = 3000) {
   var app = express();
   app.use(bodyParser.json());
   ExpressHandler.registerControllers(app,
-      [BasicController, UserController]);
+      [BasicController, UserController], true);
   app.stop = function() {
     return new Promise( (resolve, reject)=>{
       app.server.close(resolve);
@@ -23,3 +23,6 @@ export default function start(port = 3000) {
     .then( ()=> app);
 };
 
+if(process.env.RUN_SERVER) {
+  start();
+}
