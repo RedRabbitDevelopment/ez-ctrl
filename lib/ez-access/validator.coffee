@@ -88,7 +88,7 @@
                 throw new Error 'only types are supported by array validators'
               return Bluebird.all(for value_part in value
                 @validateField(validators, field, value_part, controllerName)
-              ).fail ->
+              ).catch ->
                 throw new UserError "should be an array of " + validators.type
             else
               # TODO: support object validation
@@ -107,7 +107,7 @@
             throw new Error("Validation method '#{validator}' does not exist")
         else
           @ValidationMethods[validator] value, validatorData, field, controllerName
-      .fail (error)->
+      .catch (error)->
         Bluebird.reject if error instanceof UserError then error.message else error
         
     registerValidator: (name, fn)->

@@ -161,11 +161,11 @@ BaseController.prototype =
       @validate
       @runLogic
       @translateSuccessResponse
-    ]).fail (reason)=>
+    ]).catch (reason)=>
       @translateErrorResponse reason
     .then (result)=>
       @send result
-    .fail (reason) =>
+    .catch (reason) =>
       @logError 'UnhandledError', reason
     .then =>
       @handleForked()
@@ -195,7 +195,7 @@ BaseController.prototype =
       @validate
       @runLogic
       @translateSuccessResponse
-    ], data).fail (reason)=>
+    ], data).catch (reason)=>
       @translateErrorResponse reason
     .then (result)=>
       @handleForked()
@@ -241,7 +241,7 @@ BaseController.prototype =
     form = new Form()
     form.parseAsync(@request).spread( (fields, files)=>
       @files = files
-    ).fail (error)=>
+    ).catch (error)=>
       if error.message is 'Expected CR Received 45'
         @files = {}
       else
