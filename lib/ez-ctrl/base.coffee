@@ -1,12 +1,13 @@
 FuncDetails = require('./func-details')
 Converter = require('./converter')
-Q = require('q')
+Bluebird = require 'bluebird'
 _ = require('lodash')
 inflection = require('inflection')
 Converter = require('./converter')
 Validator = require('../ez-access/validator')
 UserError = require './userError'
-multiparty = require 'multiparty'
+{Form} = require 'multiparty'
+Bluebird.promisifyAll Form
 util = require 'util'
 
 module.exports = BaseController =
@@ -170,17 +171,17 @@ BaseController.prototype =
       @handleForked()
 
   handleForked: ->
-    Q.allSettled @forked
+    Bluebird.settle @forked
     .then (results)=>
       results.forEach (result)=>
-        unless result.state is 'fulfilled'
-          @logError 'ForkError', result.reason
+        unless result.isFulfilled()
+          @logError 'ForkError', result.reason()
 
   getDisplayName: ->
     "#{@modelName}.#{@route}"
 
   steps: (steps, first)->
-    promise = Q.when first
+    promise = Bluebird.resolve first
     steps.reduce (promise, step)=>
       promise.then step.bind @
     , promise
@@ -202,14 +203,14 @@ BaseController.prototype =
   
   runBefore: (data, i = 0)->
     if i < @before.length
-      Q.fcall(=> @applyFunction(@before[i], data))
+      Bluebird.try(=> @applyFunction(@before[i], data))
       .then =>
         @runBefore data, i + 1
     else
       data
 
   runLogic: (data)->
-    Q.fcall =>
+    Bluebird.try =>
       @applyFunction @logic, data
 
   clean: (object)->
@@ -234,11 +235,11 @@ BaseController.prototype =
         @parseFiles().then =>
           @files?[field]?[0]
     else
-      Q.fcall => @request.param(field)
+      Bluebird.try => @request.param(field)
     
   parseFiles: ->
-    form = new multiparty.Form()
-    Q.ninvoke(form, 'parse', @request).spread( (fields, files)=>
+    form = new Form()
+    form.parseAsync(@request).spread( (fields, files)=>
       @files = files
     ).fail (error)=>
       if error.message is 'Expected CR Received 45'
@@ -254,7 +255,7 @@ BaseController.prototype =
           if value?
             data[field] = value
       )(field, value)
-    Q.all(promises).then ->
+    Bluebird.all(promises).then ->
       data
     
   translateSuccessResponse: (response) ->

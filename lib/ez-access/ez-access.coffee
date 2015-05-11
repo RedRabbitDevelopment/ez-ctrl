@@ -1,14 +1,14 @@
 # Note this is a front-end file!
 ( (generator)->
   if exports? and module.exports
-    Q = require 'q'
+    Bluebird = require 'bluebird'
     _ = require 'lodash'
-    module.exports = generator(Q, _)
+    module.exports = generator(Bluebird, _)
   else if define? and define.amd
-    define ['q', 'lodash'], generator
+    define ['bluebird', 'lodash'], generator
   else
-    window.EZAccess = generator(window.Q, window._)
-)((Q, _)->
+    window.EZAccess = generator(window.Bluebird, window._)
+)((Bluebird, _)->
 
   class BaseController
     constructor: (@_details)->
@@ -64,28 +64,27 @@
 
     _makeRequestBase: (method, path, data)->
 
-      deferred = Q.defer()
-      xmlhttp = if window.XMLHttpRequest
-        new XMLHttpRequest()
-      else
-        new ActiveXObject("Microsoft.XMLHTTP")
+      new Bluebird (resolve, reject)->
+        xmlhttp = if window.XMLHttpRequest
+          new XMLHttpRequest()
+        else
+          new ActiveXObject("Microsoft.XMLHTTP")
 
-      xmlhttp.onreadystatechange = =>
-        if xmlhttp.readyState is 4 and xmlhttp.status is 200
-          try
-            deferred.resolve JSON.parse xmlhttp.responseText
-          catch e
-            console.log "EZAccessError: Response not in valid JSON", xml.responseText
-            deferred.reject error, "EZAccessError: Response not in valid JSON", xml.responseText
+        xmlhttp.onreadystatechange = =>
+          if xmlhttp.readyState is 4 and xmlhttp.status is 200
+            try
+              resolve JSON.parse xmlhttp.responseText
+            catch e
+              console.log "EZAccessError: Response not in valid JSON", xml.responseText
+              reject error, "EZAccessError: Response not in valid JSON", xml.responseText
 
-      if method is 'get'
-        xmlhttp.open(method, path, true)
-        xmlhttp.send()
-      else
-        xmlhttp.open(method, path, true)
-        xmlhttp.setRequestHeader('Content-Type', 'application/json')
-        xmlhttp.send JSON.stringify data
-      deferred.promise
+        if method is 'get'
+          xmlhttp.open(method, path, true)
+          xmlhttp.send()
+        else
+          xmlhttp.open(method, path, true)
+          xmlhttp.setRequestHeader('Content-Type', 'application/json')
+          xmlhttp.send JSON.stringify data
 
     interpretResult: (result)->
       if result.success

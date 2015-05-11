@@ -1,6 +1,7 @@
 _ = require('lodash')
-Q = require 'q'
+Bluebird = require 'bluebird'
 fs = require 'fs'
+Bluebird.promisifyAll fs
 
 module.exports = class ControllerManager
   constructor: ->
@@ -12,7 +13,7 @@ module.exports = class ControllerManager
       memo
     , {}
   readdir: (dirname)->
-    Q.nfcall(fs.readdir, dirname).then (files)=>
+    fs.readdirAsync(dirname).then (files)=>
       @loadFiles dirname, files, '.js'
       if Object.keys(@controllers).length is 0
         @loadFiles dirname, files, '.coffee'

@@ -2,15 +2,15 @@
   if exports? and module.exports
     _ = require('lodash')
     validate = require 'validator'
-    Q = require('q')
+    Bluebird = require('bluebird')
     UserError = require '../ez-ctrl/userError'
-    module.exports = generator(_, validate, Q, UserError)
+    module.exports = generator(_, validate, Bluebird, UserError)
   else if define? and define.amd
-    define ['lodash', 'validate', 'q', 'UserError'], generator
+    define ['lodash', 'validate', 'bluebird', 'UserError'], generator
   else
-    {_, validator, Q, UserError} = window
-    window.Validator = generator(_, validator, Q, UserError)
-)((_, validate, Q, UserError)->
+    {_, validator, Bluebird, UserError} = window
+    window.Validator = generator(_, validator, Bluebird, UserError)
+)((_, validate, Bluebird, UserError)->
   check = validate.check
   Validator =
     validate: (validation, data, controllerName)->
@@ -22,13 +22,12 @@
           promises.push @validateField(validatorData, field, data[field], controllerName)
         else if validatorData.default
           data[field] = validatorData.default
-      Q.allSettled(promises).then (results)->
-        deferred = Q.defer()
+      Bluebird.settle(promises).then (results)->
         errors = _.filter results, (result)->
-          result.state != "fulfilled"
+          not result.isFulfilled()
         if errors.length > 0
           errors = _.reduce errors, (memo, result)->
-            reason = result.reason
+            reason = result.reason()
             # exit validation if there was an unexpected error
             throw reason if reason instanceof Error
             memo[reason.field] = reason.errors
@@ -36,10 +35,9 @@
           , {}
           error = new UserError 'Validate'
           error.errors = errors
-          deferred.reject error
+          throw error
         else
-          deferred.resolve(data)
-        deferred.promise
+          data
     
     ###
     Returns a promise that either resolves, or rejects with a list of errors: i.e.
@@ -55,21 +53,18 @@
       else if validators
         for validator, validatorData of validators
           promises.push @runValidate value, validator, validatorData, field, controllerName
-      Q.allSettled(promises).then (results)->
-        deferred = Q.defer()
-        readableErrors = (for result in results when result.state isnt "fulfilled"
-          if result.reason instanceof Error
+      Bluebird.settle(promises).then (results)->
+        readableErrors = (for result in results when not result.isFulfilled()
+          reason = result.reason()
+          if reason instanceof Error
             # Throw error and exit validation for any unexpected errors
-            throw result.reason
-          result.reason
+            throw reason
+          reason
         )
         if readableErrors.length > 0
-          deferred.reject
+          throw
             errors: readableErrors
             field: field
-        else
-          deferred.resolve()
-        deferred.promise
     ###
     Returns a promise that either is resolved, or is rejected with the readable error. Note that if validator is "type", then the validatorData
     will be transformed to is<validatorData>.
@@ -78,7 +73,7 @@
       type: "int" => isInt
     ###
     runValidate: (value, validator, validatorData, field, controllerName)->
-      Q.fcall =>
+      Bluebird.try =>
         if validator is "type"
           if _.isString validatorData
             validator = 'is' + validatorData.substr(0, 1).toUpperCase() + validatorData.substr(1)
@@ -91,7 +86,7 @@
               else
                 # TODO: support more complex array validation
                 throw new Error 'only types are supported by array validators'
-              return Q.all(for value_part in value
+              return Bluebird.all(for value_part in value
                 @validateField(validators, field, value_part, controllerName)
               ).fail ->
                 throw new UserError "should be an array of " + validators.type
@@ -113,7 +108,7 @@
         else
           @ValidationMethods[validator] value, validatorData, field, controllerName
       .fail (error)->
-        Q.reject if error instanceof UserError then error.message else error
+        Bluebird.reject if error instanceof UserError then error.message else error
         
     registerValidator: (name, fn)->
       @ValidationMethods[name] = fn

@@ -1,7 +1,7 @@
 _ = require 'lodash'
 ControllerManager = require('../ez-ctrl/manager')
 FuncDetails = require('../ez-ctrl/func-details')
-Q = require 'q'
+Bluebird = require 'bluebird'
 
 frontEndJS = null
 
@@ -13,7 +13,7 @@ module.exports = class FrontEnd
     initPromise = if dirname
       @controllerManager.readdir(dirname)
     else
-      Q.when true
+      Bluebird.resolve true
     initPromise.then =>
       @controllerManager.registerRoutes app
       if dynoScripts
@@ -30,7 +30,7 @@ module.exports = class FrontEnd
           res.sendfile __dirname + "/validator.js"
       app.get '/get-batch', (req, res)=>
         response = {}
-        Q.all  _.map req.query, (value, key)=>
+        Bluebird.all  _.map req.query, (value, key)=>
           Controller = @controllerManager.controllers[value.controllerName]
           controller = Controller.getController value.methodName
           controller.run req, res, (value.args or {})
