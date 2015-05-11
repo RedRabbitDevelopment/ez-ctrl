@@ -20,7 +20,7 @@ describe 'Validator', ->
       name: "Booya Baby"
     .then ->
       done new Error "didn't throw error"
-    .fail (result)->
+    .catch (result)->
       assert.ok result instanceof UserError
       assert.equal result.message, 'Validate'
       assert.equal result.errors.username.length, 1
@@ -28,7 +28,7 @@ describe 'Validator', ->
       assert.equal result.errors.password.length, 1
       assert.equal result.errors.password[0], 'is required'
       done()
-    .fail (error)->
+    .catch (error)->
       done error
       
   it "should fail", (done)->
@@ -37,7 +37,7 @@ describe 'Validator', ->
     , (error)->
       assert.equal error, 'is required'
       done()
-    .fail (result)->
+    .catch (result)->
       done(result)
   it "should give me an appropriate error", (done)->
     Validator.runValidate("no-oolong", "len", 8, "username").then (result)->
@@ -45,7 +45,7 @@ describe 'Validator', ->
     , (error)->
       assert.equal error, 'is required'
       done()
-    .fail (result)->
+    .catch (result)->
       done(result)
   it "should get me a readable error", (done)->
     Validator.validateField(required: true, "username", undefined, true).then (result)->
@@ -55,7 +55,7 @@ describe 'Validator', ->
       assert.equal result.errors.length, 1
       assert.equal result.errors[0], "is required"
       done()
-    .fail (error)->
+    .catch (error)->
       done error
   it "should get me multiple readable errors", (done)->
     Validator.validateField(
@@ -69,7 +69,7 @@ describe 'Validator', ->
       assert.equal result.errors[0], "String is not in range"
       assert.equal result.errors[1], "must be alphanumeric"
       done()
-    .fail (error)->
+    .catch (error)->
       done error
   it 'should be able to handle complex validation', (done)->
     Validator.validate
@@ -92,12 +92,12 @@ describe 'Validator', ->
       array: ['booya', 5, 'two']
     .then (result)->
       done new Error 'Got Result'
-    .fail (result)->
+    .catch (result)->
       assert.ok result instanceof UserError
       assert.ok result?.errors?.array
       assert.equal result.errors.array[0], 'should be an array of text'
       done()
-    .fail done
+    .catch done
   it 'should pass on 0 or empty string', (done)->
     Validator.validate
       name: required: true
@@ -105,7 +105,7 @@ describe 'Validator', ->
       name: 0
     .then (result)->
       done()
-    .fail done
+    .catch done
   it 'should test other validation on 0 or empty string', (done)->
     Validator.validate
       name:
@@ -127,4 +127,4 @@ describe 'Validator', ->
       assert.equal error.errors.name?.length, 1
       assert.equal error.errors.name[0], 'String is not in range'
       done()
-    .fail done
+    .catch done

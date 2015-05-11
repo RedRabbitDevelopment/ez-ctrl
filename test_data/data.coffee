@@ -1,4 +1,4 @@
-Q = require('q')
+Bluebird = require 'bluebird'
 base = require('../index')
 Validator = base.Validator
 UserError = base.UserError
@@ -42,15 +42,16 @@ Validator.registerValidator "unique", (value, data, field, controllerName)->
 
 # Test asynchronous validator
 Validator.registerValidator "inDb", (value, data, field, controllerName)->
-  deferred = Q.defer()
-  setTimeout ->
+  new Bluebird( (resolve)->
+    setTimeout resolve, 25
+  ).then ->
     found = UserData.length > value
     if found is data
-      deferred.resolve()
+      true
+    else if data
+      "does not exist"
     else
-      deferred.reject(if data then "does not exist" else "must not exist")
-  , 25
-  deferred.promise
+      "must not exist"
 
 exports.ErrorHandler = ErrorHandler =
   expect: (callback)->

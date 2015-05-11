@@ -1,4 +1,3 @@
-Q = require('q')
 base = require('../../index')
 BaseController = base.BaseController
 data = require '../data'

@@ -1,10 +1,13 @@
-Q = require('q')
+Bluebird = require 'bluebird'
 MyBaseController = require './'
 data = require '../data'
 middleware = data.middleware
 beforeEach = data.beforeEach
 UserData = data.UserData
 
+timeout = (time)->
+  new Bluebird (resolve)->
+    setTimeout resolve, time
 module.exports = MyBaseController.extend
   name: "AsyncUser"
   beforeEach: [->
@@ -24,12 +27,7 @@ module.exports = MyBaseController.extend
           default: 5
       logic: (optional)->
         # Get the users
-        deferred = Q.defer()
-        setTimeout ->
-          deferred.resolve(UserData)
-        , 25
-        deferred.promise
-    
+        timeout(25).then -> UserData
     get: # get /users/:id Anything with "get" automatically is get /<tableize>/:id
       validation:
         id:
@@ -37,11 +35,7 @@ module.exports = MyBaseController.extend
           type: 'int'
           inDb: true
       logic: (id)->
-        deferred = Q.defer()
-        setTimeout ->
-          deferred.resolve UserData[id]
-        , 25
-        deferred.promise
+        timeout(25).then -> UserData[id]
     add: # put /users Anything with "add" automatically is put /<tableize>
       validation:
         name:
@@ -57,14 +51,11 @@ module.exports = MyBaseController.extend
           type: 'alphanumeric'
           unique: true # Backend Only
       logic: (_data)->
-        deferred = Q.defer()
-        setTimeout ->
+        timeout(25).then ->
           _data.id = UserData.length
           _data.comments = []
           UserData.push _data
-          deferred.resolve true
-        , 25
-        deferred.promise
+          true
     save: # post /users/:id Anything with "save" automatically is post /<tableize>/:id
       validation:
         id:
@@ -81,12 +72,9 @@ module.exports = MyBaseController.extend
           type: 'alphaNumeric'
           len: 8
       logic: (id, _data)->
-        deferred = Q.defer()
-        setTimeout ->
+        timeout(25).then ->
           UserData[id][key] = value for key, value of _data
-          deferred.resolve true
-        , 25
-        deferred.promise
+          true
         
     postLogin: # post<verb> is always /<tableize/verb
       validation:
@@ -95,18 +83,15 @@ module.exports = MyBaseController.extend
         password:
           required: true
       logic: (username, password)->
-        deferred = Q.defer()
-        setTimeout ->
+        timeout(25).then ->
           for user in UserData
             user = UserData[id]
             if user.username is username
               if user.password is password
-                 deferred.resolve(true)
+                 return true
               else
-                deferred.reject "Invalid username or password"
-          deferred.reject("Invalid username or password")
-        , 25
-        deferred.promise
+                throw new UserError "Invalid username or password"
+          throw new UserError "Invalid username or password"
     beforeEachCrazy:
       before: ->
         beforeEach.other.crazy = true

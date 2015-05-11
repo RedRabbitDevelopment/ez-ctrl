@@ -1,5 +1,5 @@
 http = require 'http'
-Q = require 'q'
+Bluebird = require 'bluebird'
 assert = require 'assert'
 _ = require "lodash"
 TestData = require '../test_data/data'
@@ -13,28 +13,27 @@ describe "Test Server", ->
   beforeEach ->
     TestData.resetData()
   makeRequest = (data, postData)->
-    deferred = Q.defer()
-    data.port = 3000
-    data.hostname = "localhost"
-    data.headers =
-      "Content-Type": "application/json"
-    req = http.request data, (res)->
-      data = ""
-      res.setEncoding "utf8"
-      res.on "data", (chunk)->
-        data += chunk
-      res.on "end", ->
-        try
-          deferred.resolve JSON.parse(data)
-        catch e
-          console.log e, data
-          deferred.reject "Failed to parse json"
-    .on "error", (error)->
-      deferred.reject "Request error" + error
-    if postData
-      req.write JSON.stringify postData
-    req.end()
-    deferred.promise
+    new Bluebird (resolve, reject)->
+      data.port = 3000
+      data.hostname = "localhost"
+      data.headers =
+        "Content-Type": "application/json"
+      req = http.request data, (res)->
+        data = ""
+        res.setEncoding "utf8"
+        res.on "data", (chunk)->
+          data += chunk
+        res.on "end", ->
+          try
+            resolve JSON.parse(data)
+          catch e
+            console.log e, data
+            reject "Failed to parse json"
+      .on "error", (error)->
+        reject "Request error" + error
+      if postData
+        req.write JSON.stringify postData
+      req.end()
   doIt = (type)->
     describe "making a #{type} request", ->
       it "should successfully make the request", (done)->
@@ -47,7 +46,7 @@ describe "Test Server", ->
           assert.equal data.response.length, 3
           assert.equal data.response[0].name, "Nathan Tate"
           done()
-        .fail (error)->
+        .catch (error)->
           done(error)
       it "should get a single user", (done)->
         makeRequest
@@ -57,11 +56,11 @@ describe "Test Server", ->
           assert.ok data.response
           assert.equal data.response.name, "Baby Tate"
           done()
-        .fail (error)->
+        .catch (error)->
           done error
       it "should update a single user", (done)->
         makeRequest
-          method: "POST",
+          method: "PUT",
           path: "/#{type}/2"
         ,
           name: "Ren Tate"
@@ -73,11 +72,11 @@ describe "Test Server", ->
           assert.equal userData.name, "Ren Tate"
           assert.equal userData.username, "soonToCome"
           done()
-        .fail (error)->
+        .catch (error)->
           done error
       it "should add a single user", (done)->
         makeRequest
-          method: "PUT",
+          method: "POST",
           path: "/#{type}"
         ,
           name: "Another Tate"
@@ -92,7 +91,7 @@ describe "Test Server", ->
           assert.equal userData.username, "AnotherTate"
           assert.equal userData.password, "booyaBaby"
           done()
-        .fail (error)->
+        .catch (error)->
           done error
   doIt "users"
   doIt "async_users"
@@ -111,7 +110,7 @@ describe "Test Server", ->
         assert.ok error
         assert.equal error.message, 'object is not a function'
         done()
-      .fail (error)->
+      .catch (error)->
         done error
     it 'shouldnt fail on a 0', (done)->
       makeRequest
@@ -124,7 +123,7 @@ describe "Test Server", ->
         assert.equal data.success, true
         assert.equal data.response, 'Result'
         done()
-      .fail done
+      .catch done
     it "should use an id", (done)->
       makeRequest
         method: "GET",
@@ -134,7 +133,7 @@ describe "Test Server", ->
         assert.equal data.success, true
         assert.equal data.response, 'Result'
         done()
-      .fail (error)->
+      .catch (error)->
         done error
     it 'should give me required error', (done)->
       makeRequest
@@ -148,11 +147,11 @@ describe "Test Server", ->
         assert.equal data.success, false
         assert.equal data.error, 'Invalid username or password'
         done()
-      .fail (error)->
+      .catch (error)->
         done error
     it "should give me required validation error", (done)->
       makeRequest
-        method: "PUT",
+        method: "POST",
         path: "/users"
       ,
         name: "Booya Baby"
@@ -162,11 +161,11 @@ describe "Test Server", ->
         assert.equal data.errors.username[0], "is required"
         assert.equal data.errors.password[0], "is required"
         done()
-      .fail (error)->
+      .catch (error)->
         done error
     it 'shouldn\'t let me use an array when a string is required', (done)->
       makeRequest
-        method: 'PUT'
+        method: 'POST'
         path: '/users'
       ,
         name: ['booya', 'baby']
@@ -177,7 +176,7 @@ describe "Test Server", ->
         assert.equal data.success, false
         assert.equal data.errors.name[0], 'must be a string'
         done()
-      .fail (error)->
+      .catch (error)->
         done error
     describe "middleware", ->
       it "should run base and user", (done)->
@@ -189,7 +188,7 @@ describe "Test Server", ->
           assert.equal TestData.middleware.userRan, 1
           assert.equal TestData.middleware.asyncRan, 0
           done()
-        .fail (reason)->
+        .catch (reason)->
           done reason
       it "should run base and async", (done)->
         makeRequest
@@ -200,7 +199,7 @@ describe "Test Server", ->
           assert.equal TestData.middleware.userRan, 0
           assert.equal TestData.middleware.asyncRan, 1
           done()
-        .fail (reason)->
+        .catch (reason)->
           done reason
     describe "beforeEach", ->
       it "should run base and user", (done)->
@@ -212,7 +211,7 @@ describe "Test Server", ->
           assert.equal TestData.beforeEach.userRan, 1
           assert.equal TestData.beforeEach.asyncRan, 0
           done()
-        .fail (reason)->
+        .catch (reason)->
           done reason
       it "should run base and async", (done)->
         makeRequest
@@ -223,7 +222,7 @@ describe "Test Server", ->
           assert.equal TestData.beforeEach.userRan, 0
           assert.equal TestData.beforeEach.asyncRan, 2
           done()
-        .fail (reason)->
+        .catch (reason)->
           done reason
       it "should run on before too", (done)->
         makeRequest
@@ -235,5 +234,5 @@ describe "Test Server", ->
           assert.equal TestData.beforeEach.asyncRan, 2
           assert.ok TestData.beforeEach.other.crazy
           done()
-        .fail (reason)->
+        .catch (reason)->
           done reason

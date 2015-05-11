@@ -88,7 +88,7 @@ describe 'UserController', ->
   
     it 'should work with add', ->
       routeDetails = UserController.getRouteDetails 'add'
-      assert.equal routeDetails.method, 'put'
+      assert.equal routeDetails.method, 'post'
       assert.equal routeDetails.pattern, '/users'
       assert.ok _.isFunction routeDetails.logic
       johnnyboy =
@@ -103,7 +103,7 @@ describe 'UserController', ->
   
     it 'should work with save', ->
       routeDetails = UserController.getRouteDetails 'save'
-      assert.equal routeDetails.method, 'post'
+      assert.equal routeDetails.method, 'put'
       assert.ok _.isFunction routeDetails.logic
       newName = 'Shirley Tate'
       value = routeDetails.logic 1, name: newName
@@ -160,7 +160,7 @@ describe 'UserController', ->
         assert.equal errors.name.length, 1
         assert.equal errors.name[0], 'String is not in range'
         done()
-      .fail (error)->
+      .catch (error)->
         done(error)
     
   
@@ -180,7 +180,7 @@ describe 'UserController', ->
         assert.equal errors.name[0], 'String is not in range'
         assert.equal errors.username[0], 'String is not in range'
         done()
-      .fail (error)->
+      .catch (error)->
         done(error)
     
   
@@ -203,7 +203,7 @@ describe 'UserController', ->
         assert.equal errors.id[0], 'does not exist'
         assert.equal errors.username[0], 'must be unique'
         done()
-      .fail (error)->
+      .catch (error)->
         done(error)
     
   
@@ -227,7 +227,7 @@ describe 'UserController', ->
         assert.ok result
         assert.equal result, true
         done()
-      .fail done
+      .catch done
     it 'should catch the error as a promise as well.', (done)->
       controller = UserController.getController 'postLogin'
       controller.runLogic
@@ -235,7 +235,7 @@ describe 'UserController', ->
         username: 'yourdeveloperfriend'
       .then (result)->
         done new Error 'shouldn\'t have resolved.' + JSON.stringify result
-      .fail (error)->
+      .catch (error)->
         assert.ok error
         assert.equal error.constructor, UserError
         assert.equal error.message, 'Invalid username or password'
@@ -257,7 +257,7 @@ describe 'UserController', ->
       try
         #FrontEnd = eval(frontEndMethods)
       catch e
-        assert.fail('', e)
+        assert.catch('', e)
 
   describe 'converter', ->
     Converter = base.Converter

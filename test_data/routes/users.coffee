@@ -1,4 +1,3 @@
-Q = require('q')
 MyBaseController = require './'
 data = require '../data'
 middleware = data.middleware
