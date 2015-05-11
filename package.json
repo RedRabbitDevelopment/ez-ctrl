@@ -1,6 +1,6 @@
 {
   "name": "ez-ctrl",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "main": "index.js",
   "dependencies": {
     "bluebird": "^2.9.25",
