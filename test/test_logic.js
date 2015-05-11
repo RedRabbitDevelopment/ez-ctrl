@@ -258,7 +258,6 @@
         }).then(function(result) {
           return done(new Error('Didn\'t throw an error'));
         }, function(error) {
-          console.log('error', error);
           var errors;
           errors = error.errors;
           assert.equal(error.constructor, UserError);
