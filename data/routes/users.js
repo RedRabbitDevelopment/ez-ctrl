@@ -8,9 +8,9 @@ import User from '../models/user';
 var models = {User};
 
 var converter = new Converter({
-  model: async function fetchModel(id) {
+  model: function fetchModel(id) {
     id = parseFloat(id);
-    return await models[this.constructor.modelName].get(id);
+    return models[this.constructor.modelName].get(id);
   }
 });
 var validator = new Validator({
@@ -36,6 +36,7 @@ export default class UserController extends BaseController {
     }
   }
   onServerError(error) {
+    if(UserController.serverError) throw error;
     UserController.serverError = error;
   }
   afterSuccess() {

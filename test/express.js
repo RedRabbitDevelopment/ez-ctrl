@@ -6,6 +6,7 @@ import request from 'request';
 import start from '../data/express-server';
 import {data} from '../data/models/user';
 import UserController from '../data/routes/users';
+import {middleware} from '../data/routes/basic';
 var requestAsync = Promise.promisify(request);
 request = Promise.promisifyAll(request);
 
@@ -23,6 +24,7 @@ describe('Express Controller', ()=> {
   beforeEach(function() {
     delete UserController.serverError;
     data.reset();
+    for(let key in middleware) delete middleware[key];
   });
   afterEach(function() {
     if(UserController.serverError) throw UserController.serverError;
@@ -97,6 +99,53 @@ describe('Express Controller', ()=> {
         expectedStatus: 404
       });
       response.should.have.property('error', 'NotFound');
+    });
+    describe('batch processing', function() {
+      it('should be able to do multiple gets', async function() {
+        let requests = _.map({
+          myUser: {
+            controller: 'User',
+            method: 'get',
+            args: [1]
+          },
+          query: {
+            controller: 'User',
+            method: 'query'
+          },
+          error: {
+            controller: 'User',
+            method: 'getUnexpectedError'
+          },
+          basicValue: {
+            controller: 'Basic',
+            method: 'getRawValue'
+          }
+        }, function(request, name) {
+          return _.map(request, function(val, key) {
+            val = encodeURIComponent(val);
+            if(key === 'args') {
+              return `${name}[${key}][0]=${val}`;
+            } else {
+              return `${name}[${key}]=${val}`;
+            }
+          }).join('&');
+        }).join('&');
+        let response = await makeRequest('/batch?' + requests, {
+          expectedStatus: 200
+        });
+        if(UserController.serverError.message !== 'This is unexpected') {
+          throw UserController.serverError;
+        } else {
+          delete UserController.serverError;
+        }
+        response.should.have.property('myUser');
+        response.myUser.should.have.property('success', true);
+        response.myUser.result.should.have.property('id', 1);
+        response.error.should.have.property('success', false);
+        response.error.error.should.have.property('message', 'ServerError');
+        response.basicValue.should.have.property('success', true);
+        response.basicValue.should.have.property('result', 5);
+      });
     });
   });
 });

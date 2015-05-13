@@ -10,6 +10,10 @@ export default function start(port = 3000) {
   SocketHandler.registerController(app, UserController);
   var io = app.listen(port);
   return function stop() {
-    app.close();
+    return new Promise( (resolve, reject)=> {
+      io.close();
+      io.httpServer.on('close', resolve);
+      io.on('error', reject);
+    });
   };
 };

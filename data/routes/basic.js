@@ -12,6 +12,9 @@ export default class BasicController extends Controller {
   async initialize() {await this.callMiddleWare('initialize'); }
   async afterGetData() {await this.callMiddleWare('afterGetData'); }
   async afterSuccess() {await this.callMiddleWare('afterSuccess'); }
+  async onServerError(error) {
+    throw error;
+  }
   async callMiddleWare(name) {
     await delay(5);
     if(middleware[name + 'MainDate']) throw new Error('Already ran ' + name);

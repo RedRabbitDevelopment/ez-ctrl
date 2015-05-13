@@ -13,8 +13,9 @@ describe('Socket Handler', ()=> {
     close = SocketServer();
     manager = SocketClient('http://localhost:3000');
   });
-  after(function() {
-    close && close();
+  after(async function() {
+    close && await close();
+    manager.close();
   });
   beforeEach(function() {
     delete UserController.serverError;

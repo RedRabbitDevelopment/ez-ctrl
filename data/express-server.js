@@ -8,8 +8,9 @@ import bodyParser from 'body-parser';
 export default function start(port = 3000) {
   var app = express();
   app.use(bodyParser.json());
-  ExpressHandler.registerControllers(app,
-      [BasicController, UserController], true);
+  let expressHandler = new ExpressHandler(app);
+  expressHandler.registerControllers([BasicController, UserController]);
+  expressHandler.registerBatch();
   app.stop = function() {
     return new Promise( (resolve, reject)=>{
       app.server.close(resolve);

@@ -3,7 +3,7 @@
   "version": "1.0.0-rc.0.1",
   "main": "bin/index.js",
   "scripts": {
-    "test": "mocha --require ./test",
+    "test": "mocha --require babel-register.js",
     "build": "babel --experiment lib --out-dir bin"
   },
   "dependencies": {
