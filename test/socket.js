@@ -9,9 +9,13 @@ import SocketClient from 'socket.io-client';
 describe('Socket Handler', ()=> {
   var close;
   var manager;
-  before(function() {
-    close = SocketServer();
+  before(async function() {
+    this.timeout(10000);
+    close = await SocketServer();
     manager = SocketClient('http://localhost:3000');
+    return new Promise( (resolve)=> {
+      manager.once('connect', resolve);
+    });
   });
   after(async function() {
     close && await close();
@@ -25,6 +29,7 @@ describe('Socket Handler', ()=> {
     if(UserController.serverError) throw UserController.serverError;
   });
   it('should be able to receive a call', async function() {
+    this.timeout(10000);
     var response = await new Promise( (resolve, reject)=> {
       manager.emit('users:query', resolve);
     });

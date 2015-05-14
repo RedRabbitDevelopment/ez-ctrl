@@ -1,19 +1,26 @@
-
-import SocketIO from 'socket.io';
+import http from 'http';
+import express from 'express';
 import SocketHandler from '../lib/socket';
 import UserController from './routes/users';
-import http from 'http';
+var SocketIO = require('socket.io');
 
 export default function start(port = 3000) {
-  let app = new SocketIO();
-  app.serveClient(false);
-  SocketHandler.registerController(app, UserController);
-  var io = app.listen(port);
-  return function stop() {
-    return new Promise( (resolve, reject)=> {
-      io.close();
-      io.httpServer.on('close', resolve);
-      io.on('error', reject);
-    });
-  };
+  let app = express();
+  let server = http.createServer(app);
+  let io = SocketIO(server, {serveClient: false});
+  return new Promise( (resolve, reject)=> {
+    server.listen(port, resolve);
+  }).then( ()=> {
+    let socketHandler = new SocketHandler(io);
+    socketHandler.registerController(UserController);
+    return function stop() {
+      return new Promise( (resolve, reject)=> {
+        io.close();
+        server.on('close', ()=> {
+          resolve();
+        });
+        server.on('error', reject);
+      });
+    };
+  });
 };
