@@ -1,10 +1,11 @@
 {
   "name": "ez-ctrl",
   "version": "1.0.0-rc.0.1",
-  "main": "bin/index.js",
+  "main": "lib/index.js",
   "scripts": {
     "test": "mocha --require babel-register.js",
-    "build": "babel --experiment --out-dir lib src"
+    "build": "babel --experimental --out-dir lib src",
+    "prepublish": "npm run build"
   },
   "dependencies": {
     "bluebird": "^2.9.9",

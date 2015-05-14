@@ -3,5 +3,5 @@
 *.swp
 *.sqo
 npm-debug.log
-/bin
+/lib
 /_site
