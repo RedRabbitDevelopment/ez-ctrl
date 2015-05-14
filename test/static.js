@@ -1,9 +1,9 @@
 
 import 'should';
 import Promise from 'bluebird';
-import {data} from '../data/models/user';
-import BasicController, {middleware} from '../data/routes/basic';
-import {BaseController, SuperController, OtherController} from '../data/routes/super';
+import {data} from '../test_data/models/user';
+import BasicController, {middleware} from '../test_data/routes/basic';
+import {BaseController, SuperController, OtherController} from '../test_data/routes/super';
 var co = Promise.coroutine;
 
 describe('Calling Statically', ()=> {
