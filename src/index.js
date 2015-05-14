@@ -105,17 +105,21 @@ class BaseController {
       return this.result;
     }
   }
-  
-  getLogicFunction() {
-    let logic = this.routeDetails;
+
+  static getLogicFunction(routeDetails, context) {
+    let logic = routeDetails;
     logic = logic.logic || logic;
     if(_.isFunction(logic)) {
       return logic;
     } else if(_.isString(logic)) {
-      return this[this.routeDetails];
+      return context[this.routeDetails];
     } else {
       throw new Error('Cannot find logic function for ' + this.routeName);
     }
+  }
+  
+  getLogicFunction() {
+    return this.constructor.getLogicFunction(this.routeDetails, this);
   }
 
   async runLogic() {
