@@ -1,6 +1,6 @@
 {
   "name": "ez-ctrl",
-  "version": "1.0.0-rc.0.3",
+  "version": "1.0.0-rc.0.4",
   "main": "lib/index.js",
   "scripts": {
     "test": "mocha --require babel-register.js",
