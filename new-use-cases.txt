@@ -1,0 +1,10 @@
+- Use es6, not coffeescript - check
+- Remove success: true, response - check
+- Include proper status codes - check
+- Render other formats, csv, html, etc - check
+- Socket.io - check
+
+- Run server-side and client-side
+- Client side validation
+- put validation, socket/express, ez-access, and gulp ez on different modules
+

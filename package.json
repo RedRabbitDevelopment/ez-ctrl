@@ -4,7 +4,7 @@
   "main": "bin/index.js",
   "scripts": {
     "test": "mocha --require babel-register.js",
-    "build": "babel --experiment lib --out-dir bin"
+    "build": "babel --experiment --out-dir lib src"
   },
   "dependencies": {
     "bluebird": "^2.9.9",
