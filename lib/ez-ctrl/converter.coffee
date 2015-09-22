@@ -26,8 +26,8 @@ module.exports = Converter =
     data
   
   convertField: (value, type)->
-    if _.isArray type or _.isArray value
-      unless _.isArray type and _.isArray value
+    if _.isArray(type) or _.isArray(value)
+      unless _.isArray(type) and _.isArray(value)
         value
       else
         for index, val in value
