@@ -32,18 +32,24 @@
           url
       else
         path
+    _isPrimitive: (value)->
+      _.some [_.isNumber, _.isString, _.isBoolean, _.isNull, _.isUndefined],
+        (fn)-> fn(value)
     _serialize: (obj, prefix)->
       str = []
       unless obj?
         null
       else if obj.length?
-        for value, i in obj
-          key = if prefix then "#{prefix}[#{i}]" else i
-          if value isnt undefined
-            str.push if typeof value is 'object'
-              @_serialize(value, key)
-            else
-              key + "=" + encodeURIComponent(value)
+        if prefix and obj.length > 20 and _.every obj, @_isPrimitive
+          str.push prefix + '=' + encodeURIComponent(JSON.stringify(obj))
+        else
+          for value, i in obj
+            key = if prefix then "#{prefix}[#{i}]" else i
+            if value isnt undefined
+              str.push if typeof value is 'object'
+                @_serialize(value, key)
+              else
+                key + "=" + encodeURIComponent(value)
       else
         for key, value of obj
           key = if prefix then prefix + "[" + key + "]" else encodeURIComponent(key)

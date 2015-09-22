@@ -27,6 +27,11 @@ module.exports = Converter =
   
   convertField: (value, type)->
     if _.isArray(type) or _.isArray(value)
+      if _.isString value
+        try
+          value = JSON.parse value
+        catch e
+          # ignore
       unless _.isArray(type) and _.isArray(value)
         value
       else
