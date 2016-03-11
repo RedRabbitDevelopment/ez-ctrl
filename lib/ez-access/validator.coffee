@@ -22,7 +22,7 @@
           promises.push @validateField(validatorData, field, data[field], controllerName)
         else if validatorData.default
           data[field] = validatorData.default
-      Bluebird.settle(promises).then (results)->
+      Bluebird.map(promises, (promise)-> Bluebird.resolve(promise).reflect()).then (results)->
         errors = _.filter results, (result)->
           not result.isFulfilled()
         if errors.length > 0
