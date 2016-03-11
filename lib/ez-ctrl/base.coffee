@@ -171,7 +171,7 @@ BaseController.prototype =
       @handleForked()
 
   handleForked: ->
-    Bluebird.settle @forked
+    Bluebird.map @forked, (promise)-> Bluebird.resolve(promise).reflect()
     .then (results)=>
       results.forEach (result)=>
         unless result.isFulfilled()
