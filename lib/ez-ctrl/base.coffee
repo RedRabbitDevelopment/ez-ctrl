@@ -7,7 +7,7 @@ Converter = require('./converter')
 Validator = require('../ez-access/validator')
 UserError = require './userError'
 {Form} = require 'multiparty'
-Form.prototype.parseAsync = Bluebird.promisify Form.prototype.parse
+Form.prototype.parseAsync = Bluebird.promisify Form.prototype.parse, multiArgs: true
 util = require 'util'
 
 module.exports = BaseController =
